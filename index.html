@@ -361,14 +361,23 @@ const CHASSIS = {
     'void':    { name: 'Void',    hp: 90,  spd: 3.5, heatRate: 2.0, ult: 'CONSTRUCT', color: '#9d00ff', cost: 4500, desc: 'Summons automated turrets.' },
     'pyro':    { name: 'Ignis',   hp: 120, spd: 3.5, heatRate: 2.5, ult: 'INFERNO', color: '#ff5500', cost: 3000, desc: 'Thermal weaponry specialist.' },
     'spectre': { name: 'Spectre', hp: 80,  spd: 5, heatRate: 1.8, ult: 'RAILGUN', color: '#a020f0', cost: 5000, desc: 'Stealth ops. High burst damage.' },
-    'paladin': { name: 'Paladin', hp: 150, spd: 3, heatRate: 1.2, ult: 'REFLECT', color: '#fff', cost: 4000, desc: 'Defensive powerhouse. Runs cool.' }
+    'paladin': { name: 'Paladin', hp: 150, spd: 3, heatRate: 1.2, ult: 'REFLECT', color: '#fff', cost: 4000, desc: 'Defensive powerhouse. Runs cool.' },
+    'falcon':  { name: 'Falcon',  hp: 110, spd: 4.5, heatRate: 2.2, ult: 'DASH', color: '#ff4500', cost: 2500, desc: 'Agile interceptor. Quick dashes.' },
+    'behemoth':{ name: 'Behemoth',hp: 250, spd: 1.5, heatRate: 1.0, ult: 'BARRAGE', color: '#8b0000', cost: 6000, desc: 'Massive firepower. Very slow.' },
+    'phantom': { name: 'Phantom', hp: 70,  spd: 5.5, heatRate: 2.8, ult: 'CLOAK', color: '#696969', cost: 5500, desc: 'Invisible for short periods.' },
+    'titan':   { name: 'Titan',   hp: 180, spd: 2.5, heatRate: 1.8, ult: 'SHIELD', color: '#daa520', cost: 4800, desc: 'Energy shields. High defense.' }
 };
 const MODULES = {
     'tesla': { name: 'Tesla Coil', cost: 1000, color: '#00f3ff', desc: 'Shocks nearby enemies.', func: (p, l) => { p.flags.tesla = l; } },
     'regen': { name: 'Nanobots', cost: 1500, color: '#0f0', desc: 'Slowly repairs hull.', func: (p, l) => { setInterval(()=>{if(Game.active && p.hp<p.maxHp)p.hp+=l;}, 1000); } },
     'scope': { name: 'Targeting AI', cost: 800, color: '#f00', desc: 'Increases critical chance.', func: (p, l) => { p.crit += 0.05*l; } },
     'orbit': { name: 'Grav Orbs', cost: 2500, color: '#ffd700', desc: 'Shield orbs circle ship.', func: (p, l) => { p.flags.orbit = l; } },
-    'nova':  { name: 'Nova Core', cost: 3000, color: '#ff5500', desc: 'Enemies explode on death.', func: (p, l) => { p.flags.nova = l; } }
+    'nova':  { name: 'Nova Core', cost: 3000, color: '#ff5500', desc: 'Enemies explode on death.', func: (p, l) => { p.flags.nova = l; } },
+    'drone': { name: 'Combat Drone', cost: 2000, color: '#ff1493', desc: 'Deploys a helper drone.', func: (p, l) => { p.flags.drone = l; } },
+    'shield':{ name: 'Energy Shield', cost: 1800, color: '#00ffff', desc: 'Absorbs damage periodically.', func: (p, l) => { p.flags.shield = true; p.shieldMax = 50 * l; p.shield = p.shieldMax; } },
+    'boost': { name: 'Speed Boost', cost: 1200, color: '#32cd32', desc: 'Increases movement speed.', func: (p, l) => { p.spd *= 1.1 * l; } },
+    'mine':  { name: 'Proximity Mines', cost: 2200, color: '#dc143c', desc: 'Drops mines that explode.', func: (p, l) => { p.flags.mine = l; } },
+    'laser': { name: 'Laser Beam', cost: 3500, color: '#ff6347', desc: 'Fires a continuous laser.', func: (p, l) => { p.flags.laser = l; } }
 };
 const AUG_POOL = [
     { id: 'dmg', type:'OFF', n: 'Overcharge', d: '+20% Damage', f: p=>p.dmg*=1.2 },
@@ -403,6 +412,16 @@ const ENEMY_DB = [
     { id: 'cube', tier: 4, hp: 150, bits: 40, spd: 1.5, c: '#0000ff', r: 25, shape: 'square', ai: 'seek' },
     { id: 'shooter', tier: 2, hp: 50, bits: 15, spd: 2, c: '#f0f', r: 15, shape: 'tri', ai: 'seek', wpn: 'pew' }
 ];
+const BOSS_DB = [
+    { id: 'boss_prime', name: 'Prime Titan', hp: 2000, spd: 0.5, c: '#ff0000', r: 80, shape: 'boss', ai: 'boss', bits: 500, ult: 'OVERCLOCK' },
+    { id: 'boss_void', name: 'Void Leviathan', hp: 2500, spd: 0.4, c: '#9d00ff', r: 90, shape: 'boss', ai: 'boss_void', bits: 600, ult: 'CONSTRUCT' },
+    { id: 'boss_fire', name: 'Inferno Behemoth', hp: 1800, spd: 0.6, c: '#ff5500', r: 75, shape: 'boss', ai: 'boss_fire', bits: 550, ult: 'INFERNO' },
+    { id: 'boss_ice', name: 'Frost Colossus', hp: 2200, spd: 0.3, c: '#00f3ff', r: 85, shape: 'boss', ai: 'boss_ice', bits: 650, ult: 'PHASE' },
+    { id: 'boss_storm', name: 'Storm Overlord', hp: 1900, spd: 0.7, c: '#ffd700', r: 70, shape: 'boss', ai: 'boss_storm', bits: 700, ult: 'RAILGUN' }
+];
+
+// Global speed multiplier to make gameplay feel a bit snappier
+const SPEED_MULT = 1.15;
 
 /* GRAPHICS & INPUT */
 const C = document.getElementById('c'); const ctx = C.getContext('2d', {alpha: false});
@@ -534,7 +553,42 @@ const Input = {
             Z.addEventListener('touchcancel', end, { passive: false });
         };
         bind('z-l','joy-l','st-l','l'); bind('z-r','joy-r','st-r','r');
-        window.addEventListener('keydown', e=>{ if(e.code==='Space') Game.triggerUlt(); if(e.code==='Escape') Game.togglePause(); });
+        // Keyboard controls: WASD move, Arrow keys aim, K = fire, Space = ULT, Esc = pause
+        const _keys = {};
+        const recomputeFromKeys = () => {
+            // Left stick (movement) from WASD
+            let lx = 0, ly = 0;
+            if(_keys['KeyD']) lx += 1; if(_keys['KeyA']) lx -= 1;
+            if(_keys['KeyS']) ly += 1; if(_keys['KeyW']) ly -= 1;
+            // Normalize to -1..1
+            Input.lx = Math.max(-1, Math.min(1, lx));
+            Input.ly = Math.max(-1, Math.min(1, ly));
+
+            // Right stick (aim) from Arrow keys
+            let rx = 0, ry = 0;
+            if(_keys['ArrowRight']) rx += 1; if(_keys['ArrowLeft']) rx -= 1;
+            if(_keys['ArrowDown']) ry += 1; if(_keys['ArrowUp']) ry -= 1;
+            if(rx !== 0 || ry !== 0) {
+                // Normalize diagonal to unit vector
+                let m = Math.hypot(rx, ry) || 1; Input.rx = rx / m; Input.ry = ry / m;
+            } else {
+                // Leave existing aim if no arrow keys pressed (e.g. mouse/touch)
+                Input.rx = Input.rx || 0; Input.ry = Input.ry || 0;
+            }
+        };
+
+        window.addEventListener('keydown', e=>{
+            if(e.code === 'Space') { e.preventDefault(); Game.triggerUlt(); return; }
+            if(e.code === 'Escape') { e.preventDefault(); Game.togglePause(); return; }
+            // Fire button
+            if(e.code === 'KeyK') { Input.ra = true; e.preventDefault(); }
+            _keys[e.code] = true; recomputeFromKeys();
+        });
+
+        window.addEventListener('keyup', e=>{
+            if(e.code === 'KeyK') { Input.ra = false; }
+            delete _keys[e.code]; recomputeFromKeys();
+        });
     }
 };
 
@@ -546,6 +600,32 @@ const AI = {
         if(Game.frame % 60 === 0) {
             let ang = Math.atan2(p.y - e.y, p.x - e.x); Game.bullets.push({x:e.x, y:e.y, vx:Math.cos(ang)*5, vy:Math.sin(ang)*5, life:100, dmg:20, sz:8, color:'#f00', enemy:true});
             for(let i=0; i<6; i++) { let a = i * (6.28/6) + (Game.frame/100); Game.bullets.push({x:e.x, y:e.y, vx:Math.cos(a)*3, vy:Math.sin(a)*3, life:150, dmg:15, sz:5, color:'#f00', enemy:true}); }
+        }
+    },
+    boss_void: (e, p) => {
+        e.vx = Math.cos(Date.now()/800) * 1.5; e.vy = Math.sin(Date.now()/800) * 1.5; e.ang = Math.atan2(p.y - e.y, p.x - e.x);
+        if(Game.frame % 80 === 0) {
+            for(let i=0; i<8; i++) { let a = i * (6.28/8); Game.bullets.push({x:e.x, y:e.y, vx:Math.cos(a)*4, vy:Math.sin(a)*4, life:120, dmg:25, sz:6, color:'#9d00ff', enemy:true}); }
+        }
+    },
+    boss_fire: (e, p) => {
+        let ang = Math.atan2(p.y - e.y, p.x - e.x); e.vx = Math.cos(ang) * 0.5; e.vy = Math.sin(ang) * 0.5; e.ang = ang;
+        if(Game.frame % 50 === 0) {
+            let spread = 0.3; for(let i=-2; i<=2; i++) { let a = ang + i*spread; Game.bullets.push({x:e.x, y:e.y, vx:Math.cos(a)*6, vy:Math.sin(a)*6, life:80, dmg:30, sz:10, color:'#ff5500', enemy:true}); }
+        }
+    },
+    boss_ice: (e, p) => {
+        if(e.y < 100) e.vy = 0.8; else e.vy = 0; e.vx = Math.cos(Date.now()/1200) * 3; e.ang = 1.57;
+        if(Game.frame % 100 === 0) {
+            let ang = Math.atan2(p.y - e.y, p.x - e.x); Game.bullets.push({x:e.x, y:e.y, vx:Math.cos(ang)*2, vy:Math.sin(ang)*2, life:200, dmg:10, sz:4, color:'#00f3ff', enemy:true, frozen:true});
+            for(let i=0; i<4; i++) { let a = i * (6.28/4) + Date.now()/500; Game.bullets.push({x:e.x, y:e.y, vx:Math.cos(a)*5, vy:Math.sin(a)*5, life:150, dmg:20, sz:7, color:'#00f3ff', enemy:true}); }
+        }
+    },
+    boss_storm: (e, p) => {
+        e.vx = Math.cos(Date.now()/600) * 2; e.vy = Math.sin(Date.now()/600) * 2; e.ang = Math.atan2(p.y - e.y, p.x - e.x);
+        if(Game.frame % 40 === 0) {
+            let ang = Math.atan2(p.y - e.y, p.x - e.x); Game.bullets.push({x:e.x, y:e.y, vx:Math.cos(ang)*8, vy:Math.sin(ang)*8, life:60, dmg:35, sz:12, color:'#ffd700', enemy:true});
+            for(let i=0; i<3; i++) { let a = ang + (i-1)*0.5; Game.bullets.push({x:e.x, y:e.y, vx:Math.cos(a)*4, vy:Math.sin(a)*4, life:100, dmg:15, sz:5, color:'#ffd700', enemy:true}); }
         }
     }
 };
@@ -561,8 +641,8 @@ const Game = {
         if(this.active) return;
         let cKey = Data.equipped.chassis; let cDef = CHASSIS[cKey];
         this.player = {
-            x: W/2, y: H/2, vx:0, vy:0, a: -1.57, hp: cDef.hp, maxHp: cDef.hp, vHp: cDef.hp, vHpLag: cDef.hp, spd: cDef.spd, heatRate: cDef.heatRate,
-            dmg: 10, rate: 15, bSize: 1, bSpd: 15, heat: 0, maxHeat: 100, coolRate: 0.25, overheated: false, vHeat: 0, ult: 0, maxUlt: 100, ultMult: 1, heatMult: 1, vUlt: 0,
+            x: W/2, y: H/2, vx:0, vy:0, a: -1.57, hp: cDef.hp, maxHp: cDef.hp, vHp: cDef.hp, vHpLag: cDef.hp, spd: cDef.spd * SPEED_MULT, heatRate: cDef.heatRate,
+            dmg: 10, rate: 12, bSize: 1, bSpd: 18, heat: 0, maxHeat: 100, coolRate: 0.25, overheated: false, vHeat: 0, ult: 0, maxUlt: 100, ultMult: 1, heatMult: 1, vUlt: 0,
             crit: 0.05, pierce: 0, bounce: 0, multi: 0, dodge: 0, turnRate: 0, flags: {}, augments: [], activeSynergies: [], invul: 0, leech: 0, blastRadius: 0, homing: 0, level: 1, currentXp: 0, xpToNext: 200
         };
         Data.equipped.mods.forEach(m => { if(MODULES[m]) MODULES[m].func(this.player, Data.modLevels[m]||1); });
@@ -632,7 +712,7 @@ const Game = {
 
     startWave() {
         if(this.isTutorial) return;
-        this.boss = (this.wave % 10 === 0);
+        this.boss = (this.wave % 5 === 0);
         this.waveTotal = this.boss ? 1 : Math.max(5, (5 + Math.floor(this.wave * 1.5)) + (Math.floor(Math.random() * 7) - 3));
         this.spawnedCount = 0; this.spawnTimer = 0;
         document.getElementById('d-wave').innerText = this.wave; this.textFX("WAVE " + this.wave, '#fff');
@@ -670,6 +750,10 @@ const Game = {
         if(c.ult === 'AEGIS') { this.player.hp = Math.min(this.player.hp+50, this.player.maxHp); this.player.flags.shield = true; }
         if(c.ult === 'OVERDRIVE') { this.player.flags.ram = true; let oldSpd = this.player.spd; this.player.spd *= 3; setTimeout(()=>{ this.player.flags.ram=false; this.player.spd=oldSpd; }, 4000); }
         if(c.ult === 'CONSTRUCT') { this.turrets.push({x:this.player.x, y:this.player.y, life:600, angle:0, cd:0}); }
+        if(c.ult === 'DASH') { this.player.vx += Math.cos(this.player.a)*20; this.player.vy += Math.sin(this.player.a)*20; this.player.invul=30; }
+        if(c.ult === 'BARRAGE') { for(let i=0; i<10; i++) { let a = (i/10)*6.28; this.bullets.push({x:this.player.x, y:this.player.y, vx:Math.cos(a)*10, vy:Math.sin(a)*10, life:80, dmg:40, sz:8, color:'#8b0000'}); } }
+        if(c.ult === 'CLOAK') { this.player.flags.cloak = true; setTimeout(()=>{this.player.flags.cloak=false;}, 5000); }
+        if(c.ult === 'SHIELD') { this.player.flags.energyShield = true; this.player.shieldHp = 200; setTimeout(()=>{this.player.flags.energyShield=false;}, 8000); }
     },
 
     update() {
@@ -722,7 +806,7 @@ const Game = {
         }
 
         if(!this.isTutorial) {
-            if(this.spawnedCount < this.waveTotal) { this.spawnTimer--; if(this.spawnTimer <= 0) { this.spawn(); this.spawnTimer = 100 - Math.min(70, this.wave*2); } } 
+            if(this.spawnedCount < this.waveTotal) { this.spawnTimer--; if(this.spawnTimer <= 0) { this.spawn(); this.spawnTimer = 80 - Math.min(60, this.wave*2); } } 
             else if(this.enemies.length === 0) { this.showAugments(); return; }
         }
         
@@ -824,15 +908,16 @@ const Game = {
 
     spawn() {
         if(this.boss && this.enemies.length === 0 && this.spawnedCount === 0) {
-            let hp = 2000 + (this.wave * 500); this.enemies.push({ x: W/2, y: -100, vx:0, vy:0, ang: 1.57, hp: hp, maxHp: hp, type: 'boss', id: 'boss_prime', boss: true, tier: 6, spd: 0.5 + (this.wave*0.05), c: '#ff0000', r: 80, shape: 'boss', ai: 'boss', bits: 500, turnRate: 0.02 });
-            this.textFX("WARNING: TITAN DETECTED", "#ff0000"); this.spawnedCount++; return;
+            let bossIndex = Math.floor(this.wave / 5) - 1; let bossDef = BOSS_DB[bossIndex % BOSS_DB.length];
+            let hp = bossDef.hp + (this.wave * 200); this.enemies.push({ x: W/2, y: -100, vx:0, vy:0, ang: 1.57, hp: hp, maxHp: hp, type: 'boss', id: bossDef.id, boss: true, tier: 6, spd: bossDef.spd * SPEED_MULT, c: bossDef.c, r: bossDef.r, shape: bossDef.shape, ai: bossDef.ai, bits: bossDef.bits, turnRate: 0.02 });
+            this.textFX("WARNING: " + bossDef.name.toUpperCase() + " DETECTED", bossDef.c); this.spawnedCount++; return;
         }
         if(this.boss) return;
         let t = 1; if(this.wave >= 3) t = 2; if(this.wave >= 6) t = 3; if(this.wave >= 9) t = 4;
         let pool = ENEMY_DB.filter(e => e.tier <= t); let template = pool[Math.floor(Math.random() * pool.length)];
         let ang = Math.random()*6.28, dist = Math.max(W,H)/1.2; let sx = W/2 + Math.cos(ang)*dist, sy = H/2 + Math.sin(ang)*dist; let scaleMult = 1 + (this.wave * 0.15); let isElite = Math.random() < 0.05;
         if(isElite) { this.textFX("ELITE HOSTILE DETECTED", "#ffd700"); }
-        this.enemies.push({ ...template, x: sx, y: sy, vx: 0, vy: 0, ang: Math.atan2(H/2 - sy, W/2 - sx), hp: template.hp * scaleMult * (isElite ? 3 : 1), maxHp: template.hp * scaleMult * (isElite ? 3 : 1), turnRate: 0.03 + (Math.random()*0.02), charge: 0, type: template.id, elite: isElite, r: template.r * (isElite ? 1.5 : 1), c: isElite ? '#ffd700' : template.c, bits: template.bits * (isElite ? 5 : 1) });
+        this.enemies.push({ ...template, x: sx, y: sy, vx: 0, vy: 0, ang: Math.atan2(H/2 - sy, W/2 - sx), spd: (template.spd || 1) * SPEED_MULT, hp: template.hp * scaleMult * (isElite ? 3 : 1), maxHp: template.hp * scaleMult * (isElite ? 3 : 1), turnRate: 0.03 + (Math.random()*0.02), charge: 0, type: template.id, elite: isElite, r: template.r * (isElite ? 1.5 : 1), c: isElite ? '#ffd700' : template.c, bits: template.bits * (isElite ? 5 : 1) });
         this.spawnedCount++;
     },
 
