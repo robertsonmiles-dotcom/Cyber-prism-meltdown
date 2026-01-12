@@ -212,6 +212,108 @@
     #lvl-up-msg { position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%); color: var(--pink); font-size: 14px; font-weight: bold; text-shadow: 0 0 10px var(--pink); pointer-events: none; opacity: 0; transition: opacity 0.5s; text-align: center; }
     #lvl-up-msg.show { opacity: 1; animation: floatUp 1s forwards; }
     @keyframes floatUp { from { transform: translate(-50%, 20px); } to { transform: translate(-50%, 0); } }
+
+    /* CONTROLS BUTTON & MODAL */
+    #btn-controls {
+        position: absolute; bottom: 30px; right: 30px; z-index: 200;
+        width: 50px; height: 50px; background: rgba(0,0,0,0.6); border: 2px solid var(--cyan);
+        color: var(--cyan); font-family: 'Orbitron'; font-weight: bold; font-size: 18px;
+        display: flex; align-items: center; justify-content: center;
+        transform: skewX(-10deg); transition: 0.2s; box-shadow: 0 0 10px rgba(0,243,255,0.2);
+        animation: pulseCtrlBtn 2s infinite; pointer-events: auto; cursor: pointer;
+    }
+    #btn-controls:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); transform: skewX(-10deg) scale(1.1); }
+    @keyframes pulseCtrlBtn { 0% { box-shadow: 0 0 5px rgba(0,243,255,0.2); } 50% { box-shadow: 0 0 15px rgba(0,243,255,0.6); } 100% { box-shadow: 0 0 5px rgba(0,243,255,0.2); } }
+
+    #s-controls {
+        pointer-events: auto !important;
+    }
+
+    .controls-modal {
+        background: linear-gradient(135deg, rgba(10, 20, 30, 0.98) 0%, rgba(5, 10, 15, 0.99) 100%);
+        border: 2px solid var(--cyan); padding: 40px; max-width: 600px; max-height: 85vh; overflow-y: auto;
+        position: relative; box-shadow: 0 0 50px rgba(0, 243, 255, 0.2);
+    }
+
+    .controls-modal h2 {
+        color: var(--cyan); text-align: center; margin-top: 0; margin-bottom: 30px; font-size: 28px;
+        letter-spacing: 3px; border: none; display: block;
+    }
+
+    .control-section {
+        margin-bottom: 25px; padding: 15px; border-left: 3px solid var(--cyan); background: rgba(0, 243, 255, 0.05);
+    }
+
+    .control-section h3 {
+        color: #ffd700; margin: 0 0 15px 0; font-size: 16px; letter-spacing: 2px;
+    }
+
+    .control-item {
+        display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+        font-size: 13px;
+    }
+
+    .control-item:last-child {
+        border-bottom: none;
+    }
+
+    .control-key {
+        background: rgba(0, 20, 40, 0.8); border: 1px solid var(--cyan); padding: 4px 10px; border-radius: 4px;
+        color: #fff; font-family: monospace; font-weight: bold; min-width: 120px; text-align: center;
+    }
+
+    .control-description {
+        color: #aaa; flex: 1; text-align: right; margin-right: 10px;
+    }
+
+    .controls-close-btn {
+        position: absolute; top: 20px; right: 20px; width: 30px; height: 30px;
+        background: rgba(0, 243, 255, 0.2); border: 1px solid var(--cyan); color: var(--cyan);
+        font-family: 'Orbitron'; font-size: 18px; cursor: pointer; transition: 0.2s;
+        display: flex; align-items: center; justify-content: center;
+    }
+
+    .controls-close-btn:hover {
+        background: var(--cyan); color: #000; box-shadow: 0 0 10px var(--cyan);
+    }
+
+    /* POLISH: Smooth transitions & animations */
+    .btn { animation: btnIntro 0.3s ease-out; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    @keyframes btnIntro { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+    .screen:not(.hidden) { animation: screenFadeIn 0.3s ease-out; }
+    @keyframes screenFadeIn { from { opacity: 0; transform: translateY(5px); filter: blur(3px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+
+    /* Enhanced bar animations */
+    .bar { transition: width 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+
+    /* Floating text polish */
+    .floatingText { font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 10px currentColor; }
+
+    /* Enemy destruction effect */
+    @keyframes destroyShip { 
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(1.2); }
+        100% { opacity: 0; transform: scale(0.5); }
+    }
+
+    /* Button press feedback */
+    .btn:active { transform: scale(0.92) !important; }
+
+    /* Pause button polish */
+    #btn-pause { transition: all 0.2s ease; }
+    #btn-pause:active { transform: skewX(-10deg) scale(0.95); }
+
+    /* Menu smooth scroll */
+    .cyber-panel { scroll-behavior: smooth; }
+    .col { scroll-behavior: smooth; }
+
+    /* Text effect fade */
+    @keyframes textFXFade {
+        0% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        50% { opacity: 1; }
+        100% { opacity: 0; transform: translateY(-60px) scale(1.1); filter: blur(2px); }
+    }
 </style>
 </head>
 <body class="crt">
@@ -254,6 +356,7 @@
 <div id="s-menu" class="screen interactive menu-anim">
     <button class="btn" style="position:absolute; top:30px; left:30px; border-color:var(--gold); color:var(--gold);" onclick="Menus.open('achievements')">ACHIEVEMENTS</button>
     <button class="btn" style="position:absolute; top:30px; right:30px; border-color:#fff; color:#fff;" onclick="toggleFullScreen()">FULLSCREEN</button>
+    <button id="btn-controls" onclick="Menus.open('controls')">?</button>
     <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%);">
         <h1 class="glitch-text">CYBER PRISM</h1>
         <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V10.3 // ONLINE</h3>
@@ -312,6 +415,76 @@
         <div id="ach-list" class="ach-grid"></div>
     </div>
     <button class="btn" style="margin-top:20px; border-color:var(--gold); color:var(--gold);" onclick="Menus.home()">BACK</button>
+</div>
+
+<div id="s-controls" class="screen hidden interactive menu-anim">
+    <div class="controls-modal">
+        <button class="controls-close-btn" onclick="Menus.home()">✕</button>
+        <h2>CONTROL SYSTEMS</h2>
+        
+        <div class="control-section">
+            <h3>MOVEMENT</h3>
+            <div class="control-item">
+                <span class="control-description">Move Left/Right/Up/Down</span>
+                <span class="control-key">A / D / W / S</span>
+            </div>
+            <div class="control-item">
+                <span class="control-description">Mobile: Left Joystick</span>
+                <span class="control-key">TOUCH</span>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <h3>AIMING & FIRING</h3>
+            <div class="control-item">
+                <span class="control-description">Aim Up/Down/Left/Right</span>
+                <span class="control-key">↑ / ↓ / ← / →</span>
+            </div>
+            <div class="control-item">
+                <span class="control-description">Fire Weapon</span>
+                <span class="control-key">K or CTRL</span>
+            </div>
+            <div class="control-item">
+                <span class="control-description">Mobile: Right Joystick</span>
+                <span class="control-key">TOUCH</span>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <h3>ABILITIES</h3>
+            <div class="control-item">
+                <span class="control-description">Trigger Ultimate</span>
+                <span class="control-key">SPACE</span>
+            </div>
+            <div class="control-item">
+                <span class="control-description">Mobile: ULT Button</span>
+                <span class="control-key">ON SCREEN</span>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <h3>MENU</h3>
+            <div class="control-item">
+                <span class="control-description">Pause / Resume</span>
+                <span class="control-key">ESC</span>
+            </div>
+            <div class="control-item">
+                <span class="control-description">Mobile: Pause Button</span>
+                <span class="control-key">ON SCREEN</span>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <h3>TIPS</h3>
+            <div style="color: #aaa; font-size: 12px; line-height: 1.6;">
+                • Heat management is crucial—stop firing to cool down<br>
+                • Combine augments to unlock powerful synergies<br>
+                • Elite enemies drop more rewards<br>
+                • Upgrade modules in the R&D Lab for sustained power<br>
+                • Use ultimas strategically for wave clearing
+            </div>
+        </div>
+    </div>
 </div>
 <div id="s-up" class="screen hidden interactive menu-anim">
     <div class="cyber-panel" style="align-items:center; padding:30px;">
@@ -509,13 +682,30 @@ const Draw = {
 
 /* INPUT SYSTEM */
 const Input = {
-    lx:0, ly:0, la:false, rx:0, ry:0, ra:false, lox:0, loy:0, rox:0, roy:0,
+    lx:0, ly:0, la:false, rx:0, ry:0, ra:false, lox:0, loy:0, rox:0, roy:0, mouseX: 0, mouseY: 0, mouseActive: false,
     init() {
         // Prevent default touch behavior on canvas to stop scrolling/zooming/selecting
         const C = document.getElementById('c');
         C.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
         C.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
         C.addEventListener('touchend', e => e.preventDefault(), { passive: false });
+
+        // Mouse movement for aiming (when playing with keyboard+mouse)
+        window.addEventListener('mousemove', e => {
+            if(Game.active && Input.mouseActive) {
+                Input.mouseX = e.clientX;
+                Input.mouseY = e.clientY;
+                // Calculate aim vector from player to mouse
+                let dx = Input.mouseX - Game.player.x;
+                let dy = Input.mouseY - Game.player.y;
+                let dist = Math.hypot(dx, dy) || 1;
+                Input.rx = dx / dist;
+                Input.ry = dy / dist;
+            }
+        });
+
+        C.addEventListener('mouseenter', () => { Input.mouseActive = true; });
+        C.addEventListener('mouseleave', () => { Input.mouseActive = false; });
 
         const bind = (z, j, s, k) => {
             const Z=document.getElementById(z), J=document.getElementById(j), S=document.getElementById(s);
@@ -564,15 +754,15 @@ const Input = {
             Input.lx = Math.max(-1, Math.min(1, lx));
             Input.ly = Math.max(-1, Math.min(1, ly));
 
-            // Right stick (aim) from Arrow keys
+            // Right stick (aim) from Arrow keys - only override if arrow keys are pressed and mouse isn't active
             let rx = 0, ry = 0;
             if(_keys['ArrowRight']) rx += 1; if(_keys['ArrowLeft']) rx -= 1;
             if(_keys['ArrowDown']) ry += 1; if(_keys['ArrowUp']) ry -= 1;
             if(rx !== 0 || ry !== 0) {
                 // Normalize diagonal to unit vector
                 let m = Math.hypot(rx, ry) || 1; Input.rx = rx / m; Input.ry = ry / m;
-            } else {
-                // Leave existing aim if no arrow keys pressed (e.g. mouse/touch)
+            } else if(!Input.mouseActive) {
+                // Leave existing aim if no arrow keys pressed and mouse isn't providing aim (e.g. touch)
                 Input.rx = Input.rx || 0; Input.ry = Input.ry || 0;
             }
         };
@@ -580,13 +770,15 @@ const Input = {
         window.addEventListener('keydown', e=>{
             if(e.code === 'Space') { e.preventDefault(); Game.triggerUlt(); return; }
             if(e.code === 'Escape') { e.preventDefault(); Game.togglePause(); return; }
-            // Fire button
+            // Fire button - support both K and mouse click simulation
             if(e.code === 'KeyK') { Input.ra = true; e.preventDefault(); }
+            // Support alternative fire key (Ctrl for easier reach)
+            if(e.code === 'ControlLeft' || e.code === 'ControlRight') { Input.ra = true; e.preventDefault(); }
             _keys[e.code] = true; recomputeFromKeys();
         });
 
         window.addEventListener('keyup', e=>{
-            if(e.code === 'KeyK') { Input.ra = false; }
+            if(e.code === 'KeyK' || e.code === 'ControlLeft' || e.code === 'ControlRight') { Input.ra = false; }
             delete _keys[e.code]; recomputeFromKeys();
         });
     }
@@ -707,7 +899,19 @@ const Game = {
 
     showDamage(x, y, dmg, isCrit, color=null) {
         if(dmg < 1) return;
-        this.floatingTexts.push({ x: x+(Math.random()-0.5)*20, y: y+(Math.random()-0.5)*20, text: Math.floor(dmg), life: 40, vy: -1.5, color: color ? color : (isCrit ? '#ffff00' : '#ffffff'), isCrit: isCrit, alpha: 1 });
+        let sz = isCrit ? 18 : 14;
+        this.floatingTexts.push({ 
+            x: x+(Math.random()-0.5)*20, 
+            y: y+(Math.random()-0.5)*20, 
+            text: Math.floor(dmg), 
+            life: 50, 
+            vy: -2,
+            vx: (Math.random()-0.5)*2,
+            color: color ? color : (isCrit ? '#ffff00' : '#ffffff'), 
+            isCrit: isCrit, 
+            alpha: 1,
+            size: sz
+        });
     },
 
     startWave() {
@@ -946,7 +1150,16 @@ const Game = {
         });
         this.bullets.forEach(b => { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.shadowBlur = 15; ctx.shadowColor = b.color; ctx.fillStyle = b.color; ctx.beginPath(); ctx.arc(b.x, b.y, b.sz, 0, 6.28); ctx.fill(); ctx.restore(); });
         ctx.font = "bold 12px Orbitron"; ctx.textAlign = "center";
-        this.floatingTexts.forEach(ft => { ctx.fillStyle = ft.color; ctx.globalAlpha = ft.alpha; if(ft.isCrit) ctx.font = "bold 16px Orbitron"; else ctx.font = "12px Orbitron"; ctx.fillText(ft.text, ft.x, ft.y); });
+        this.floatingTexts.forEach(ft => { 
+            ctx.fillStyle = ft.color; 
+            ctx.globalAlpha = ft.alpha; 
+            if(ft.isCrit) ctx.font = `bold ${ft.size || 16}px Orbitron`;
+            else ctx.font = `${ft.size || 12}px Orbitron`;
+            ctx.shadowColor = ft.color;
+            ctx.shadowBlur = ft.isCrit ? 15 : 5;
+            ctx.fillText(ft.text, ft.x, ft.y);
+            ctx.shadowBlur = 0;
+        });
         ctx.restore();
     },
     
@@ -996,7 +1209,24 @@ const Game = {
         ACHIEVEMENTS.forEach(a => { if (!Data.achievements.includes(a.id) && a.req(s)) { Data.achievements.push(a.id); Data.bits += a.reward; if(this.active) this.bits += a.reward; this.notifyAch(a); localStorage.setItem(SAVE_KEY, JSON.stringify(Data)); } });
     },
     notifyAch(a) { let n = document.getElementById('ach-notify'); document.getElementById('ach-txt').innerText = a.name; document.getElementById('ach-rew').innerText = `+${a.reward} BITS`; n.classList.add('show'); setTimeout(() => n.classList.remove('show'), 3000); },
-    textFX(t, c) { let d = document.createElement('div'); d.style.position='absolute'; d.style.top='30%'; d.style.width='100%'; d.style.textAlign='center'; d.style.color=c; d.style.fontFamily='Orbitron'; d.style.fontSize='24px'; d.style.textShadow='0 0 20px '+c; d.style.zIndex = 20; d.innerText = t; document.body.appendChild(d); setTimeout(()=>d.remove(), 2000); },
+    textFX(t, c) { 
+        let d = document.createElement('div'); 
+        d.style.position='absolute'; 
+        d.style.top='30%'; 
+        d.style.width='100%'; 
+        d.style.textAlign='center'; 
+        d.style.color=c; 
+        d.style.fontFamily='Orbitron'; 
+        d.style.fontSize='24px'; 
+        d.style.textShadow='0 0 20px '+c; 
+        d.style.zIndex = 20; 
+        d.style.fontWeight = 'bold';
+        d.style.letterSpacing = '2px';
+        d.innerText = t; 
+        document.body.appendChild(d); 
+        d.style.animation = 'textFXFade 2.5s ease-out forwards';
+        setTimeout(()=>d.remove(), 2500);
+    },
     over() { this.active = false; document.getElementById('ui-hud').classList.add('hidden'); document.getElementById('s-over').classList.remove('hidden'); document.getElementById('go-xp').innerText = this.xp; document.getElementById('go-bits').innerText = this.bits; let c = Data.equipped.chassis; Data.chassisXP[c].xp += this.xp; Data.bits += this.bits; this.checkAch(); localStorage.setItem(SAVE_KEY, JSON.stringify(Data)); }
 };
 
@@ -1016,6 +1246,10 @@ const Menus = {
     open(mode) {
         document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
         if(previewId) { cancelAnimationFrame(previewId); previewId=null; }
+        if(mode === 'controls') {
+            document.getElementById('s-controls').classList.remove('hidden');
+            return;
+        }
         if (mode === 'achievements') {
             document.getElementById('s-ach').classList.remove('hidden'); let list = document.getElementById('ach-list'); list.innerHTML = ''; let unlockedCount = 0;
             ACHIEVEMENTS.forEach(a => { let unlocked = Data.achievements.includes(a.id); if(unlocked) unlockedCount++; let card = document.createElement('div'); card.className = `ach-card ${unlocked ? 'unlocked' : ''}`; card.innerHTML = `<h4 style="margin:0 0 5px 0; color:${unlocked ? 'var(--gold)' : '#555'}">${a.name}</h4><span class="ach-desc" style="font-size:11px; color:#888;">${a.desc}</span><div class="ach-reward" style="color:${unlocked?'var(--cyan)':'#444'}">+${a.reward} BITS</div>`; list.appendChild(card); });
