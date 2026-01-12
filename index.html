@@ -229,7 +229,7 @@
 <div id="tut-msg">INITIALIZING TRAINING SIM...</div>
 
 <div id="ui-hud" class="screen hidden">
-    <button id="btn-pause" onclick="Game.togglePause()">II</button>
+    <button id="btn-pause" onclick="Game && Game.togglePause && Game.togglePause()">II</button>
     <div class="top-bar">
         <div>
             <div class="bar-con"><div id="hp-lag" class="bar"></div><div id="hp-bar" class="bar"></div><span class="bar-label">INTEGRITY</span></div>
@@ -246,7 +246,7 @@
     </div>
     <div id="msg-oh">WEAPON JAMMED</div>
     <div id="lvl-up-msg">FIRMWARE UPDATE<br><span id="lvl-bonus" style="color:#fff; font-size:12px;">+5% DMG</span></div>
-    <div id="btn-ult" onclick="Game.triggerUlt()">ULT</div>
+    <div id="btn-ult" onclick="Game && Game.triggerUlt && Game.triggerUlt()">ULT</div>
     <div id="z-l" class="zone"></div><div id="z-r" class="zone"></div>
     <div id="joy-l" class="joy-base"></div><div id="st-l" class="stick"></div>
     <div id="joy-r" class="joy-base"></div><div id="st-r" class="stick"></div>
@@ -254,19 +254,19 @@
 
 <div id="s-menu" class="screen interactive menu-anim" style="flex-wrap: wrap;">
     <div style="position: absolute; top: 20px; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 30px; width: calc(100% - 60px); pointer-events: auto; z-index: 150;">
-        <button class="btn" style="border-color:var(--gold); color:var(--gold); margin: 0;" onclick="Menus.open('achievements')">ACHIEVEMENTS</button>
-        <button class="btn" style="border-color:var(--pink); color:var(--pink); margin: 0;" onclick="Menus.open('leaderboard')">LEADERBOARD</button>
-        <button class="btn" style="border-color:#fff; color:#fff; margin: 0;" onclick="toggleFullScreen()">FULLSCREEN</button>
+        <button class="btn" style="border-color:var(--gold); color:var(--gold); margin: 0;" onclick="window.openAchievements()">ACHIEVEMENTS</button>
+        <button class="btn" style="border-color:var(--pink); color:var(--pink); margin: 0;" onclick="window.openLeaderboard()">LEADERBOARD</button>
+        <button class="btn" style="border-color:#fff; color:#fff; margin: 0;" onclick="window.toggleFS()">FULLSCREEN</button>
     </div>
     <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%); margin-top: 80px;">
         <h1 class="glitch-text">CYBER PRISM</h1>
         <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V10.3 // ONLINE</h3>
         <div style="display:flex; flex-direction:column; align-items:center;">
-            <button class="btn" style="width:240px; font-weight:bold; border-color:#fff; font-size:18px;" onclick="Game.start()">DEPLOY UNIT</button>
-            <button class="btn" style="width:240px; border-color:#0f0; color:#0f0;" onclick="Game.startTutorial()">TUTORIAL</button>
-            <button class="btn" style="width:240px;" onclick="Menus.open('hangar')">HANGAR</button>
-            <button class="btn" style="width:240px;" onclick="Menus.open('shop')">BLACK MARKET</button>
-            <button class="btn" style="width:240px;" onclick="Menus.open('lab')">R&D LAB</button>
+            <button class="btn" style="width:240px; font-weight:bold; border-color:#fff; font-size:18px;" onclick="window.startGame()">DEPLOY UNIT</button>
+            <button class="btn" style="width:240px; border-color:#0f0; color:#0f0;" onclick="window.startTutorial()">TUTORIAL</button>
+            <button class="btn" style="width:240px;" onclick="window.openHangar()">HANGAR</button>
+            <button class="btn" style="width:240px;" onclick="window.openShop()">BLACK MARKET</button>
+            <button class="btn" style="width:240px;" onclick="window.openLab()">R&D LAB</button>
         </div>
     </div>
 </div>
@@ -275,9 +275,9 @@
     <div class="cyber-panel" style="text-align:center; width:300px; pointer-events: auto;">
         <h2 style="margin-top:0;">SYSTEM PAUSED</h2>
         <div style="color:#aaa; font-size:12px; margin-bottom:10px;">ACTIVE SYNERGIES: <span id="pause-syn" style="color:var(--gold)">NONE</span></div>
-        <button class="btn" style="width:100%; pointer-events: auto;" onclick="Game.togglePause()">RESUME MISSION</button>
-        <button class="btn" style="width:100%; border-color:#0f0; color:#0f0; pointer-events: auto;" onclick="Game.buyRepair()">EMERGENCY REPAIR (500 BITS)</button>
-        <button class="btn" style="width:100%; border-color:var(--red); color:var(--red); pointer-events: auto;" onclick="Game.abort()">ABORT MISSION</button>
+        <button class="btn" style="width:100%; pointer-events: auto;" onclick="Game && Game.togglePause && Game.togglePause()">RESUME MISSION</button>
+        <button class="btn" style="width:100%; border-color:#0f0; color:#0f0; pointer-events: auto;" onclick="Game && Game.buyRepair && Game.buyRepair()">EMERGENCY REPAIR (500 BITS)</button>
+        <button class="btn" style="width:100%; border-color:var(--red); color:var(--red); pointer-events: auto;" onclick="Game && Game.abort && Game.abort()">ABORT MISSION</button>
     </div>
 </div>
 <div id="s-over" class="screen hidden interactive menu-anim">
@@ -287,7 +287,7 @@
             <p>XP GAINED: <span id="go-xp" style="color:var(--pink)">0</span></p>
             <p>BITS COLLECTED: <span id="go-bits" style="color:var(--cyan)">0</span></p>
         </div>
-        <button class="btn" style="pointer-events: auto;" onclick="Game.abort()">RETURN TO BASE</button>
+        <button class="btn" style="pointer-events: auto;" onclick="Game && Game.abort && Game.abort()">RETURN TO BASE</button>
     </div>
 </div>
 <div id="s-list" class="screen hidden interactive menu-anim">
@@ -298,14 +298,14 @@
     <div class="cyber-panel list-con" style="pointer-events: auto;">
         <div class="col">
             <div id="list-tabs" style="display:flex; margin-bottom:15px;">
-                <button id="tab-chassis" class="btn" style="margin:0 10px 0 0; font-size:12px; pointer-events: auto;" onclick="Menus.setShopTab('CHASSIS')">CHASSIS</button>
-                <button id="tab-modules" class="btn" style="margin:0; font-size:12px; pointer-events: auto;" onclick="Menus.setShopTab('MODULES')">MODULES</button>
+                <button id="tab-chassis" class="btn" style="margin:0 10px 0 0; font-size:12px; pointer-events: auto;" onclick="Menus && Menus.setShopTab && Menus.setShopTab('CHASSIS')">CHASSIS</button>
+                <button id="tab-modules" class="btn" style="margin:0; font-size:12px; pointer-events: auto;" onclick="Menus && Menus.setShopTab && Menus.setShopTab('MODULES')">MODULES</button>
             </div>
             <div id="list-items"></div>
         </div>
         <div id="list-detail" class="col-r"></div>
     </div>
-    <button class="btn" style="margin-top:20px; z-index:999; pointer-events: auto;" onclick="Menus.home()">BACK</button>
+    <button class="btn" style="margin-top:20px; z-index:999; pointer-events: auto;" onclick="Menus && Menus.home && Menus.home()">BACK</button>
 </div>
 <div id="s-ach" class="screen hidden interactive menu-anim">
     <div style="width:85%; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -315,13 +315,13 @@
     <div class="cyber-panel" style="width:85%; height:60%; overflow-y:auto; border-color:var(--gold); pointer-events: auto;">
         <div id="ach-list" class="ach-grid"></div>
     </div>
-    <button class="btn" style="margin-top:20px; border-color:var(--gold); color:var(--gold); pointer-events: auto;" onclick="Menus.home()">BACK</button>
+    <button class="btn" style="margin-top:20px; border-color:var(--gold); color:var(--gold); pointer-events: auto;" onclick="Menus && Menus.home && Menus.home()">BACK</button>
 </div>
 <div id="s-up" class="screen hidden interactive menu-anim">
     <div class="cyber-panel" style="align-items:center; padding:30px; pointer-events: auto;">
         <h2>SYSTEM UPGRADE</h2>
         <div id="card-con"></div>
-        <button class="btn" id="btn-reroll" style="width:200px; margin-top:20px; pointer-events: auto;" onclick="Game.rerollAugments()">REROLL (50 BITS)</button>
+        <button class="btn" id="btn-reroll" style="width:200px; margin-top:20px; pointer-events: auto;" onclick="Game && Game.rerollAugments && Game.rerollAugments()">REROLL (50 BITS)</button>
     </div>
 </div>
 
@@ -336,6 +336,17 @@ function toggleFullScreen() {
     else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
   }
 }
+
+// Wrapper functions for button handlers to ensure they work
+window.startGame = () => { if(Game && Game.start) Game.start(); };
+window.startTutorial = () => { if(Game && Game.startTutorial) Game.startTutorial(); };
+window.openHangar = () => { if(Menus && Menus.open) Menus.open('hangar'); };
+window.openShop = () => { if(Menus && Menus.open) Menus.open('shop'); };
+window.openLab = () => { if(Menus && Menus.open) Menus.open('lab'); };
+window.openAchievements = () => { if(Menus && Menus.open) Menus.open('achievements'); };
+window.openLeaderboard = () => { if(Menus && Menus.open) Menus.open('leaderboard'); };
+window.toggleFS = () => { toggleFullScreen(); };
+
 /* DATA & CONFIG */
 const ACHIEVEMENTS = [
     { id: 'first_blood', name: 'FIRST BLOOD', desc: 'Destroy your first enemy.', reward: 100, req: (s) => s.totalKills >= 1 },
@@ -1094,6 +1105,15 @@ let s = localStorage.getItem(SAVE_KEY); if(s) { Data = {...Data, ...JSON.parse(s
 Data.owned.forEach(c => { if(!Data.chassisXP[c]) Data.chassisXP[c] = {xp:0, lvl:1}; }); Data.modules.forEach(m => { if(!Data.modLevels[m]) Data.modLevels[m] = 1; });
 Input.init(); InitStars();
 function Loop() { Game.frame++; Game.update(); if(Game.active) requestAnimationFrame(Loop); }
+
+// Initialize menu on page load
+window.addEventListener('DOMContentLoaded', () => { Menus.home(); });
+// Also try showing menu immediately
+setTimeout(() => { 
+    if(!Game.active) { 
+        document.getElementById('s-menu').classList.remove('hidden'); 
+    } 
+}, 100);
 </script>
 </body>
 </html>
