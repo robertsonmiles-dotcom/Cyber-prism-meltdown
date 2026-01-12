@@ -1763,6 +1763,59 @@ const Menus = {
     }, home() { if(previewId) { cancelAnimationFrame(previewId); previewId=null; } document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden')); document.getElementById('s-menu').classList.remove('hidden'); }
 };
 
+// ===== API CLIENT =====
+const API = {
+    baseURL: localStorage.getItem('API_URL') || 'http://localhost:3000',
+    
+    async request(endpoint, options = {}) {
+        try {
+            const response = await fetch(`${this.baseURL}${endpoint}`, {
+                headers: { 'Content-Type': 'application/json' },
+                ...options
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return await response.json();
+        } catch(e) {
+            console.error(`API Error [${endpoint}]:`, e);
+            return null;
+        }
+    },
+    
+    async getDailyChallenges() {
+        return await this.request('/api/daily-challenges');
+    },
+    
+    async updateDailyChallenge(challengeId, progress, completed) {
+        return await this.request('/api/daily-challenges/update', {
+            method: 'POST',
+            body: JSON.stringify({ challengeId, progress, completed })
+        });
+    },
+    
+    async getLeaderboard(limit = 50) {
+        return await this.request(`/api/leaderboard?limit=${limit}`);
+    },
+    
+    async submitLeaderboardEntry(playerName, wave, kills, bits, prestigeLevel) {
+        return await this.request('/api/leaderboard/submit', {
+            method: 'POST',
+            body: JSON.stringify({ playerName, wave, kills, bits, prestigeLevel })
+        });
+    },
+    
+    async getPlayerStats(playerName) {
+        return await this.request(`/api/leaderboard/player/${encodeURIComponent(playerName)}`);
+    },
+    
+    async getServerTime() {
+        return await this.request('/api/server-time');
+    },
+    
+    async healthCheck() {
+        return await this.request('/api/health');
+    }
+};
+
 // ===== LONG-TERM ENGAGEMENT SYSTEMS =====
 
 // COSMETIC SKINS SYSTEM
@@ -1828,35 +1881,69 @@ const ENEMY_TIERS = [
 
 // LEADERBOARD TRACKING
 const Leaderboard = {
-    save() {
+    async save(playerName = 'Player') {
+        // Save to server
+        const result = await API.submitLeaderboardEntry(
+            playerName,
+            Game.wave || 1,
+            Game.spawnedCount || 0,
+            this.runBits || 0,
+            Data.prestigeLevel || 0
+        );
+        
+        // Also save locally as backup
         let lb = JSON.parse(localStorage.getItem('lb') || '{"scores": []}');
         lb.scores.push({
-            name: 'Player',
-            wave: Game.wave,
-            kills: Game.stats.totalKills,
-            bits: Data.bits,
+            name: playerName,
+            wave: Game.wave || 1,
+            kills: Game.spawnedCount || 0,
+            bits: this.runBits || 0,
             date: new Date().toLocaleDateString(),
             prestige: Data.prestigeLevel || 0
         });
         lb.scores.sort((a,b) => b.wave - a.wave);
         lb.scores = lb.scores.slice(0, 20);
         localStorage.setItem('lb', JSON.stringify(lb));
+        
+        return result;
     },
-    get() {
+    
+    async get() {
+        // Try to fetch from server
+        const serverData = await API.getLeaderboard(50);
+        if (serverData && serverData.entries) {
+            return serverData.entries;
+        }
+        // Fallback to local
         return JSON.parse(localStorage.getItem('lb') || '{"scores": []}').scores;
     }
 };
 
 // DAILY CHALLENGE TRACKER
-function CheckDailyChallenge() {
+async function CheckDailyChallenge() {
     if(!Data.dailyChallenges) Data.dailyChallenges = {};
-    let today = new Date().toDateString();
+    
+    // Get server time for UTC sync
+    const serverTime = await API.getServerTime();
+    let today = serverTime ? serverTime.utcDate : new Date().toISOString().split('T')[0];
+    
     if(Data.lastChallengeDate !== today) {
-        Data.dailyChallenges = {};
+        // New day - fetch fresh challenges from server
+        const dailyData = await API.getDailyChallenges();
+        if(dailyData && dailyData.challenges) {
+            Data.dailyChallenges = {};
+            dailyData.challenges.forEach(c => {
+                Data.dailyChallenges[c.id] = { completed: false, progress: 0, ...c };
+            });
+        } else {
+            // Fallback to local
+            Data.dailyChallenges = {};
+            DAILY_CHALLENGES.forEach(c => {
+                Data.dailyChallenges[c.id] = { completed: false, progress: 0 };
+            });
+        }
         Data.lastChallengeDate = today;
-        DAILY_CHALLENGES.forEach(c => {
-            Data.dailyChallenges[c.id] = { completed: false, progress: 0 };
-        });
+        localStorage.setItem(SAVE_KEY, JSON.stringify(Data));
     }
 }
 

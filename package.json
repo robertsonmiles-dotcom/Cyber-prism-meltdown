@@ -1,0 +1,17 @@
+{
+  "name": "cyber-prism-backend",
+  "version": "1.0.0",
+  "description": "Backend server for CYBER PRISM game - daily challenges & leaderboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["cyberpunk", "arcade", "game", "api"],
+  "author": "robertsonmiles-dotcom",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  }
+}
