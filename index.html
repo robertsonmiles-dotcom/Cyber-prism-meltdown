@@ -212,289 +212,12 @@
     #lvl-up-msg { position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%); color: var(--pink); font-size: 14px; font-weight: bold; text-shadow: 0 0 10px var(--pink); pointer-events: none; opacity: 0; transition: opacity 0.5s; text-align: center; }
     #lvl-up-msg.show { opacity: 1; animation: floatUp 1s forwards; }
     @keyframes floatUp { from { transform: translate(-50%, 20px); } to { transform: translate(-50%, 0); } }
-
-    /* CONTROLS BUTTON & MODAL */
-    #btn-controls {
-        position: absolute; bottom: 30px; right: 30px; z-index: 200;
-        width: 50px; height: 50px; background: rgba(0,0,0,0.6); border: 2px solid var(--cyan);
-        color: var(--cyan); font-family: 'Orbitron'; font-weight: bold; font-size: 18px;
-        display: flex; align-items: center; justify-content: center;
-        transform: skewX(-10deg); transition: 0.2s; box-shadow: 0 0 10px rgba(0,243,255,0.2);
-        animation: pulseCtrlBtn 2s infinite; pointer-events: auto; cursor: pointer;
-    }
-    #btn-controls:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); transform: skewX(-10deg) scale(1.1); }
-    @keyframes pulseCtrlBtn { 0% { box-shadow: 0 0 5px rgba(0,243,255,0.2); } 50% { box-shadow: 0 0 15px rgba(0,243,255,0.6); } 100% { box-shadow: 0 0 5px rgba(0,243,255,0.2); } }
-
-    #s-controls {
-        pointer-events: auto !important;
-    }
-
-    .controls-modal {
-        background: linear-gradient(135deg, rgba(10, 20, 30, 0.98) 0%, rgba(5, 10, 15, 0.99) 100%);
-        border: 2px solid var(--cyan); padding: 40px; max-width: 600px; max-height: 85vh; overflow-y: auto;
-        position: relative; box-shadow: 0 0 50px rgba(0, 243, 255, 0.2);
-    }
-
-    .controls-modal h2 {
-        color: var(--cyan); text-align: center; margin-top: 0; margin-bottom: 30px; font-size: 28px;
-        letter-spacing: 3px; border: none; display: block;
-    }
-
-    .control-section {
-        margin-bottom: 25px; padding: 15px; border-left: 3px solid var(--cyan); background: rgba(0, 243, 255, 0.05);
-    }
-
-    .control-section h3 {
-        color: #ffd700; margin: 0 0 15px 0; font-size: 16px; letter-spacing: 2px;
-    }
-
-    .control-item {
-        display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid rgba(0, 243, 255, 0.1);
-        font-size: 13px;
-    }
-
-    .control-item:last-child {
-        border-bottom: none;
-    }
-
-    .control-key {
-        background: rgba(0, 20, 40, 0.8); border: 1px solid var(--cyan); padding: 4px 10px; border-radius: 4px;
-        color: #fff; font-family: monospace; font-weight: bold; min-width: 120px; text-align: center;
-    }
-
-    .control-description {
-        color: #aaa; flex: 1; text-align: right; margin-right: 10px;
-    }
-
-    .controls-close-btn {
-        position: absolute; top: 20px; right: 20px; width: 30px; height: 30px;
-        background: rgba(0, 243, 255, 0.2); border: 1px solid var(--cyan); color: var(--cyan);
-        font-family: 'Orbitron'; font-size: 18px; cursor: pointer; transition: 0.2s;
-        display: flex; align-items: center; justify-content: center;
-    }
-
-    .controls-close-btn:hover {
-        background: var(--cyan); color: #000; box-shadow: 0 0 10px var(--cyan);
-    }
-
-    /* POLISH: Smooth transitions & animations */
-    .btn { animation: btnIntro 0.3s ease-out; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    @keyframes btnIntro { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
-    .screen:not(.hidden) { animation: screenFadeIn 0.3s ease-out; }
-    @keyframes screenFadeIn { from { opacity: 0; transform: translateY(5px); filter: blur(3px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
-
-    /* Enhanced bar animations */
-    .bar { transition: width 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-
-    /* Floating text polish */
-    .floatingText { font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 10px currentColor; }
-
-    /* Enemy destruction effect */
-    @keyframes destroyShip { 
-        0% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.5; transform: scale(1.2); }
-        100% { opacity: 0; transform: scale(0.5); }
-    }
-
-    /* Button press feedback */
-    .btn:active { transform: scale(0.92) !important; }
-
-    /* Pause button polish */
-    #btn-pause { transition: all 0.2s ease; }
-    #btn-pause:active { transform: skewX(-10deg) scale(0.95); }
-
-    /* Menu smooth scroll */
-    .cyber-panel { scroll-behavior: smooth; }
-    .col { scroll-behavior: smooth; }
-
-    /* Text effect fade */
-    @keyframes textFXFade {
-        0% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-        50% { opacity: 1; }
-        100% { opacity: 0; transform: translateY(-60px) scale(1.1); filter: blur(2px); }
-    }
-
-    /* === POLISH: Advanced Effects === */
-    
-    /* Smooth easing for all transitions */
-    * { transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-    
-    /* Enhanced glow layers */
-    .glow-text { text-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
-    
-    /* Bloom effect on UI elements */
-    .bloom { filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 20px currentColor); }
-    
-    /* Cinematic bars (top/bottom) */
-    .cinematic::before, .cinematic::after {
-        content: ''; position: fixed; left: 0; right: 0; height: 60px; background: #000;
-        z-index: 999; pointer-events: none;
-    }
-    .cinematic::before { top: 0; }
-    .cinematic::after { bottom: 0; }
-    
-    /* Scan lines enhancement */
-    @keyframes scanlines {
-        0% { background-position: 0 0; }
-        100% { background-position: 0 4px; }
-    }
-    
-    /* Screen wobble on damage */
-    @keyframes damageWobble {
-        0%, 100% { transform: skewX(0deg); }
-        25% { transform: skewX(1deg); }
-        50% { transform: skewX(-1deg); }
-        75% { transform: skewX(1deg); }
-    }
-    
-    /* Pulse on critical hit */
-    @keyframes criticalPulse {
-        0% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.3); opacity: 0.7; }
-        100% { transform: scale(1); opacity: 0; }
-    }
-    
-    /* Button press feedback with spring */
-    @keyframes springPress {
-        0% { transform: scale(1); }
-        50% { transform: scale(0.85); }
-        100% { transform: scale(1); }
-    }
-    
-    /* Wave effect */
-    @keyframes waveRipple {
-        0% { transform: scale(0); opacity: 1; }
-        100% { transform: scale(2); opacity: 0; }
-    }
-    
-    /* Neon flicker */
-    @keyframes neonFlicker {
-        0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
-        20%, 24%, 55% { opacity: 0.8; text-shadow: 0 0 5px currentColor; }
-    }
-    
-    /* Loading bar fill */
-    @keyframes barFill {
-        0% { width: 0%; }
-        100% { width: 100%; }
-    }
-
-    /* Enhanced scrollbar styling */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: rgba(0, 243, 255, 0.05); }
-    ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--pink); }
-
-    /* Visual separator */
-    .separator { 
-        width: 100%; height: 1px; 
-        background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-        margin: 15px 0; opacity: 0.5;
-    }
 </style>
 </head>
 <body class="crt">
 
 <canvas id="c"></canvas>
 <div class="world-bg"><div class="grid-floor"></div><div id="dust-con"></div></div>
-
-<script>
-/* === AUDIO SYSTEM (Web Audio API) === */
-const Audio = {
-    ctx: null,
-    initialized: false,
-    
-    init() {
-        try {
-            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-            this.initialized = true;
-        } catch(e) {
-            console.log("Web Audio API not supported");
-        }
-    },
-    
-    // Generate simple sound effects using oscillators
-    play(type = 'hit', duration = 0.1, freq = 400) {
-        if (!this.initialized || !this.ctx) return;
-        
-        try {
-            const osc = this.ctx.createOscillator();
-            const gain = this.ctx.createGain();
-            const now = this.ctx.currentTime;
-            
-            osc.connect(gain);
-            gain.connect(this.ctx.destination);
-            
-            switch(type) {
-                case 'hit': // Bullet hit
-                    osc.frequency.setValueAtTime(freq, now);
-                    osc.frequency.exponentialRampToValueAtTime(50, now + duration);
-                    gain.gain.setValueAtTime(0.1, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
-                    osc.type = 'sine';
-                    break;
-                    
-                case 'kill': // Enemy killed
-                    osc.frequency.setValueAtTime(freq + 200, now);
-                    osc.frequency.exponentialRampToValueAtTime(freq - 200, now + duration);
-                    gain.gain.setValueAtTime(0.15, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
-                    osc.type = 'triangle';
-                    break;
-                    
-                case 'ult': // Ultimate charged
-                    osc.frequency.setValueAtTime(freq, now);
-                    osc.frequency.linearRampToValueAtTime(freq * 2, now + duration);
-                    gain.gain.setValueAtTime(0.08, now);
-                    gain.gain.exponentialRampToValueAtTime(0.02, now + duration);
-                    osc.type = 'sine';
-                    break;
-                    
-                case 'pickup': // Item pickup
-                    osc.frequency.setValueAtTime(freq, now);
-                    osc.frequency.linearRampToValueAtTime(freq * 1.5, now + duration * 0.5);
-                    osc.frequency.linearRampToValueAtTime(freq * 2, now + duration);
-                    gain.gain.setValueAtTime(0.1, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
-                    osc.type = 'sine';
-                    break;
-                    
-                case 'damage': // Player takes damage
-                    osc.frequency.setValueAtTime(freq - 200, now);
-                    osc.frequency.exponentialRampToValueAtTime(50, now + duration);
-                    gain.gain.setValueAtTime(0.12, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
-                    osc.type = 'square';
-                    break;
-                    
-                case 'levelup': // Level up
-                    for (let i = 0; i < 3; i++) {
-                        const o = this.ctx.createOscillator();
-                        const g = this.ctx.createGain();
-                        o.connect(g);
-                        g.connect(this.ctx.destination);
-                        const t = now + i * duration * 0.4;
-                        o.frequency.setValueAtTime(freq + i * 150, t);
-                        o.frequency.linearRampToValueAtTime(freq + i * 150 + 200, t + duration * 0.3);
-                        g.gain.setValueAtTime(0.08, t);
-                        g.gain.exponentialRampToValueAtTime(0.01, t + duration * 0.3);
-                        o.type = 'sine';
-                        o.start(t);
-                        o.stop(t + duration * 0.3);
-                    }
-                    osc.stop(now);
-                    return;
-            }
-            
-            osc.start(now);
-            osc.stop(now + duration);
-        } catch(e) {
-            console.log("Audio play error:", e);
-        }
-    }
-};
-</script>
 
 <div id="ach-notify">
     <h3 style="color:var(--gold); margin:0; letter-spacing:2px;">ACHIEVEMENT UNLOCKED</h3>
@@ -529,22 +252,17 @@ const Audio = {
 </div>
 
 <div id="s-menu" class="screen interactive menu-anim">
-    <button class="btn" style="position:absolute; top:30px; left:30px; border-color:var(--gold); color:var(--gold);" onclick="Menus.open('achievements'); Audio.play('pickup', 0.1, 600)">ACHIEVEMENTS</button>
-    <button class="btn" style="position:absolute; top:30px; right:30px; border-color:#fff; color:#fff;" onclick="toggleFullScreen(); Audio.play('pickup', 0.1, 500)">FULLSCREEN</button>
-    <button id="btn-controls" onclick="Menus.open('controls'); Audio.play('pickup', 0.1, 550)">?</button>
+    <button class="btn" style="position:absolute; top:30px; left:30px; border-color:var(--gold); color:var(--gold);" onclick="Menus.open('achievements')">ACHIEVEMENTS</button>
+    <button class="btn" style="position:absolute; top:30px; right:30px; border-color:#fff; color:#fff;" onclick="toggleFullScreen()">FULLSCREEN</button>
     <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%);">
         <h1 class="glitch-text">CYBER PRISM</h1>
         <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V10.3 // ONLINE</h3>
         <div style="display:flex; flex-direction:column; align-items:center;">
-            <button class="btn" style="width:240px; font-weight:bold; border-color:#fff; font-size:18px;" onclick="Game.start(); Audio.play('pickup', 0.15, 700)">DEPLOY UNIT</button>
-            <button class="btn" style="width:240px; border-color:#0f0; color:#0f0;" onclick="Game.startTutorial(); Audio.play('pickup', 0.15, 650)">TUTORIAL</button>
-            <button class="btn" style="width:240px;" onclick="Menus.open('hangar'); Audio.play('pickup', 0.1, 600)">HANGAR</button>
-            <button class="btn" style="width:240px;" onclick="Menus.open('shop'); Audio.play('pickup', 0.1, 600)">BLACK MARKET</button>
-            <button class="btn" style="width:240px;" onclick="Menus.open('lab'); Audio.play('pickup', 0.1, 600)">R&D LAB</button>
-            <button class="btn" style="width:240px; border-color:#ff9900; color:#ff9900;" onclick="Menus.open('daily'); Audio.play('pickup', 0.1, 650)">DAILY CHALLENGES</button>
-            <button class="btn" style="width:240px; border-color:#00ff88; color:#00ff88;" onclick="Menus.open('quests'); Audio.play('pickup', 0.1, 700)">QUESTS</button>
-            <button class="btn" style="width:240px; border-color:#ff1493; color:#ff1493;" onclick="Menus.open('leader'); Audio.play('pickup', 0.1, 550)">LEADERBOARD</button>
-            <button class="btn" style="width:240px; border-color:var(--gold); color:var(--gold);" onclick="Menus.open('prestige'); Audio.play('pickup', 0.1, 800)">ASCENSION</button>
+            <button class="btn" style="width:240px; font-weight:bold; border-color:#fff; font-size:18px;" onclick="Game.start()">DEPLOY UNIT</button>
+            <button class="btn" style="width:240px; border-color:#0f0; color:#0f0;" onclick="Game.startTutorial()">TUTORIAL</button>
+            <button class="btn" style="width:240px;" onclick="Menus.open('hangar')">HANGAR</button>
+            <button class="btn" style="width:240px;" onclick="Menus.open('shop')">BLACK MARKET</button>
+            <button class="btn" style="width:240px;" onclick="Menus.open('lab')">R&D LAB</button>
         </div>
     </div>
 </div>
@@ -553,9 +271,9 @@ const Audio = {
     <div class="cyber-panel" style="text-align:center; width:300px;">
         <h2 style="margin-top:0;">SYSTEM PAUSED</h2>
         <div style="color:#aaa; font-size:12px; margin-bottom:10px;">ACTIVE SYNERGIES: <span id="pause-syn" style="color:var(--gold)">NONE</span></div>
-        <button class="btn" style="width:100%" onclick="Game.togglePause(); Audio.play('pickup', 0.1, 600)">RESUME MISSION</button>
-        <button class="btn" style="width:100%; border-color:#0f0; color:#0f0;" onclick="Game.buyRepair(); Audio.play('pickup', 0.15, 700)">EMERGENCY REPAIR (500 BITS)</button>
-        <button class="btn" style="width:100%; border-color:var(--red); color:var(--red);" onclick="Game.abort(); Audio.play('pickup', 0.1, 400)">ABORT MISSION</button>
+        <button class="btn" style="width:100%" onclick="Game.togglePause()">RESUME MISSION</button>
+        <button class="btn" style="width:100%; border-color:#0f0; color:#0f0;" onclick="Game.buyRepair()">EMERGENCY REPAIR (500 BITS)</button>
+        <button class="btn" style="width:100%; border-color:var(--red); color:var(--red);" onclick="Game.abort()">ABORT MISSION</button>
     </div>
 </div>
 <div id="s-over" class="screen hidden interactive menu-anim">
@@ -583,7 +301,7 @@ const Audio = {
         </div>
         <div id="list-detail" class="col-r"></div>
     </div>
-    <button class="btn" style="margin-top:20px; z-index:999;" onclick="Menus.home(); Audio.play('pickup', 0.1, 500)">BACK</button>
+    <button class="btn" style="margin-top:20px; z-index:999;" onclick="Menus.home()">BACK</button>
 </div>
 <div id="s-ach" class="screen hidden interactive menu-anim">
     <div style="width:85%; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -593,137 +311,13 @@ const Audio = {
     <div class="cyber-panel" style="width:85%; height:60%; overflow-y:auto; border-color:var(--gold);">
         <div id="ach-list" class="ach-grid"></div>
     </div>
-    <button class="btn" style="margin-top:20px; border-color:var(--gold); color:var(--gold);" onclick="Menus.home(); Audio.play('pickup', 0.1, 500)">BACK</button>
-</div>
-
-<div id="s-daily" class="screen hidden interactive menu-anim">
-    <div style="width:85%; margin-bottom:10px;">
-        <h2 style="color:#ff9900; margin:0 0 15px 0;">DAILY CHALLENGES</h2>
-        <div style="color:#888; font-size:12px; margin-bottom:15px;">Resets daily at UTC 00:00</div>
-    </div>
-    <div class="cyber-panel" style="width:85%; height:60%; overflow-y:auto;">
-        <div id="daily-list" style="display:flex; flex-direction:column; gap:10px;"></div>
-    </div>
-    <button class="btn" style="margin-top:20px;" onclick="Menus.home(); Audio.play('pickup', 0.1, 500)">BACK</button>
-</div>
-
-<div id="s-quests" class="screen hidden interactive menu-anim">
-    <div style="width:85%; margin-bottom:10px;">
-        <h2 style="color:#00ff88; margin:0 0 15px 0;">QUESTS & MISSIONS</h2>
-    </div>
-    <div class="cyber-panel" style="width:85%; height:60%; overflow-y:auto;">
-        <div id="quest-list" style="display:flex; flex-direction:column; gap:12px;"></div>
-    </div>
-    <button class="btn" style="margin-top:20px;" onclick="Menus.home(); Audio.play('pickup', 0.1, 500)">BACK</button>
-</div>
-
-<div id="s-leader" class="screen hidden interactive menu-anim">
-    <div style="width:85%; margin-bottom:10px;">
-        <h2 style="color:#ff1493; margin:0 0 15px 0;">LEADERBOARD</h2>
-    </div>
-    <div class="cyber-panel" style="width:85%; height:60%; overflow-y:auto;">
-        <table style="width:100%; color:#aaa; font-size:12px; border-collapse:collapse;">
-            <tr style="color:#fff; border-bottom:1px solid #333;">
-                <th style="text-align:left; padding:8px;">RANK</th><th>WAVE</th><th>KILLS</th><th>BITS</th><th>DATE</th>
-            </tr>
-            <tbody id="leader-body"></tbody>
-        </table>
-    </div>
-    <button class="btn" style="margin-top:20px;" onclick="Menus.home(); Audio.play('pickup', 0.1, 500)">BACK</button>
-</div>
-
-<div id="s-prestige" class="screen hidden interactive menu-anim">
-    <div class="cyber-panel" style="text-align:center; border-color:var(--gold); background:radial-gradient(circle at center, rgba(255, 215, 0, 0.1), transparent);">
-        <h1 style="color:var(--gold); margin:0 0 20px 0; font-size:32px;">ASCENSION SYSTEM</h1>
-        <div id="prestige-info" style="color:#aaa; margin-bottom:20px; font-size:14px;"></div>
-        <div style="background:rgba(0,0,0,0.5); padding:15px; margin:20px 0; border:1px solid var(--gold);">
-            <p style="margin:0; color:#fff;"><strong>Current Prestige Level:</strong> <span id="prestige-level" style="color:var(--gold); font-size:18px;">0</span></p>
-            <p style="margin:8px 0 0 0; color:#aaa;">Bit Multiplier: <span id="prestige-mult" style="color:#fff;">x1.00</span></p>
-        </div>
-        <button id="prestige-btn" class="btn" style="width:240px; border-color:var(--gold); color:var(--gold); margin:20px 0;" onclick="ActivatePrestige()">ASCEND NOW</button>
-        <div style="color:#888; font-size:11px; margin-top:15px;">
-            <p>• Keep 50% of your Bits</p>
-            <p>• Reset all equipment & modules</p>
-            <p>• Gain permanent Bit multiplier</p>
-        </div>
-    </div>
-    <button class="btn" style="margin-top:20px;" onclick="Menus.home(); Audio.play('pickup', 0.1, 500)">BACK</button>
-</div>
-
-<div id="s-controls" class="screen hidden interactive menu-anim">
-    <div class="controls-modal">
-        <button class="controls-close-btn" onclick="Menus.home(); Audio.play('pickup', 0.1, 450)">✕</button>
-        <h2>CONTROL SYSTEMS</h2>
-        
-        <div class="control-section">
-            <h3>MOVEMENT</h3>
-            <div class="control-item">
-                <span class="control-description">Move Left/Right/Up/Down</span>
-                <span class="control-key">A / D / W / S</span>
-            </div>
-            <div class="control-item">
-                <span class="control-description">Mobile: Left Joystick</span>
-                <span class="control-key">TOUCH</span>
-            </div>
-        </div>
-
-        <div class="control-section">
-            <h3>AIMING & FIRING</h3>
-            <div class="control-item">
-                <span class="control-description">Aim Up/Down/Left/Right</span>
-                <span class="control-key">↑ / ↓ / ← / →</span>
-            </div>
-            <div class="control-item">
-                <span class="control-description">Fire Weapon</span>
-                <span class="control-key">K or CTRL</span>
-            </div>
-            <div class="control-item">
-                <span class="control-description">Mobile: Right Joystick</span>
-                <span class="control-key">TOUCH</span>
-            </div>
-        </div>
-
-        <div class="control-section">
-            <h3>ABILITIES</h3>
-            <div class="control-item">
-                <span class="control-description">Trigger Ultimate</span>
-                <span class="control-key">SPACE</span>
-            </div>
-            <div class="control-item">
-                <span class="control-description">Mobile: ULT Button</span>
-                <span class="control-key">ON SCREEN</span>
-            </div>
-        </div>
-
-        <div class="control-section">
-            <h3>MENU</h3>
-            <div class="control-item">
-                <span class="control-description">Pause / Resume</span>
-                <span class="control-key">ESC</span>
-            </div>
-            <div class="control-item">
-                <span class="control-description">Mobile: Pause Button</span>
-                <span class="control-key">ON SCREEN</span>
-            </div>
-        </div>
-
-        <div class="control-section">
-            <h3>TIPS</h3>
-            <div style="color: #aaa; font-size: 12px; line-height: 1.6;">
-                • Heat management is crucial—stop firing to cool down<br>
-                • Combine augments to unlock powerful synergies<br>
-                • Elite enemies drop more rewards<br>
-                • Upgrade modules in the R&D Lab for sustained power<br>
-                • Use ultimas strategically for wave clearing
-            </div>
-        </div>
-    </div>
+    <button class="btn" style="margin-top:20px; border-color:var(--gold); color:var(--gold);" onclick="Menus.home()">BACK</button>
 </div>
 <div id="s-up" class="screen hidden interactive menu-anim">
     <div class="cyber-panel" style="align-items:center; padding:30px;">
         <h2>SYSTEM UPGRADE</h2>
         <div id="card-con"></div>
-        <button class="btn" id="btn-reroll" style="width:200px; margin-top:20px;" onclick="Game.rerollAugments(); Audio.play('pickup', 0.15, 750)">REROLL (50 BITS)</button>
+        <button class="btn" id="btn-reroll" style="width:200px; margin-top:20px;" onclick="Game.rerollAugments()">REROLL (50 BITS)</button>
     </div>
 </div>
 
@@ -915,30 +509,13 @@ const Draw = {
 
 /* INPUT SYSTEM */
 const Input = {
-    lx:0, ly:0, la:false, rx:0, ry:0, ra:false, lox:0, loy:0, rox:0, roy:0, mouseX: 0, mouseY: 0, mouseActive: false,
+    lx:0, ly:0, la:false, rx:0, ry:0, ra:false, lox:0, loy:0, rox:0, roy:0,
     init() {
         // Prevent default touch behavior on canvas to stop scrolling/zooming/selecting
         const C = document.getElementById('c');
         C.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
         C.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
         C.addEventListener('touchend', e => e.preventDefault(), { passive: false });
-
-        // Mouse movement for aiming (when playing with keyboard+mouse)
-        window.addEventListener('mousemove', e => {
-            if(Game.active && Input.mouseActive) {
-                Input.mouseX = e.clientX;
-                Input.mouseY = e.clientY;
-                // Calculate aim vector from player to mouse
-                let dx = Input.mouseX - Game.player.x;
-                let dy = Input.mouseY - Game.player.y;
-                let dist = Math.hypot(dx, dy) || 1;
-                Input.rx = dx / dist;
-                Input.ry = dy / dist;
-            }
-        });
-
-        C.addEventListener('mouseenter', () => { Input.mouseActive = true; });
-        C.addEventListener('mouseleave', () => { Input.mouseActive = false; });
 
         const bind = (z, j, s, k) => {
             const Z=document.getElementById(z), J=document.getElementById(j), S=document.getElementById(s);
@@ -987,15 +564,15 @@ const Input = {
             Input.lx = Math.max(-1, Math.min(1, lx));
             Input.ly = Math.max(-1, Math.min(1, ly));
 
-            // Right stick (aim) from Arrow keys - only override if arrow keys are pressed and mouse isn't active
+            // Right stick (aim) from Arrow keys
             let rx = 0, ry = 0;
             if(_keys['ArrowRight']) rx += 1; if(_keys['ArrowLeft']) rx -= 1;
             if(_keys['ArrowDown']) ry += 1; if(_keys['ArrowUp']) ry -= 1;
             if(rx !== 0 || ry !== 0) {
                 // Normalize diagonal to unit vector
                 let m = Math.hypot(rx, ry) || 1; Input.rx = rx / m; Input.ry = ry / m;
-            } else if(!Input.mouseActive) {
-                // Leave existing aim if no arrow keys pressed and mouse isn't providing aim (e.g. touch)
+            } else {
+                // Leave existing aim if no arrow keys pressed (e.g. mouse/touch)
                 Input.rx = Input.rx || 0; Input.ry = Input.ry || 0;
             }
         };
@@ -1003,15 +580,13 @@ const Input = {
         window.addEventListener('keydown', e=>{
             if(e.code === 'Space') { e.preventDefault(); Game.triggerUlt(); return; }
             if(e.code === 'Escape') { e.preventDefault(); Game.togglePause(); return; }
-            // Fire button - support both K and mouse click simulation
+            // Fire button
             if(e.code === 'KeyK') { Input.ra = true; e.preventDefault(); }
-            // Support alternative fire key (Ctrl for easier reach)
-            if(e.code === 'ControlLeft' || e.code === 'ControlRight') { Input.ra = true; e.preventDefault(); }
             _keys[e.code] = true; recomputeFromKeys();
         });
 
         window.addEventListener('keyup', e=>{
-            if(e.code === 'KeyK' || e.code === 'ControlLeft' || e.code === 'ControlRight') { Input.ra = false; }
+            if(e.code === 'KeyK') { Input.ra = false; }
             delete _keys[e.code]; recomputeFromKeys();
         });
     }
@@ -1064,12 +639,6 @@ const Game = {
 
     start() {
         if(this.active) return;
-        
-        // Initialize audio on first interaction
-        if(!Audio.initialized) {
-            Audio.init();
-        }
-        
         let cKey = Data.equipped.chassis; let cDef = CHASSIS[cKey];
         this.player = {
             x: W/2, y: H/2, vx:0, vy:0, a: -1.57, hp: cDef.hp, maxHp: cDef.hp, vHp: cDef.hp, vHpLag: cDef.hp, spd: cDef.spd * SPEED_MULT, heatRate: cDef.heatRate,
@@ -1138,43 +707,7 @@ const Game = {
 
     showDamage(x, y, dmg, isCrit, color=null) {
         if(dmg < 1) return;
-        let sz = isCrit ? 18 : 14;
-        this.floatingTexts.push({ 
-            x: x+(Math.random()-0.5)*20, 
-            y: y+(Math.random()-0.5)*20, 
-            text: Math.floor(dmg), 
-            life: 50, 
-            vy: -2,
-            vx: (Math.random()-0.5)*2,
-            color: color ? color : (isCrit ? '#ffff00' : '#ffffff'), 
-            isCrit: isCrit, 
-            alpha: 1,
-            size: sz
-        });
-        
-        // Sound feedback
-        if(isCrit) {
-            Audio.play('kill', 0.15, 600);
-            // Crit particles
-            for(let i=0; i<6; i++) {
-                let angle = (i / 6) * Math.PI * 2;
-                this.particles.push({
-                    x: x,
-                    y: y,
-                    vx: Math.cos(angle) * 6,
-                    vy: Math.sin(angle) * 6,
-                    life: 20,
-                    maxLife: 20,
-                    c: '#ffff00',
-                    sz: 2,
-                    decay: 1,
-                    type: 'crit'
-                });
-            }
-            this.shake += 2;
-        } else {
-            Audio.play('hit', 0.08, 400 + Math.random() * 100);
-        }
+        this.floatingTexts.push({ x: x+(Math.random()-0.5)*20, y: y+(Math.random()-0.5)*20, text: Math.floor(dmg), life: 40, vy: -1.5, color: color ? color : (isCrit ? '#ffff00' : '#ffffff'), isCrit: isCrit, alpha: 1 });
     },
 
     startWave() {
@@ -1203,54 +736,12 @@ const Game = {
     rerollAugments() { if(this.bits >= this.rerollCost) { this.bits -= this.rerollCost; this.rerollCost += 50; this.showAugments(); } else alert("Not enough Bits!"); },
     abort() {
         this.active = false; document.getElementById('s-pause').classList.add('hidden'); document.getElementById('ui-hud').classList.add('hidden');
-        document.getElementById('s-over').classList.add('hidden');
-        
-        // Track run stats for leaderboard and challenges
-        Data.stats.totalKills += this.spawnedCount || 0;
-        if(this.wave > Data.stats.highestWave) Data.stats.highestWave = this.wave;
-        Leaderboard.save();
-        
-        // Apply prestige multiplier to bits earned
-        let mult = Data.bitMultiplier || 1.0;
-        let seasonMult = ApplySeasonalBonus(1);
-        this.bits = Math.floor(this.bits * mult * seasonMult);
-        Data.bits += this.bits;
-        
-        // Update quests and challenges
-        UpdateQuestProgress('rich', Data.bits);
-        
-        localStorage.setItem(SAVE_KEY, JSON.stringify(Data));
-        Menus.home();
+        document.getElementById('s-over').classList.add('hidden'); Menus.home();
     },
     triggerUlt() {
         if(this.player.ult < this.player.maxUlt) return;
         this.player.ult = 0; let c = CHASSIS[Data.equipped.chassis];
-        this.textFX("SYSTEM: " + c.ult, c.color); 
-        this.player.heat = 0; 
-        this.player.overheated = false; 
-        this.jamTimer = 0;
-        
-        // Audio
-        Audio.play('ult', 0.4, 800);
-        
-        // Visual burst
-        for(let i=0; i<30; i++) {
-            let angle = (i / 30) * Math.PI * 2;
-            this.particles.push({
-                x: this.player.x,
-                y: this.player.y,
-                vx: Math.cos(angle) * 12,
-                vy: Math.sin(angle) * 12,
-                life: 25,
-                maxLife: 25,
-                c: c.color,
-                sz: 3,
-                decay: 1,
-                type: 'ult'
-            });
-        }
-        this.shake += 15;
-        
+        this.textFX("SYSTEM: " + c.ult, c.color); this.player.heat = 0; this.player.overheated = false; this.jamTimer = 0;
         if(c.ult === 'OVERCLOCK') { this.player.rate=4; setTimeout(()=>{this.player.rate=15;}, 4000); }
         if(c.ult === 'REFLECT') { this.player.invul=300; this.player.flags.thorns=true; }
         if(c.ult === 'PHASE') { this.player.dodge+=0.9; setTimeout(()=>{this.player.dodge-=0.9;}, 4000); }
@@ -1355,49 +846,16 @@ const Game = {
     },
     
     killEnemy(e, i) {
-        this.enemies.splice(i, 1); 
-        this.bits += e.bits * (this.boss ? 10 : 1);
-        let gain = e.bits * 10; 
-        this.xp += gain; 
-        this.player.currentXp += gain;
+        this.enemies.splice(i, 1); this.bits += e.bits * (this.boss ? 10 : 1);
+        let gain = e.bits * 10; this.xp += gain; this.player.currentXp += gain;
         if(this.player.currentXp >= this.player.xpToNext) this.levelUp();
-        Data.stats.totalKills++; 
-        if(e.boss) Data.stats.bossKilled = true;
-        let dist = Math.hypot(e.x - this.player.x, e.y - this.player.y); 
-        if(dist > 400) this.achFlags.longShot = true; 
-        if(dist < 50) this.achFlags.closeKill = true; 
-        this.checkAch();
-        let P = this.player; 
-        if(P.leech > 0 && P.hp < P.maxHp) P.hp = Math.min(P.maxHp, P.hp + P.leech);
+        Data.stats.totalKills++; if(e.boss) Data.stats.bossKilled = true;
+        let dist = Math.hypot(e.x - this.player.x, e.y - this.player.y); if(dist > 400) this.achFlags.longShot = true; if(dist < 50) this.achFlags.closeKill = true; this.checkAch();
+        let P = this.player; if(P.leech > 0 && P.hp < P.maxHp) P.hp = Math.min(P.maxHp, P.hp + P.leech);
         if(e.frozen && P.activeSynergies.includes('shatter')) { for(let k=0; k<5; k++) { let a = k*(6.28/5); this.bullets.push({x:e.x, y:e.y, vx:Math.cos(a)*12, vy:Math.sin(a)*12, life:20, dmg:10, sz:3, color:'#00f3ff', angle:a}); } }
         P.ult = Math.min(P.maxUlt, P.ult + 7*P.ultMult);
         if(P.flags.nova && Math.random() < 0.3) { for(let k=0; k<6; k++) { let a = k*(6.28/6); this.bullets.push({x:e.x, y:e.y, vx:Math.cos(a)*10, vy:Math.sin(a)*10, life:30, dmg:20, sz:3, color:'#ff5500', angle:a}); } }
-        
-        // Enhanced explosion with better audio
-        let audioFreq = 200 + (e.tier * 100);
-        Audio.play('kill', 0.2, audioFreq);
-        
-        this.explosion(e.x, e.y, e.c, e.elite ? 3 : (e.boss ? 4 : 1.5));
-        
-        // Bit pickup particles
-        for(let i=0; i<e.bits; i++) {
-            let angle = Math.random() * Math.PI * 2;
-            this.particles.push({
-                x: e.x,
-                y: e.y,
-                vx: Math.cos(angle) * (2 + Math.random() * 3),
-                vy: Math.sin(angle) * (2 + Math.random() * 3) - 2,
-                life: 60,
-                maxLife: 60,
-                c: '#00f3ff',
-                sz: 1,
-                decay: 0.98,
-                type: 'bit',
-                targetX: P.x,
-                targetY: P.y
-            });
-        }
-        
+        this.explosion(e.x, e.y, e.c, e.elite ? 2 : 1);
         if(e.id === 'cube' && e.r > 10) { for(let k=0; k<2; k++) { this.enemies.push({...e, hp:e.hp/2, r:e.r/1.5, x:e.x+k*10, y:e.y+k*10, bits:1}); } }
     },
 
@@ -1406,28 +864,6 @@ const Game = {
         let roll = Math.random(); let txt = '';
         if(roll < 0.33) { P.dmg *= 1.05; txt = '+5% DMG'; } else if (roll < 0.66) { P.maxHp += 10; P.hp += 10; txt = '+10 MAX HP'; } else { P.crit += 0.02; txt = '+2% CRIT'; }
         document.getElementById('lvl-bonus').innerText = txt; let msg = document.getElementById('lvl-up-msg'); msg.classList.remove('show'); void msg.offsetWidth; msg.classList.add('show');
-        
-        // Audio feedback
-        Audio.play('levelup', 0.3, 500);
-        
-        // Level up particle burst
-        for(let i=0; i<20; i++) {
-            let angle = (i / 20) * Math.PI * 2;
-            this.particles.push({
-                x: this.player.x,
-                y: this.player.y,
-                vx: Math.cos(angle) * 8,
-                vy: Math.sin(angle) * 8,
-                life: 30,
-                maxLife: 30,
-                c: '#ffd700',
-                sz: 2,
-                decay: 1,
-                type: 'levelup'
-            });
-        }
-        
-        this.shake += 8;
     },
 
     updateBullet(b, i) {
@@ -1494,64 +930,13 @@ const Game = {
         if(P.flags.rear) { let ra = aimA + Math.PI; this.bullets.push({ x:P.x, y:P.y, vx:Math.cos(ra)*P.bSpd, vy:Math.sin(ra)*P.bSpd, life:60, dmg:P.dmg, sz:3*P.bSize, pierce:P.pierce, bounce:P.bounce, angle:ra, color:color }); }
     },
 
-    explosion(x, y, c, scale=1) { 
-        for(let i=0; i<12*scale; i++) {
-            let angle = (i / (12*scale)) * Math.PI * 2;
-            let speed = 5 + Math.random() * 8;
-            this.particles.push({ 
-                x: x, y: y, 
-                vx: Math.cos(angle) * speed, 
-                vy: Math.sin(angle) * speed, 
-                life: 25 + Math.random()*15, 
-                maxLife: 40,
-                c: c, 
-                sz: Math.random()*5*scale,
-                decay: 1,
-                type: 'explosion'
-            });
-        }
-        // Secondary smaller particles
-        for(let i=0; i<8*scale; i++) {
-            let angle = Math.random() * Math.PI * 2;
-            this.particles.push({
-                x: x + (Math.random()-0.5)*20,
-                y: y + (Math.random()-0.5)*20,
-                vx: Math.cos(angle) * (Math.random()*3),
-                vy: Math.sin(angle) * (Math.random()*3),
-                life: 15,
-                maxLife: 20,
-                c: c,
-                sz: Math.random()*2,
-                decay: 1.2,
-                type: 'spark'
-            });
-        }
-        // Screen shake
-        this.shake += 5 * scale;
-        // Sound
-        Audio.play('hit', 0.1, 300 + Math.random() * 200);
-    },
+    explosion(x, y, c, scale=1) { for(let i=0; i<8*scale; i++) this.particles.push({ x:x, y:y, vx:(Math.random()-0.5)*8*scale, vy:(Math.random()-0.5)*8*scale, life:20 + Math.random()*15, c:c, sz:Math.random()*4*scale }); },
 
     render() {
         ctx.clearRect(0,0,W,H); ctx.save();
         if(this.shake > 0) { ctx.translate((Math.random()-0.5)*this.shake, (Math.random()-0.5)*this.shake); this.shake *= 0.9; if(this.shake < 0.5) this.shake = 0; }
         Draw.stars(Game.frame, this.player);
-        
-        // Render particles with enhanced effects
-        ctx.globalCompositeOperation = 'lighter';
-        this.particles.forEach(p => { 
-            ctx.fillStyle = p.c; 
-            ctx.globalAlpha = (p.life / p.maxLife) * 0.8;
-            ctx.shadowColor = p.c;
-            ctx.shadowBlur = p.type === 'crit' ? 20 : (p.type === 'explosion' ? 15 : 5);
-            ctx.beginPath(); 
-            ctx.arc(p.x, p.y, p.sz, 0, 6.28); 
-            ctx.fill();
-        }); 
-        ctx.globalCompositeOperation = 'source-over'; 
-        ctx.globalAlpha = 1;
-        ctx.shadowBlur = 0;
-        
+        ctx.globalCompositeOperation = 'lighter'; this.particles.forEach(p => { ctx.fillStyle = p.c; ctx.globalAlpha = p.life/30; ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, 6.28); ctx.fill(); }); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
         this.turrets.forEach(t => Draw.turret(ctx, t));
         Draw.ship(ctx, this.player.x, this.player.y, this.player.a, Data.equipped.chassis, CHASSIS[Data.equipped.chassis].color, Data.equipped.mods, this.player.overheated);
         this.enemies.forEach(e => {
@@ -1559,46 +944,9 @@ const Game = {
             if(this.player.flags.tesla && Math.hypot(e.x-this.player.x, e.y-this.player.y)<250 && Game.frame%5===0) { ctx.beginPath(); ctx.moveTo(this.player.x, this.player.y); ctx.lineTo(e.x,e.y); ctx.strokeStyle = `rgba(0, 243, 255, ${Math.random()})`; ctx.stroke(); }
             Draw.enemy(ctx, e);
         });
-        
-        // Enhanced bullet rendering with glow
-        this.bullets.forEach(b => { 
-            ctx.save(); 
-            ctx.globalCompositeOperation = 'lighter'; 
-            ctx.shadowBlur = 20; 
-            ctx.shadowColor = b.color;
-            // Glow layer
-            ctx.fillStyle = b.color;
-            ctx.globalAlpha = 0.3;
-            ctx.beginPath(); 
-            ctx.arc(b.x, b.y, b.sz * 2, 0, 6.28); 
-            ctx.fill();
-            // Core
-            ctx.fillStyle = b.color; 
-            ctx.globalAlpha = 1;
-            ctx.beginPath(); 
-            ctx.arc(b.x, b.y, b.sz, 0, 6.28); 
-            ctx.fill(); 
-            ctx.restore(); 
-        });
-        
-        // Render floating text with enhanced styling
-        ctx.font = "bold 12px Orbitron"; 
-        ctx.textAlign = "center";
-        this.floatingTexts.forEach(ft => { 
-            ctx.fillStyle = ft.color; 
-            ctx.globalAlpha = ft.alpha; 
-            if(ft.isCrit) {
-                ctx.font = `bold ${ft.size || 16}px Orbitron`;
-                ctx.shadowColor = ft.color;
-                ctx.shadowBlur = 20;
-            } else {
-                ctx.font = `${ft.size || 12}px Orbitron`;
-                ctx.shadowColor = ft.color;
-                ctx.shadowBlur = 8;
-            }
-            ctx.fillText(ft.text, ft.x, ft.y);
-            ctx.shadowBlur = 0;
-        });
+        this.bullets.forEach(b => { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.shadowBlur = 15; ctx.shadowColor = b.color; ctx.fillStyle = b.color; ctx.beginPath(); ctx.arc(b.x, b.y, b.sz, 0, 6.28); ctx.fill(); ctx.restore(); });
+        ctx.font = "bold 12px Orbitron"; ctx.textAlign = "center";
+        this.floatingTexts.forEach(ft => { ctx.fillStyle = ft.color; ctx.globalAlpha = ft.alpha; if(ft.isCrit) ctx.font = "bold 16px Orbitron"; else ctx.font = "12px Orbitron"; ctx.fillText(ft.text, ft.x, ft.y); });
         ctx.restore();
     },
     
@@ -1648,43 +996,8 @@ const Game = {
         ACHIEVEMENTS.forEach(a => { if (!Data.achievements.includes(a.id) && a.req(s)) { Data.achievements.push(a.id); Data.bits += a.reward; if(this.active) this.bits += a.reward; this.notifyAch(a); localStorage.setItem(SAVE_KEY, JSON.stringify(Data)); } });
     },
     notifyAch(a) { let n = document.getElementById('ach-notify'); document.getElementById('ach-txt').innerText = a.name; document.getElementById('ach-rew').innerText = `+${a.reward} BITS`; n.classList.add('show'); setTimeout(() => n.classList.remove('show'), 3000); },
-    textFX(t, c) { 
-        let d = document.createElement('div'); 
-        d.style.position='absolute'; 
-        d.style.top='30%'; 
-        d.style.width='100%'; 
-        d.style.textAlign='center'; 
-        d.style.color=c; 
-        d.style.fontFamily='Orbitron'; 
-        d.style.fontSize='24px'; 
-        d.style.textShadow='0 0 20px '+c; 
-        d.style.zIndex = 20; 
-        d.style.fontWeight = 'bold';
-        d.style.letterSpacing = '2px';
-        d.innerText = t; 
-        document.body.appendChild(d); 
-        d.style.animation = 'textFXFade 2.5s ease-out forwards';
-        setTimeout(()=>d.remove(), 2500);
-    },
-    over() { 
-        // Player died - end session but keep all bits earned
-        this.active = false; 
-        document.getElementById('ui-hud').classList.add('hidden'); 
-        document.getElementById('s-over').classList.remove('hidden'); 
-        
-        // Display stats
-        document.getElementById('go-xp').innerText = this.xp; 
-        document.getElementById('go-bits').innerText = this.bits; 
-        
-        // Add earned bits & xp to total
-        let c = Data.equipped.chassis; 
-        Data.chassisXP[c].xp += this.xp; 
-        Data.bits += this.bits; 
-        
-        // Track stats for achievements
-        this.checkAch(); 
-        localStorage.setItem(SAVE_KEY, JSON.stringify(Data)); 
-    }
+    textFX(t, c) { let d = document.createElement('div'); d.style.position='absolute'; d.style.top='30%'; d.style.width='100%'; d.style.textAlign='center'; d.style.color=c; d.style.fontFamily='Orbitron'; d.style.fontSize='24px'; d.style.textShadow='0 0 20px '+c; d.style.zIndex = 20; d.innerText = t; document.body.appendChild(d); setTimeout(()=>d.remove(), 2000); },
+    over() { this.active = false; document.getElementById('ui-hud').classList.add('hidden'); document.getElementById('s-over').classList.remove('hidden'); document.getElementById('go-xp').innerText = this.xp; document.getElementById('go-bits').innerText = this.bits; let c = Data.equipped.chassis; Data.chassisXP[c].xp += this.xp; Data.bits += this.bits; this.checkAch(); localStorage.setItem(SAVE_KEY, JSON.stringify(Data)); }
 };
 
 let ShopTab = 'CHASSIS'; let previewId = null;
@@ -1703,59 +1016,6 @@ const Menus = {
     open(mode) {
         document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
         if(previewId) { cancelAnimationFrame(previewId); previewId=null; }
-        if(mode === 'controls') {
-            document.getElementById('s-controls').classList.remove('hidden');
-            return;
-        }
-        if(mode === 'daily') {
-            document.getElementById('s-daily').classList.remove('hidden');
-            let list = document.getElementById('daily-list');
-            list.innerHTML = '';
-            DAILY_CHALLENGES.forEach(d => {
-                let completed = Data.dailyChallenges && Data.dailyChallenges[d.id]?.completed;
-                let card = document.createElement('div');
-                card.className = `ach-card ${completed ? 'unlocked' : ''}`;
-                card.innerHTML = `<h4 style="margin:0 0 5px 0; color:${completed ? '#00ff00' : '#ff9900'}">${d.name}</h4><span class="ach-desc" style="font-size:11px; color:#888;">${d.desc}</span><div class="ach-reward" style="color:${completed?'#00ff00':'#ff9900'}">+${d.reward} BITS</div>`;
-                list.appendChild(card);
-            });
-            return;
-        }
-        if(mode === 'quests') {
-            document.getElementById('s-quests').classList.remove('hidden');
-            let list = document.getElementById('quest-list');
-            list.innerHTML = '';
-            QUESTS.forEach(q => {
-                let completed = Data.quests && Data.quests[q.id]?.completed;
-                let card = document.createElement('div');
-                card.className = `ach-card ${completed ? 'unlocked' : ''}`;
-                card.innerHTML = `<h4 style="margin:0 0 5px 0; color:${completed ? '#00ff88' : '#aaa'}">${q.name}</h4><span class="ach-desc" style="font-size:11px; color:#888;">${q.desc}</span><div class="ach-reward" style="color:${completed?'#00ff88':'#555'}">+${q.reward} BITS</div>`;
-                list.appendChild(card);
-            });
-            return;
-        }
-        if(mode === 'leader') {
-            document.getElementById('s-leader').classList.remove('hidden');
-            let tbody = document.getElementById('leader-body');
-            tbody.innerHTML = '';
-            let scores = Leaderboard.get();
-            scores.forEach((score, idx) => {
-                let row = document.createElement('tr');
-                row.style.borderBottom = '1px solid #333';
-                row.innerHTML = `<td style="padding:6px;">${idx+1}</td><td>${score.wave}</td><td>${score.kills}</td><td>${score.bits}</td><td>${score.date}</td>`;
-                tbody.appendChild(row);
-            });
-            return;
-        }
-        if(mode === 'prestige') {
-            document.getElementById('s-prestige').classList.remove('hidden');
-            let level = Data.prestigeLevel || 0;
-            let mult = Data.bitMultiplier || 1.0;
-            document.getElementById('prestige-level').innerText = level;
-            document.getElementById('prestige-mult').innerText = 'x' + mult.toFixed(2);
-            let info = PRESTIGE_REWARDS.find(p => p.level === level)?.bonus || 'No bonus yet';
-            document.getElementById('prestige-info').innerHTML = `Prestige ${level > 0 ? 'Current Bonus: ' + info : 'Not yet activated'}`;
-            return;
-        }
         if (mode === 'achievements') {
             document.getElementById('s-ach').classList.remove('hidden'); let list = document.getElementById('ach-list'); list.innerHTML = ''; let unlockedCount = 0;
             ACHIEVEMENTS.forEach(a => { let unlocked = Data.achievements.includes(a.id); if(unlocked) unlockedCount++; let card = document.createElement('div'); card.className = `ach-card ${unlocked ? 'unlocked' : ''}`; card.innerHTML = `<h4 style="margin:0 0 5px 0; color:${unlocked ? 'var(--gold)' : '#555'}">${a.name}</h4><span class="ach-desc" style="font-size:11px; color:#888;">${a.desc}</span><div class="ach-reward" style="color:${unlocked?'var(--cyan)':'#444'}">+${a.reward} BITS</div>`; list.appendChild(card); });
@@ -1781,238 +1041,9 @@ const Menus = {
     }, home() { if(previewId) { cancelAnimationFrame(previewId); previewId=null; } document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden')); document.getElementById('s-menu').classList.remove('hidden'); }
 };
 
-// ===== API CLIENT =====
-const API = {
-    baseURL: localStorage.getItem('API_URL') || 'http://localhost:3000',
-    
-    async request(endpoint, options = {}) {
-        try {
-            const response = await fetch(`${this.baseURL}${endpoint}`, {
-                headers: { 'Content-Type': 'application/json' },
-                ...options
-            });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            return await response.json();
-        } catch(e) {
-            console.error(`API Error [${endpoint}]:`, e);
-            return null;
-        }
-    },
-    
-    async getDailyChallenges() {
-        return await this.request('/api/daily-challenges');
-    },
-    
-    async updateDailyChallenge(challengeId, progress, completed) {
-        return await this.request('/api/daily-challenges/update', {
-            method: 'POST',
-            body: JSON.stringify({ challengeId, progress, completed })
-        });
-    },
-    
-    async getLeaderboard(limit = 50) {
-        return await this.request(`/api/leaderboard?limit=${limit}`);
-    },
-    
-    async submitLeaderboardEntry(playerName, wave, kills, bits, prestigeLevel) {
-        return await this.request('/api/leaderboard/submit', {
-            method: 'POST',
-            body: JSON.stringify({ playerName, wave, kills, bits, prestigeLevel })
-        });
-    },
-    
-    async getPlayerStats(playerName) {
-        return await this.request(`/api/leaderboard/player/${encodeURIComponent(playerName)}`);
-    },
-    
-    async getServerTime() {
-        return await this.request('/api/server-time');
-    },
-    
-    async healthCheck() {
-        return await this.request('/api/health');
-    }
-};
-
-// ===== LONG-TERM ENGAGEMENT SYSTEMS =====
-
-// COSMETIC SKINS SYSTEM
-const SKINS = {
-    'chrome':   { name: 'Chrome', cost: 2000, color: '#c0c0c0', desc: 'Sleek metallic finish.' },
-    'neon':     { name: 'Neon Pink', cost: 1500, color: '#ff1493', desc: 'Vibrant cyberpunk style.' },
-    'plasma':   { name: 'Plasma', cost: 3000, color: '#00ff88', desc: 'Radioactive glow effect.' },
-    'obsidian': { name: 'Obsidian', cost: 2500, color: '#1a1a1a', desc: 'Pure darkness with edges.' },
-    'gold':     { name: 'Gold Rush', cost: 5000, color: '#ffd700', desc: 'Premium luxury skin.' },
-    'void':     { name: 'Void', cost: 4000, color: '#2d0a4e', desc: 'Dimensional distortion.' },
-    'coral':    { name: 'Coral', cost: 1800, color: '#ff7f50', desc: 'Ocean-inspired theme.' },
-    'holo':     { name: 'Hologram', cost: 3500, color: '#00d9ff', desc: 'Shimmering projection.' }
-};
-
-// DAILY CHALLENGES SYSTEM
-const DAILY_CHALLENGES = [
-    { id: 'killstreak', name: 'KILL STREAK', desc: 'Eliminate 50 enemies in one run', req: (s) => s.runKills >= 50, reward: 500 },
-    { id: 'wave_push', name: 'WAVE PUSHER', desc: 'Reach Wave 20+', req: (s) => s.currentWave >= 20, reward: 750 },
-    { id: 'survivor', name: 'SURVIVOR', desc: 'Reach Wave 10 with 100% HP', req: (s) => s.currentWave >= 10 && s.currentHp === s.maxHp, reward: 600 },
-    { id: 'collector', name: 'BIT COLLECTOR', desc: 'Collect 5,000 Bits in one run', req: (s) => s.runBits >= 5000, reward: 800 },
-    { id: 'sniper', name: 'PRECISION SHOOTER', desc: 'Get 3 kills from >300px away', req: (s) => s.longShotCount >= 3, reward: 400 },
-    { id: 'boss_slayer', name: 'BOSS SLAYER', desc: 'Defeat any Boss', req: (s) => s.bossDefeatedToday, reward: 1000 },
-    { id: 'heat_master', name: 'HEAT MASTER', desc: 'Keep heat <30% for 30 seconds', req: (s) => s.lowHeatTime >= 30, reward: 550 },
-    { id: 'crit_spree', name: 'CRITICAL HITS', desc: 'Land 20 critical hits', req: (s) => s.critCount >= 20, reward: 650 }
-];
-
-// QUEST SYSTEM (SHORT-TERM GOALS)
-const QUESTS = [
-    { id: 'starter', name: 'First Steps', desc: 'Complete your first game', reward: 250, type: 'story' },
-    { id: 'speedrun', name: 'Speed Racer', desc: 'Reach Wave 10 in under 2 minutes', reward: 400, type: 'challenge' },
-    { id: 'rich', name: 'Get Rich', desc: 'Accumulate 10,000 total Bits', reward: 500, type: 'grind' },
-    { id: 'collector', name: 'Chassis Collector', desc: 'Own 5 different Chassis', reward: 600, type: 'collect' },
-    { id: 'engineer', name: 'Engineer Pro', desc: 'Unlock 3 different Synergies', reward: 700, type: 'challenge' },
-    { id: 'prestige', name: 'Ascend', desc: 'Complete your first Prestige run', reward: 2000, type: 'prestige' }
-];
-
-// PRESTIGE SYSTEM (META PROGRESSION)
-const PRESTIGE_REWARDS = [
-    { level: 1, name: 'INITIATE', bonus: '+5% Bits', multiplier: 1.05 },
-    { level: 2, name: 'ASCENDED', bonus: '+10% Bits', multiplier: 1.10 },
-    { level: 3, name: 'LEGENDARY', bonus: '+20% Bits', multiplier: 1.20 },
-    { level: 5, name: 'COSMIC', bonus: '+50% Bits', multiplier: 1.50 },
-    { level: 10, name: 'ETERNAL', bonus: '+100% Bits', multiplier: 2.00 }
-];
-
-// SEASONAL EVENTS
-const CURRENT_SEASON = {
-    name: 'NEON GENESIS',
-    color: '#00ff00',
-    bonus: 'x1.5 Bits from all sources',
-    endDate: new Date(Date.now() + 7*24*60*60*1000) // 7 days
-};
-
-// ENEMY TIER EXPANSION (NEW ENEMY TYPES)
-const ENEMY_TIERS = [
-    { id: 'spawn', tier: 1, hp: 15, bits: 3, spd: 1.5, c: '#ff00ff', r: 8, shape: 'arrow', ai: 'wander' },
-    { id: 'specter', tier: 2, hp: 25, bits: 12, spd: 3.5, c: '#00ffff', r: 9, shape: 'dart', ai: 'seek' },
-    { id: 'sentinel', tier: 3, hp: 120, bits: 35, spd: 1, c: '#00ff00', r: 22, shape: 'square', ai: 'patrol' },
-    { id: 'vortex', tier: 3, hp: 60, bits: 30, spd: 2.5, c: '#ff00ff', r: 16, shape: 'tri', ai: 'orbit' },
-    { id: 'decimator', tier: 4, hp: 200, bits: 60, spd: 2, c: '#ffff00', r: 28, shape: 'square', ai: 'seek', wpn: 'heavy' },
-    { id: 'phantom', tier: 4, hp: 80, bits: 50, spd: 4.5, c: '#8080ff', r: 14, shape: 'arrow', ai: 'teleport' }
-];
-
-// LEADERBOARD TRACKING
-const Leaderboard = {
-    async save(playerName = 'Player') {
-        // Save to server
-        const result = await API.submitLeaderboardEntry(
-            playerName,
-            Game.wave || 1,
-            Game.spawnedCount || 0,
-            this.runBits || 0,
-            Data.prestigeLevel || 0
-        );
-        
-        // Also save locally as backup
-        let lb = JSON.parse(localStorage.getItem('lb') || '{"scores": []}');
-        lb.scores.push({
-            name: playerName,
-            wave: Game.wave || 1,
-            kills: Game.spawnedCount || 0,
-            bits: this.runBits || 0,
-            date: new Date().toLocaleDateString(),
-            prestige: Data.prestigeLevel || 0
-        });
-        lb.scores.sort((a,b) => b.wave - a.wave);
-        lb.scores = lb.scores.slice(0, 20);
-        localStorage.setItem('lb', JSON.stringify(lb));
-        
-        return result;
-    },
-    
-    async get() {
-        // Try to fetch from server
-        const serverData = await API.getLeaderboard(50);
-        if (serverData && serverData.entries) {
-            return serverData.entries;
-        }
-        // Fallback to local
-        return JSON.parse(localStorage.getItem('lb') || '{"scores": []}').scores;
-    }
-};
-
-// DAILY CHALLENGE TRACKER
-async function CheckDailyChallenge() {
-    if(!Data.dailyChallenges) Data.dailyChallenges = {};
-    
-    // Get server time for UTC sync
-    const serverTime = await API.getServerTime();
-    let today = serverTime ? serverTime.utcDate : new Date().toISOString().split('T')[0];
-    
-    if(Data.lastChallengeDate !== today) {
-        // New day - fetch fresh challenges from server
-        const dailyData = await API.getDailyChallenges();
-        if(dailyData && dailyData.challenges) {
-            Data.dailyChallenges = {};
-            dailyData.challenges.forEach(c => {
-                Data.dailyChallenges[c.id] = { completed: false, progress: 0, ...c };
-            });
-        } else {
-            // Fallback to local
-            Data.dailyChallenges = {};
-            DAILY_CHALLENGES.forEach(c => {
-                Data.dailyChallenges[c.id] = { completed: false, progress: 0 };
-            });
-        }
-        Data.lastChallengeDate = today;
-        localStorage.setItem(SAVE_KEY, JSON.stringify(Data));
-    }
-}
-
-// QUEST TRACKER
-function UpdateQuestProgress(questId, value) {
-    if(!Data.quests) Data.quests = {};
-    if(!Data.quests[questId]) Data.quests[questId] = { completed: false, progress: 0 };
-    Data.quests[questId].progress = value;
-    localStorage.setItem(SAVE_KEY, JSON.stringify(Data));
-}
-
-// PRESTIGE SYSTEM (NEW RUN WITH MULTIPLIER)
-function ActivatePrestige() {
-    if(confirm('ASCEND TO PRESTIGE?\nYou will reset all items but gain +5% Bits permanently!')) {
-        Data.prestigeLevel = (Data.prestigeLevel || 0) + 1;
-        Data.bits = Math.floor(Data.bits * 0.5); // Keep 50% of bits
-        Data.owned = ['viper'];
-        Data.modules = [];
-        Data.equipped = { chassis: 'viper', mods: [] };
-        Data.chassisXP = { 'viper': {xp:0, lvl:1} };
-        Data.modLevels = {};
-        
-        let multiplier = PRESTIGE_REWARDS.find(p => p.level <= Data.prestigeLevel)?.multiplier || 1;
-        Data.bitMultiplier = multiplier;
-        
-        Game.resetGame();
-        localStorage.setItem(SAVE_KEY, JSON.stringify(Data));
-        alert(`ASCENDED TO PRESTIGE ${Data.prestigeLevel}! Bit multiplier: x${multiplier}`);
-    }
-}
-
-// SEASONAL BONUS TRACKER
-function ApplySeasonalBonus(earnings) {
-    if(CURRENT_SEASON && earnings) {
-        let seasonMultiplier = 1.5;
-        return Math.floor(earnings * seasonMultiplier);
-    }
-    return earnings;
-}
-
-// UPDATE ENEMY SPAWNING (use expanded tier list)
-function GetDynamicEnemyType() {
-    let allEnemies = [...ENEMY_DB, ...ENEMY_TIERS];
-    let waveScaling = Math.min(Game.wave / 50, 1); // Scales from 0 to 1 as wave increases
-    let tierFilter = allEnemies.filter(e => (e.tier || 1) <= 1 + Math.floor(waveScaling * 4));
-    return tierFilter[Math.floor(Math.random() * tierFilter.length)];
-}
-
-let s = localStorage.getItem(SAVE_KEY); if(s) { Data = {...Data, ...JSON.parse(s)}; if(!Data.achievements) Data.achievements = []; if(!Data.stats) Data.stats = { totalKills: 0, highestWave: 0, bossKilled: false }; if(!Data.prestigeLevel) Data.prestigeLevel = 0; if(!Data.dailyChallenges) CheckDailyChallenge(); }
+let s = localStorage.getItem(SAVE_KEY); if(s) { Data = {...Data, ...JSON.parse(s)}; if(!Data.achievements) Data.achievements = []; if(!Data.stats) Data.stats = { totalKills: 0, highestWave: 0, bossKilled: false }; }
 Data.owned.forEach(c => { if(!Data.chassisXP[c]) Data.chassisXP[c] = {xp:0, lvl:1}; }); Data.modules.forEach(m => { if(!Data.modLevels[m]) Data.modLevels[m] = 1; });
-Input.init(); InitStars(); CheckDailyChallenge();
+Input.init(); InitStars();
 function Loop() { Game.frame++; Game.update(); if(Game.active) requestAnimationFrame(Loop); }
 </script>
 </body>
