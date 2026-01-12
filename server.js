@@ -5,6 +5,7 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static('.'));
 
 // In-memory storage (use database in production)
 let leaderboard = [];
@@ -19,7 +20,7 @@ const DAILY_CHALLENGES = [
     { id: 'ult5', name: 'Ultimate Master', desc: 'Use ultimate 5 times', reward: 550, type: 'ult' },
     { id: 'level3', name: 'Upgrader', desc: 'Reach Level 3', reward: 650, type: 'level' },
     { id: 'boss', name: 'Boss Slayer', desc: 'Defeat a boss', reward: 750, type: 'boss' },
-    { id: 'survive', name: 'Survivor', desc: 'Survive 5 minutes', reward: 600, type: time' }
+    { id: 'survive', name: 'Survivor', desc: 'Survive 5 minutes', reward: 600, type: 'time' }
 ];
 
 // Generate daily seed for challenge selection (resets at UTC midnight)

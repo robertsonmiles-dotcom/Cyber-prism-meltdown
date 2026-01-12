@@ -254,6 +254,7 @@
 
 <div id="s-menu" class="screen interactive menu-anim">
     <button class="btn" style="position:absolute; top:30px; left:30px; border-color:var(--gold); color:var(--gold);" onclick="Menus.open('achievements')">ACHIEVEMENTS</button>
+    <button class="btn" style="position:absolute; top:30px; left:200px; border-color:var(--pink); color:var(--pink);" onclick="Menus.open('leaderboard')">LEADERBOARD</button>
     <button class="btn" style="position:absolute; top:30px; right:30px; border-color:#fff; color:#fff;" onclick="toggleFullScreen()">FULLSCREEN</button>
     <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%);">
         <h1 class="glitch-text">CYBER PRISM</h1>
@@ -352,6 +353,32 @@ const ACHIEVEMENTS = [
     { id: 'daredevil', name: 'DAREDEVIL', desc: 'Kill enemy < 50px away.', reward: 200, req: (s) => s.closeKill },
     { id: 'untouchable', name: 'UNTOUCHABLE', desc: 'Finish Wave 5 with 100% HP.', reward: 5000, req: (s) => s.untouchable }
 ];
+const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000/api' : '/api';
+async function apiCall(endpoint, options = {}) {
+    try {
+        const res = await fetch(`${API_BASE}${endpoint}`, {
+            headers: { 'Content-Type': 'application/json', ...options.headers },
+            ...options
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+    } catch (e) {
+        console.error('API call failed:', e);
+        return null;
+    }
+}
+async function submitScore(wave, kills, bits) {
+    const playerName = localStorage.getItem('playerName') || 'Anonymous';
+    const data = await apiCall('/leaderboard/submit', {
+        method: 'POST',
+        body: JSON.stringify({ playerName, wave, kills, bits, prestigeLevel: 0 })
+    });
+    if (data) console.log('Score submitted:', data.message);
+}
+async function getLeaderboard() {
+    const data = await apiCall('/leaderboard');
+    return data || { entries: [] };
+}
 let Data = { bits: 1000, owned: ['viper'], modules: [], equipped: { chassis: 'viper', mods: [] }, chassisXP: { 'viper': {xp:0, lvl:1} }, modLevels: {}, achievements: [], stats: { totalKills: 0, highestWave: 0, bossKilled: false } };
 
 const CHASSIS = {
@@ -648,7 +675,7 @@ const Game = {
         };
         Data.equipped.mods.forEach(m => { if(MODULES[m]) MODULES[m].func(this.player, Data.modLevels[m]||1); });
         this.enemies=[]; this.bullets=[]; this.particles=[]; this.turrets=[]; this.floatingTexts=[];
-        this.xp=0; this.bits=0; this.wave=1; this.active=true; this.jamTimer = 0; this.rerollCost = 50; this.isTutorial = false;
+        this.xp=0; this.bits=0; this.wave=1; this.kills=0; this.active=true; this.jamTimer = 0; this.rerollCost = 50; this.isTutorial = false;
         
         document.getElementById('tut-msg').style.display = 'none';
         this.startWave();
@@ -847,7 +874,7 @@ const Game = {
     },
     
     killEnemy(e, i) {
-        this.enemies.splice(i, 1); this.bits += e.bits * (this.boss ? 10 : 1);
+        this.enemies.splice(i, 1); this.kills++; this.bits += e.bits * (this.boss ? 10 : 1);
         let gain = e.bits * 10; this.xp += gain; this.player.currentXp += gain;
         if(this.player.currentXp >= this.player.xpToNext) this.levelUp();
         Data.stats.totalKills++; if(e.boss) Data.stats.bossKilled = true;
@@ -998,7 +1025,7 @@ const Game = {
     },
     notifyAch(a) { let n = document.getElementById('ach-notify'); document.getElementById('ach-txt').innerText = a.name; document.getElementById('ach-rew').innerText = `+${a.reward} BITS`; n.classList.add('show'); setTimeout(() => n.classList.remove('show'), 3000); },
     textFX(t, c) { let d = document.createElement('div'); d.style.position='absolute'; d.style.top='30%'; d.style.width='100%'; d.style.textAlign='center'; d.style.color=c; d.style.fontFamily='Orbitron'; d.style.fontSize='24px'; d.style.textShadow='0 0 20px '+c; d.style.zIndex = 20; d.innerText = t; document.body.appendChild(d); setTimeout(()=>d.remove(), 2000); },
-    over() { this.active = false; document.getElementById('ui-hud').classList.add('hidden'); document.getElementById('s-over').classList.remove('hidden'); document.getElementById('go-xp').innerText = this.xp; document.getElementById('go-bits').innerText = this.bits; let c = Data.equipped.chassis; Data.chassisXP[c].xp += this.xp; Data.bits += this.bits; this.checkAch(); localStorage.setItem(SAVE_KEY, JSON.stringify(Data)); }
+    over() { this.active = false; document.getElementById('ui-hud').classList.add('hidden'); document.getElementById('s-over').classList.remove('hidden'); document.getElementById('go-xp').innerText = this.xp; document.getElementById('go-bits').innerText = this.bits; let c = Data.equipped.chassis; Data.chassisXP[c].xp += this.xp; Data.bits += this.bits; Data.stats.highestWave = Math.max(Data.stats.highestWave, this.wave); this.checkAch(); localStorage.setItem(SAVE_KEY, JSON.stringify(Data)); submitScore(this.wave, this.kills, this.bits); }
 };
 
 let ShopTab = 'CHASSIS'; let previewId = null;
@@ -1018,9 +1045,28 @@ const Menus = {
         document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
         if(previewId) { cancelAnimationFrame(previewId); previewId=null; }
         if (mode === 'achievements') {
-            document.getElementById('s-ach').classList.remove('hidden'); let list = document.getElementById('ach-list'); list.innerHTML = ''; let unlockedCount = 0;
+            document.getElementById('s-ach').classList.remove('hidden');
+            document.querySelector('#s-ach h2').innerText = 'ACHIEVEMENTS';
+            document.querySelector('#s-ach .cyber-panel').style.borderColor = 'var(--gold)';
+            let list = document.getElementById('ach-list'); list.innerHTML = ''; let unlockedCount = 0;
             ACHIEVEMENTS.forEach(a => { let unlocked = Data.achievements.includes(a.id); if(unlocked) unlockedCount++; let card = document.createElement('div'); card.className = `ach-card ${unlocked ? 'unlocked' : ''}`; card.innerHTML = `<h4 style="margin:0 0 5px 0; color:${unlocked ? 'var(--gold)' : '#555'}">${a.name}</h4><span class="ach-desc" style="font-size:11px; color:#888;">${a.desc}</span><div class="ach-reward" style="color:${unlocked?'var(--cyan)':'#444'}">+${a.reward} BITS</div>`; list.appendChild(card); });
             document.getElementById('ach-count').innerText = `${unlockedCount}/${ACHIEVEMENTS.length}`; return;
+        } else if (mode === 'leaderboard') {
+            document.getElementById('s-ach').classList.remove('hidden');
+            document.querySelector('#s-ach h2').innerText = 'GLOBAL LEADERBOARD';
+            document.querySelector('#s-ach .cyber-panel').style.borderColor = 'var(--pink)';
+            let list = document.getElementById('ach-list');
+            list.innerHTML = '<div style="text-align:center; color:#aaa;">Loading leaderboard...</div>';
+            getLeaderboard().then(data => {
+                list.innerHTML = '';
+                data.entries.forEach(entry => {
+                    let card = document.createElement('div');
+                    card.className = 'ach-card unlocked';
+                    card.innerHTML = `<h4 style="margin:0 0 5px 0; color:var(--gold)">${entry.playerName}</h4><span class="ach-desc" style="font-size:11px; color:#888;">Wave ${entry.wave} | Kills ${entry.kills} | Bits ${entry.bits}</span><div class="ach-reward" style="color:var(--cyan)">#${entry.rank}</div>`;
+                    list.appendChild(card);
+                });
+            });
+            return;
         }
         document.getElementById('s-list').classList.remove('hidden'); document.getElementById('list-title').innerText = mode.toUpperCase(); document.getElementById('ui-bits').innerText = Data.bits;
         const lst = document.getElementById('list-items'); const det = document.getElementById('list-detail'); const tabRow = document.getElementById('list-tabs'); lst.innerHTML = ''; det.innerHTML = '';
