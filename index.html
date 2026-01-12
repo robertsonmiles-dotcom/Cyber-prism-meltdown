@@ -314,12 +314,187 @@
         50% { opacity: 1; }
         100% { opacity: 0; transform: translateY(-60px) scale(1.1); filter: blur(2px); }
     }
+
+    /* === POLISH: Advanced Effects === */
+    
+    /* Smooth easing for all transitions */
+    * { transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    
+    /* Enhanced glow layers */
+    .glow-text { text-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
+    
+    /* Bloom effect on UI elements */
+    .bloom { filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 20px currentColor); }
+    
+    /* Cinematic bars (top/bottom) */
+    .cinematic::before, .cinematic::after {
+        content: ''; position: fixed; left: 0; right: 0; height: 60px; background: #000;
+        z-index: 999; pointer-events: none;
+    }
+    .cinematic::before { top: 0; }
+    .cinematic::after { bottom: 0; }
+    
+    /* Scan lines enhancement */
+    @keyframes scanlines {
+        0% { background-position: 0 0; }
+        100% { background-position: 0 4px; }
+    }
+    
+    /* Screen wobble on damage */
+    @keyframes damageWobble {
+        0%, 100% { transform: skewX(0deg); }
+        25% { transform: skewX(1deg); }
+        50% { transform: skewX(-1deg); }
+        75% { transform: skewX(1deg); }
+    }
+    
+    /* Pulse on critical hit */
+    @keyframes criticalPulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.3); opacity: 0.7; }
+        100% { transform: scale(1); opacity: 0; }
+    }
+    
+    /* Button press feedback with spring */
+    @keyframes springPress {
+        0% { transform: scale(1); }
+        50% { transform: scale(0.85); }
+        100% { transform: scale(1); }
+    }
+    
+    /* Wave effect */
+    @keyframes waveRipple {
+        0% { transform: scale(0); opacity: 1; }
+        100% { transform: scale(2); opacity: 0; }
+    }
+    
+    /* Neon flicker */
+    @keyframes neonFlicker {
+        0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+        20%, 24%, 55% { opacity: 0.8; text-shadow: 0 0 5px currentColor; }
+    }
+    
+    /* Loading bar fill */
+    @keyframes barFill {
+        0% { width: 0%; }
+        100% { width: 100%; }
+    }
+
+    /* Enhanced scrollbar styling */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 243, 255, 0.05); }
+    ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--pink); }
+
+    /* Visual separator */
+    .separator { 
+        width: 100%; height: 1px; 
+        background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+        margin: 15px 0; opacity: 0.5;
+    }
 </style>
 </head>
 <body class="crt">
 
 <canvas id="c"></canvas>
 <div class="world-bg"><div class="grid-floor"></div><div id="dust-con"></div></div>
+
+<script>
+/* === AUDIO SYSTEM (Web Audio API) === */
+const Audio = {
+    ctx: null,
+    initialized: false,
+    
+    init() {
+        try {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            this.initialized = true;
+        } catch(e) {
+            console.log("Web Audio API not supported");
+        }
+    },
+    
+    // Generate simple sound effects using oscillators
+    play(type = 'hit', duration = 0.1, freq = 400) {
+        if (!this.initialized || !this.ctx) return;
+        
+        try {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            const now = this.ctx.currentTime;
+            
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            
+            switch(type) {
+                case 'hit': // Bullet hit
+                    osc.frequency.setValueAtTime(freq, now);
+                    osc.frequency.exponentialRampToValueAtTime(50, now + duration);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+                    osc.type = 'sine';
+                    break;
+                    
+                case 'kill': // Enemy killed
+                    osc.frequency.setValueAtTime(freq + 200, now);
+                    osc.frequency.exponentialRampToValueAtTime(freq - 200, now + duration);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+                    osc.type = 'triangle';
+                    break;
+                    
+                case 'ult': // Ultimate charged
+                    osc.frequency.setValueAtTime(freq, now);
+                    osc.frequency.linearRampToValueAtTime(freq * 2, now + duration);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.02, now + duration);
+                    osc.type = 'sine';
+                    break;
+                    
+                case 'pickup': // Item pickup
+                    osc.frequency.setValueAtTime(freq, now);
+                    osc.frequency.linearRampToValueAtTime(freq * 1.5, now + duration * 0.5);
+                    osc.frequency.linearRampToValueAtTime(freq * 2, now + duration);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+                    osc.type = 'sine';
+                    break;
+                    
+                case 'damage': // Player takes damage
+                    osc.frequency.setValueAtTime(freq - 200, now);
+                    osc.frequency.exponentialRampToValueAtTime(50, now + duration);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+                    osc.type = 'square';
+                    break;
+                    
+                case 'levelup': // Level up
+                    for (let i = 0; i < 3; i++) {
+                        const o = this.ctx.createOscillator();
+                        const g = this.ctx.createGain();
+                        o.connect(g);
+                        g.connect(this.ctx.destination);
+                        const t = now + i * duration * 0.4;
+                        o.frequency.setValueAtTime(freq + i * 150, t);
+                        o.frequency.linearRampToValueAtTime(freq + i * 150 + 200, t + duration * 0.3);
+                        g.gain.setValueAtTime(0.08, t);
+                        g.gain.exponentialRampToValueAtTime(0.01, t + duration * 0.3);
+                        o.type = 'sine';
+                        o.start(t);
+                        o.stop(t + duration * 0.3);
+                    }
+                    osc.stop(now);
+                    return;
+            }
+            
+            osc.start(now);
+            osc.stop(now + duration);
+        } catch(e) {
+            console.log("Audio play error:", e);
+        }
+    }
+};
+</script>
 
 <div id="ach-notify">
     <h3 style="color:var(--gold); margin:0; letter-spacing:2px;">ACHIEVEMENT UNLOCKED</h3>
@@ -354,18 +529,18 @@
 </div>
 
 <div id="s-menu" class="screen interactive menu-anim">
-    <button class="btn" style="position:absolute; top:30px; left:30px; border-color:var(--gold); color:var(--gold);" onclick="Menus.open('achievements')">ACHIEVEMENTS</button>
-    <button class="btn" style="position:absolute; top:30px; right:30px; border-color:#fff; color:#fff;" onclick="toggleFullScreen()">FULLSCREEN</button>
-    <button id="btn-controls" onclick="Menus.open('controls')">?</button>
+    <button class="btn" style="position:absolute; top:30px; left:30px; border-color:var(--gold); color:var(--gold);" onclick="Menus.open('achievements'); Audio.play('pickup', 0.1, 600)">ACHIEVEMENTS</button>
+    <button class="btn" style="position:absolute; top:30px; right:30px; border-color:#fff; color:#fff;" onclick="toggleFullScreen(); Audio.play('pickup', 0.1, 500)">FULLSCREEN</button>
+    <button id="btn-controls" onclick="Menus.open('controls'); Audio.play('pickup', 0.1, 550)">?</button>
     <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%);">
         <h1 class="glitch-text">CYBER PRISM</h1>
         <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V10.3 // ONLINE</h3>
         <div style="display:flex; flex-direction:column; align-items:center;">
-            <button class="btn" style="width:240px; font-weight:bold; border-color:#fff; font-size:18px;" onclick="Game.start()">DEPLOY UNIT</button>
-            <button class="btn" style="width:240px; border-color:#0f0; color:#0f0;" onclick="Game.startTutorial()">TUTORIAL</button>
-            <button class="btn" style="width:240px;" onclick="Menus.open('hangar')">HANGAR</button>
-            <button class="btn" style="width:240px;" onclick="Menus.open('shop')">BLACK MARKET</button>
-            <button class="btn" style="width:240px;" onclick="Menus.open('lab')">R&D LAB</button>
+            <button class="btn" style="width:240px; font-weight:bold; border-color:#fff; font-size:18px;" onclick="Game.start(); Audio.play('pickup', 0.15, 700)">DEPLOY UNIT</button>
+            <button class="btn" style="width:240px; border-color:#0f0; color:#0f0;" onclick="Game.startTutorial(); Audio.play('pickup', 0.15, 650)">TUTORIAL</button>
+            <button class="btn" style="width:240px;" onclick="Menus.open('hangar'); Audio.play('pickup', 0.1, 600)">HANGAR</button>
+            <button class="btn" style="width:240px;" onclick="Menus.open('shop'); Audio.play('pickup', 0.1, 600)">BLACK MARKET</button>
+            <button class="btn" style="width:240px;" onclick="Menus.open('lab'); Audio.play('pickup', 0.1, 600)">R&D LAB</button>
         </div>
     </div>
 </div>
@@ -374,9 +549,9 @@
     <div class="cyber-panel" style="text-align:center; width:300px;">
         <h2 style="margin-top:0;">SYSTEM PAUSED</h2>
         <div style="color:#aaa; font-size:12px; margin-bottom:10px;">ACTIVE SYNERGIES: <span id="pause-syn" style="color:var(--gold)">NONE</span></div>
-        <button class="btn" style="width:100%" onclick="Game.togglePause()">RESUME MISSION</button>
-        <button class="btn" style="width:100%; border-color:#0f0; color:#0f0;" onclick="Game.buyRepair()">EMERGENCY REPAIR (500 BITS)</button>
-        <button class="btn" style="width:100%; border-color:var(--red); color:var(--red);" onclick="Game.abort()">ABORT MISSION</button>
+        <button class="btn" style="width:100%" onclick="Game.togglePause(); Audio.play('pickup', 0.1, 600)">RESUME MISSION</button>
+        <button class="btn" style="width:100%; border-color:#0f0; color:#0f0;" onclick="Game.buyRepair(); Audio.play('pickup', 0.15, 700)">EMERGENCY REPAIR (500 BITS)</button>
+        <button class="btn" style="width:100%; border-color:var(--red); color:var(--red);" onclick="Game.abort(); Audio.play('pickup', 0.1, 400)">ABORT MISSION</button>
     </div>
 </div>
 <div id="s-over" class="screen hidden interactive menu-anim">
@@ -404,7 +579,7 @@
         </div>
         <div id="list-detail" class="col-r"></div>
     </div>
-    <button class="btn" style="margin-top:20px; z-index:999;" onclick="Menus.home()">BACK</button>
+    <button class="btn" style="margin-top:20px; z-index:999;" onclick="Menus.home(); Audio.play('pickup', 0.1, 500)">BACK</button>
 </div>
 <div id="s-ach" class="screen hidden interactive menu-anim">
     <div style="width:85%; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -414,12 +589,12 @@
     <div class="cyber-panel" style="width:85%; height:60%; overflow-y:auto; border-color:var(--gold);">
         <div id="ach-list" class="ach-grid"></div>
     </div>
-    <button class="btn" style="margin-top:20px; border-color:var(--gold); color:var(--gold);" onclick="Menus.home()">BACK</button>
+    <button class="btn" style="margin-top:20px; border-color:var(--gold); color:var(--gold);" onclick="Menus.home(); Audio.play('pickup', 0.1, 500)">BACK</button>
 </div>
 
 <div id="s-controls" class="screen hidden interactive menu-anim">
     <div class="controls-modal">
-        <button class="controls-close-btn" onclick="Menus.home()">✕</button>
+        <button class="controls-close-btn" onclick="Menus.home(); Audio.play('pickup', 0.1, 450)">✕</button>
         <h2>CONTROL SYSTEMS</h2>
         
         <div class="control-section">
@@ -490,7 +665,7 @@
     <div class="cyber-panel" style="align-items:center; padding:30px;">
         <h2>SYSTEM UPGRADE</h2>
         <div id="card-con"></div>
-        <button class="btn" id="btn-reroll" style="width:200px; margin-top:20px;" onclick="Game.rerollAugments()">REROLL (50 BITS)</button>
+        <button class="btn" id="btn-reroll" style="width:200px; margin-top:20px;" onclick="Game.rerollAugments(); Audio.play('pickup', 0.15, 750)">REROLL (50 BITS)</button>
     </div>
 </div>
 
@@ -831,6 +1006,12 @@ const Game = {
 
     start() {
         if(this.active) return;
+        
+        // Initialize audio on first interaction
+        if(!Audio.initialized) {
+            Audio.init();
+        }
+        
         let cKey = Data.equipped.chassis; let cDef = CHASSIS[cKey];
         this.player = {
             x: W/2, y: H/2, vx:0, vy:0, a: -1.57, hp: cDef.hp, maxHp: cDef.hp, vHp: cDef.hp, vHpLag: cDef.hp, spd: cDef.spd * SPEED_MULT, heatRate: cDef.heatRate,
@@ -912,6 +1093,30 @@ const Game = {
             alpha: 1,
             size: sz
         });
+        
+        // Sound feedback
+        if(isCrit) {
+            Audio.play('kill', 0.15, 600);
+            // Crit particles
+            for(let i=0; i<6; i++) {
+                let angle = (i / 6) * Math.PI * 2;
+                this.particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * 6,
+                    vy: Math.sin(angle) * 6,
+                    life: 20,
+                    maxLife: 20,
+                    c: '#ffff00',
+                    sz: 2,
+                    decay: 1,
+                    type: 'crit'
+                });
+            }
+            this.shake += 2;
+        } else {
+            Audio.play('hit', 0.08, 400 + Math.random() * 100);
+        }
     },
 
     startWave() {
@@ -945,7 +1150,32 @@ const Game = {
     triggerUlt() {
         if(this.player.ult < this.player.maxUlt) return;
         this.player.ult = 0; let c = CHASSIS[Data.equipped.chassis];
-        this.textFX("SYSTEM: " + c.ult, c.color); this.player.heat = 0; this.player.overheated = false; this.jamTimer = 0;
+        this.textFX("SYSTEM: " + c.ult, c.color); 
+        this.player.heat = 0; 
+        this.player.overheated = false; 
+        this.jamTimer = 0;
+        
+        // Audio
+        Audio.play('ult', 0.4, 800);
+        
+        // Visual burst
+        for(let i=0; i<30; i++) {
+            let angle = (i / 30) * Math.PI * 2;
+            this.particles.push({
+                x: this.player.x,
+                y: this.player.y,
+                vx: Math.cos(angle) * 12,
+                vy: Math.sin(angle) * 12,
+                life: 25,
+                maxLife: 25,
+                c: c.color,
+                sz: 3,
+                decay: 1,
+                type: 'ult'
+            });
+        }
+        this.shake += 15;
+        
         if(c.ult === 'OVERCLOCK') { this.player.rate=4; setTimeout(()=>{this.player.rate=15;}, 4000); }
         if(c.ult === 'REFLECT') { this.player.invul=300; this.player.flags.thorns=true; }
         if(c.ult === 'PHASE') { this.player.dodge+=0.9; setTimeout(()=>{this.player.dodge-=0.9;}, 4000); }
@@ -1050,16 +1280,49 @@ const Game = {
     },
     
     killEnemy(e, i) {
-        this.enemies.splice(i, 1); this.bits += e.bits * (this.boss ? 10 : 1);
-        let gain = e.bits * 10; this.xp += gain; this.player.currentXp += gain;
+        this.enemies.splice(i, 1); 
+        this.bits += e.bits * (this.boss ? 10 : 1);
+        let gain = e.bits * 10; 
+        this.xp += gain; 
+        this.player.currentXp += gain;
         if(this.player.currentXp >= this.player.xpToNext) this.levelUp();
-        Data.stats.totalKills++; if(e.boss) Data.stats.bossKilled = true;
-        let dist = Math.hypot(e.x - this.player.x, e.y - this.player.y); if(dist > 400) this.achFlags.longShot = true; if(dist < 50) this.achFlags.closeKill = true; this.checkAch();
-        let P = this.player; if(P.leech > 0 && P.hp < P.maxHp) P.hp = Math.min(P.maxHp, P.hp + P.leech);
+        Data.stats.totalKills++; 
+        if(e.boss) Data.stats.bossKilled = true;
+        let dist = Math.hypot(e.x - this.player.x, e.y - this.player.y); 
+        if(dist > 400) this.achFlags.longShot = true; 
+        if(dist < 50) this.achFlags.closeKill = true; 
+        this.checkAch();
+        let P = this.player; 
+        if(P.leech > 0 && P.hp < P.maxHp) P.hp = Math.min(P.maxHp, P.hp + P.leech);
         if(e.frozen && P.activeSynergies.includes('shatter')) { for(let k=0; k<5; k++) { let a = k*(6.28/5); this.bullets.push({x:e.x, y:e.y, vx:Math.cos(a)*12, vy:Math.sin(a)*12, life:20, dmg:10, sz:3, color:'#00f3ff', angle:a}); } }
         P.ult = Math.min(P.maxUlt, P.ult + 7*P.ultMult);
         if(P.flags.nova && Math.random() < 0.3) { for(let k=0; k<6; k++) { let a = k*(6.28/6); this.bullets.push({x:e.x, y:e.y, vx:Math.cos(a)*10, vy:Math.sin(a)*10, life:30, dmg:20, sz:3, color:'#ff5500', angle:a}); } }
-        this.explosion(e.x, e.y, e.c, e.elite ? 2 : 1);
+        
+        // Enhanced explosion with better audio
+        let audioFreq = 200 + (e.tier * 100);
+        Audio.play('kill', 0.2, audioFreq);
+        
+        this.explosion(e.x, e.y, e.c, e.elite ? 3 : (e.boss ? 4 : 1.5));
+        
+        // Bit pickup particles
+        for(let i=0; i<e.bits; i++) {
+            let angle = Math.random() * Math.PI * 2;
+            this.particles.push({
+                x: e.x,
+                y: e.y,
+                vx: Math.cos(angle) * (2 + Math.random() * 3),
+                vy: Math.sin(angle) * (2 + Math.random() * 3) - 2,
+                life: 60,
+                maxLife: 60,
+                c: '#00f3ff',
+                sz: 1,
+                decay: 0.98,
+                type: 'bit',
+                targetX: P.x,
+                targetY: P.y
+            });
+        }
+        
         if(e.id === 'cube' && e.r > 10) { for(let k=0; k<2; k++) { this.enemies.push({...e, hp:e.hp/2, r:e.r/1.5, x:e.x+k*10, y:e.y+k*10, bits:1}); } }
     },
 
@@ -1068,6 +1331,28 @@ const Game = {
         let roll = Math.random(); let txt = '';
         if(roll < 0.33) { P.dmg *= 1.05; txt = '+5% DMG'; } else if (roll < 0.66) { P.maxHp += 10; P.hp += 10; txt = '+10 MAX HP'; } else { P.crit += 0.02; txt = '+2% CRIT'; }
         document.getElementById('lvl-bonus').innerText = txt; let msg = document.getElementById('lvl-up-msg'); msg.classList.remove('show'); void msg.offsetWidth; msg.classList.add('show');
+        
+        // Audio feedback
+        Audio.play('levelup', 0.3, 500);
+        
+        // Level up particle burst
+        for(let i=0; i<20; i++) {
+            let angle = (i / 20) * Math.PI * 2;
+            this.particles.push({
+                x: this.player.x,
+                y: this.player.y,
+                vx: Math.cos(angle) * 8,
+                vy: Math.sin(angle) * 8,
+                life: 30,
+                maxLife: 30,
+                c: '#ffd700',
+                sz: 2,
+                decay: 1,
+                type: 'levelup'
+            });
+        }
+        
+        this.shake += 8;
     },
 
     updateBullet(b, i) {
@@ -1134,13 +1419,64 @@ const Game = {
         if(P.flags.rear) { let ra = aimA + Math.PI; this.bullets.push({ x:P.x, y:P.y, vx:Math.cos(ra)*P.bSpd, vy:Math.sin(ra)*P.bSpd, life:60, dmg:P.dmg, sz:3*P.bSize, pierce:P.pierce, bounce:P.bounce, angle:ra, color:color }); }
     },
 
-    explosion(x, y, c, scale=1) { for(let i=0; i<8*scale; i++) this.particles.push({ x:x, y:y, vx:(Math.random()-0.5)*8*scale, vy:(Math.random()-0.5)*8*scale, life:20 + Math.random()*15, c:c, sz:Math.random()*4*scale }); },
+    explosion(x, y, c, scale=1) { 
+        for(let i=0; i<12*scale; i++) {
+            let angle = (i / (12*scale)) * Math.PI * 2;
+            let speed = 5 + Math.random() * 8;
+            this.particles.push({ 
+                x: x, y: y, 
+                vx: Math.cos(angle) * speed, 
+                vy: Math.sin(angle) * speed, 
+                life: 25 + Math.random()*15, 
+                maxLife: 40,
+                c: c, 
+                sz: Math.random()*5*scale,
+                decay: 1,
+                type: 'explosion'
+            });
+        }
+        // Secondary smaller particles
+        for(let i=0; i<8*scale; i++) {
+            let angle = Math.random() * Math.PI * 2;
+            this.particles.push({
+                x: x + (Math.random()-0.5)*20,
+                y: y + (Math.random()-0.5)*20,
+                vx: Math.cos(angle) * (Math.random()*3),
+                vy: Math.sin(angle) * (Math.random()*3),
+                life: 15,
+                maxLife: 20,
+                c: c,
+                sz: Math.random()*2,
+                decay: 1.2,
+                type: 'spark'
+            });
+        }
+        // Screen shake
+        this.shake += 5 * scale;
+        // Sound
+        Audio.play('hit', 0.1, 300 + Math.random() * 200);
+    },
 
     render() {
         ctx.clearRect(0,0,W,H); ctx.save();
         if(this.shake > 0) { ctx.translate((Math.random()-0.5)*this.shake, (Math.random()-0.5)*this.shake); this.shake *= 0.9; if(this.shake < 0.5) this.shake = 0; }
         Draw.stars(Game.frame, this.player);
-        ctx.globalCompositeOperation = 'lighter'; this.particles.forEach(p => { ctx.fillStyle = p.c; ctx.globalAlpha = p.life/30; ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, 6.28); ctx.fill(); }); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+        
+        // Render particles with enhanced effects
+        ctx.globalCompositeOperation = 'lighter';
+        this.particles.forEach(p => { 
+            ctx.fillStyle = p.c; 
+            ctx.globalAlpha = (p.life / p.maxLife) * 0.8;
+            ctx.shadowColor = p.c;
+            ctx.shadowBlur = p.type === 'crit' ? 20 : (p.type === 'explosion' ? 15 : 5);
+            ctx.beginPath(); 
+            ctx.arc(p.x, p.y, p.sz, 0, 6.28); 
+            ctx.fill();
+        }); 
+        ctx.globalCompositeOperation = 'source-over'; 
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
+        
         this.turrets.forEach(t => Draw.turret(ctx, t));
         Draw.ship(ctx, this.player.x, this.player.y, this.player.a, Data.equipped.chassis, CHASSIS[Data.equipped.chassis].color, Data.equipped.mods, this.player.overheated);
         this.enemies.forEach(e => {
@@ -1148,15 +1484,43 @@ const Game = {
             if(this.player.flags.tesla && Math.hypot(e.x-this.player.x, e.y-this.player.y)<250 && Game.frame%5===0) { ctx.beginPath(); ctx.moveTo(this.player.x, this.player.y); ctx.lineTo(e.x,e.y); ctx.strokeStyle = `rgba(0, 243, 255, ${Math.random()})`; ctx.stroke(); }
             Draw.enemy(ctx, e);
         });
-        this.bullets.forEach(b => { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.shadowBlur = 15; ctx.shadowColor = b.color; ctx.fillStyle = b.color; ctx.beginPath(); ctx.arc(b.x, b.y, b.sz, 0, 6.28); ctx.fill(); ctx.restore(); });
-        ctx.font = "bold 12px Orbitron"; ctx.textAlign = "center";
+        
+        // Enhanced bullet rendering with glow
+        this.bullets.forEach(b => { 
+            ctx.save(); 
+            ctx.globalCompositeOperation = 'lighter'; 
+            ctx.shadowBlur = 20; 
+            ctx.shadowColor = b.color;
+            // Glow layer
+            ctx.fillStyle = b.color;
+            ctx.globalAlpha = 0.3;
+            ctx.beginPath(); 
+            ctx.arc(b.x, b.y, b.sz * 2, 0, 6.28); 
+            ctx.fill();
+            // Core
+            ctx.fillStyle = b.color; 
+            ctx.globalAlpha = 1;
+            ctx.beginPath(); 
+            ctx.arc(b.x, b.y, b.sz, 0, 6.28); 
+            ctx.fill(); 
+            ctx.restore(); 
+        });
+        
+        // Render floating text with enhanced styling
+        ctx.font = "bold 12px Orbitron"; 
+        ctx.textAlign = "center";
         this.floatingTexts.forEach(ft => { 
             ctx.fillStyle = ft.color; 
             ctx.globalAlpha = ft.alpha; 
-            if(ft.isCrit) ctx.font = `bold ${ft.size || 16}px Orbitron`;
-            else ctx.font = `${ft.size || 12}px Orbitron`;
-            ctx.shadowColor = ft.color;
-            ctx.shadowBlur = ft.isCrit ? 15 : 5;
+            if(ft.isCrit) {
+                ctx.font = `bold ${ft.size || 16}px Orbitron`;
+                ctx.shadowColor = ft.color;
+                ctx.shadowBlur = 20;
+            } else {
+                ctx.font = `${ft.size || 12}px Orbitron`;
+                ctx.shadowColor = ft.color;
+                ctx.shadowBlur = 8;
+            }
             ctx.fillText(ft.text, ft.x, ft.y);
             ctx.shadowBlur = 0;
         });
