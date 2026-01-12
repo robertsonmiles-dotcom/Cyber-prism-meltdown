@@ -1666,7 +1666,25 @@ const Game = {
         d.style.animation = 'textFXFade 2.5s ease-out forwards';
         setTimeout(()=>d.remove(), 2500);
     },
-    over() { this.active = false; document.getElementById('ui-hud').classList.add('hidden'); document.getElementById('s-over').classList.remove('hidden'); document.getElementById('go-xp').innerText = this.xp; document.getElementById('go-bits').innerText = this.bits; let c = Data.equipped.chassis; Data.chassisXP[c].xp += this.xp; Data.bits += this.bits; this.checkAch(); localStorage.setItem(SAVE_KEY, JSON.stringify(Data)); }
+    over() { 
+        // Player died - end session but keep all bits earned
+        this.active = false; 
+        document.getElementById('ui-hud').classList.add('hidden'); 
+        document.getElementById('s-over').classList.remove('hidden'); 
+        
+        // Display stats
+        document.getElementById('go-xp').innerText = this.xp; 
+        document.getElementById('go-bits').innerText = this.bits; 
+        
+        // Add earned bits & xp to total
+        let c = Data.equipped.chassis; 
+        Data.chassisXP[c].xp += this.xp; 
+        Data.bits += this.bits; 
+        
+        // Track stats for achievements
+        this.checkAch(); 
+        localStorage.setItem(SAVE_KEY, JSON.stringify(Data)); 
+    }
 };
 
 let ShopTab = 'CHASSIS'; let previewId = null;
