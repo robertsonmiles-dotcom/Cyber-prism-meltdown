@@ -541,6 +541,10 @@ const Audio = {
             <button class="btn" style="width:240px;" onclick="Menus.open('hangar'); Audio.play('pickup', 0.1, 600)">HANGAR</button>
             <button class="btn" style="width:240px;" onclick="Menus.open('shop'); Audio.play('pickup', 0.1, 600)">BLACK MARKET</button>
             <button class="btn" style="width:240px;" onclick="Menus.open('lab'); Audio.play('pickup', 0.1, 600)">R&D LAB</button>
+            <button class="btn" style="width:240px; border-color:#ff9900; color:#ff9900;" onclick="Menus.open('daily'); Audio.play('pickup', 0.1, 650)">DAILY CHALLENGES</button>
+            <button class="btn" style="width:240px; border-color:#00ff88; color:#00ff88;" onclick="Menus.open('quests'); Audio.play('pickup', 0.1, 700)">QUESTS</button>
+            <button class="btn" style="width:240px; border-color:#ff1493; color:#ff1493;" onclick="Menus.open('leader'); Audio.play('pickup', 0.1, 550)">LEADERBOARD</button>
+            <button class="btn" style="width:240px; border-color:var(--gold); color:var(--gold);" onclick="Menus.open('prestige'); Audio.play('pickup', 0.1, 800)">ASCENSION</button>
         </div>
     </div>
 </div>
@@ -590,6 +594,60 @@ const Audio = {
         <div id="ach-list" class="ach-grid"></div>
     </div>
     <button class="btn" style="margin-top:20px; border-color:var(--gold); color:var(--gold);" onclick="Menus.home(); Audio.play('pickup', 0.1, 500)">BACK</button>
+</div>
+
+<div id="s-daily" class="screen hidden interactive menu-anim">
+    <div style="width:85%; margin-bottom:10px;">
+        <h2 style="color:#ff9900; margin:0 0 15px 0;">DAILY CHALLENGES</h2>
+        <div style="color:#888; font-size:12px; margin-bottom:15px;">Resets daily at UTC 00:00</div>
+    </div>
+    <div class="cyber-panel" style="width:85%; height:60%; overflow-y:auto;">
+        <div id="daily-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+    </div>
+    <button class="btn" style="margin-top:20px;" onclick="Menus.home(); Audio.play('pickup', 0.1, 500)">BACK</button>
+</div>
+
+<div id="s-quests" class="screen hidden interactive menu-anim">
+    <div style="width:85%; margin-bottom:10px;">
+        <h2 style="color:#00ff88; margin:0 0 15px 0;">QUESTS & MISSIONS</h2>
+    </div>
+    <div class="cyber-panel" style="width:85%; height:60%; overflow-y:auto;">
+        <div id="quest-list" style="display:flex; flex-direction:column; gap:12px;"></div>
+    </div>
+    <button class="btn" style="margin-top:20px;" onclick="Menus.home(); Audio.play('pickup', 0.1, 500)">BACK</button>
+</div>
+
+<div id="s-leader" class="screen hidden interactive menu-anim">
+    <div style="width:85%; margin-bottom:10px;">
+        <h2 style="color:#ff1493; margin:0 0 15px 0;">LEADERBOARD</h2>
+    </div>
+    <div class="cyber-panel" style="width:85%; height:60%; overflow-y:auto;">
+        <table style="width:100%; color:#aaa; font-size:12px; border-collapse:collapse;">
+            <tr style="color:#fff; border-bottom:1px solid #333;">
+                <th style="text-align:left; padding:8px;">RANK</th><th>WAVE</th><th>KILLS</th><th>BITS</th><th>DATE</th>
+            </tr>
+            <tbody id="leader-body"></tbody>
+        </table>
+    </div>
+    <button class="btn" style="margin-top:20px;" onclick="Menus.home(); Audio.play('pickup', 0.1, 500)">BACK</button>
+</div>
+
+<div id="s-prestige" class="screen hidden interactive menu-anim">
+    <div class="cyber-panel" style="text-align:center; border-color:var(--gold); background:radial-gradient(circle at center, rgba(255, 215, 0, 0.1), transparent);">
+        <h1 style="color:var(--gold); margin:0 0 20px 0; font-size:32px;">ASCENSION SYSTEM</h1>
+        <div id="prestige-info" style="color:#aaa; margin-bottom:20px; font-size:14px;"></div>
+        <div style="background:rgba(0,0,0,0.5); padding:15px; margin:20px 0; border:1px solid var(--gold);">
+            <p style="margin:0; color:#fff;"><strong>Current Prestige Level:</strong> <span id="prestige-level" style="color:var(--gold); font-size:18px;">0</span></p>
+            <p style="margin:8px 0 0 0; color:#aaa;">Bit Multiplier: <span id="prestige-mult" style="color:#fff;">x1.00</span></p>
+        </div>
+        <button id="prestige-btn" class="btn" style="width:240px; border-color:var(--gold); color:var(--gold); margin:20px 0;" onclick="ActivatePrestige()">ASCEND NOW</button>
+        <div style="color:#888; font-size:11px; margin-top:15px;">
+            <p>• Keep 50% of your Bits</p>
+            <p>• Reset all equipment & modules</p>
+            <p>• Gain permanent Bit multiplier</p>
+        </div>
+    </div>
+    <button class="btn" style="margin-top:20px;" onclick="Menus.home(); Audio.play('pickup', 0.1, 500)">BACK</button>
 </div>
 
 <div id="s-controls" class="screen hidden interactive menu-anim">
@@ -1145,7 +1203,24 @@ const Game = {
     rerollAugments() { if(this.bits >= this.rerollCost) { this.bits -= this.rerollCost; this.rerollCost += 50; this.showAugments(); } else alert("Not enough Bits!"); },
     abort() {
         this.active = false; document.getElementById('s-pause').classList.add('hidden'); document.getElementById('ui-hud').classList.add('hidden');
-        document.getElementById('s-over').classList.add('hidden'); Menus.home();
+        document.getElementById('s-over').classList.add('hidden');
+        
+        // Track run stats for leaderboard and challenges
+        Data.stats.totalKills += this.spawnedCount || 0;
+        if(this.wave > Data.stats.highestWave) Data.stats.highestWave = this.wave;
+        Leaderboard.save();
+        
+        // Apply prestige multiplier to bits earned
+        let mult = Data.bitMultiplier || 1.0;
+        let seasonMult = ApplySeasonalBonus(1);
+        this.bits = Math.floor(this.bits * mult * seasonMult);
+        Data.bits += this.bits;
+        
+        // Update quests and challenges
+        UpdateQuestProgress('rich', Data.bits);
+        
+        localStorage.setItem(SAVE_KEY, JSON.stringify(Data));
+        Menus.home();
     },
     triggerUlt() {
         if(this.player.ult < this.player.maxUlt) return;
@@ -1614,6 +1689,55 @@ const Menus = {
             document.getElementById('s-controls').classList.remove('hidden');
             return;
         }
+        if(mode === 'daily') {
+            document.getElementById('s-daily').classList.remove('hidden');
+            let list = document.getElementById('daily-list');
+            list.innerHTML = '';
+            DAILY_CHALLENGES.forEach(d => {
+                let completed = Data.dailyChallenges && Data.dailyChallenges[d.id]?.completed;
+                let card = document.createElement('div');
+                card.className = `ach-card ${completed ? 'unlocked' : ''}`;
+                card.innerHTML = `<h4 style="margin:0 0 5px 0; color:${completed ? '#00ff00' : '#ff9900'}">${d.name}</h4><span class="ach-desc" style="font-size:11px; color:#888;">${d.desc}</span><div class="ach-reward" style="color:${completed?'#00ff00':'#ff9900'}">+${d.reward} BITS</div>`;
+                list.appendChild(card);
+            });
+            return;
+        }
+        if(mode === 'quests') {
+            document.getElementById('s-quests').classList.remove('hidden');
+            let list = document.getElementById('quest-list');
+            list.innerHTML = '';
+            QUESTS.forEach(q => {
+                let completed = Data.quests && Data.quests[q.id]?.completed;
+                let card = document.createElement('div');
+                card.className = `ach-card ${completed ? 'unlocked' : ''}`;
+                card.innerHTML = `<h4 style="margin:0 0 5px 0; color:${completed ? '#00ff88' : '#aaa'}">${q.name}</h4><span class="ach-desc" style="font-size:11px; color:#888;">${q.desc}</span><div class="ach-reward" style="color:${completed?'#00ff88':'#555'}">+${q.reward} BITS</div>`;
+                list.appendChild(card);
+            });
+            return;
+        }
+        if(mode === 'leader') {
+            document.getElementById('s-leader').classList.remove('hidden');
+            let tbody = document.getElementById('leader-body');
+            tbody.innerHTML = '';
+            let scores = Leaderboard.get();
+            scores.forEach((score, idx) => {
+                let row = document.createElement('tr');
+                row.style.borderBottom = '1px solid #333';
+                row.innerHTML = `<td style="padding:6px;">${idx+1}</td><td>${score.wave}</td><td>${score.kills}</td><td>${score.bits}</td><td>${score.date}</td>`;
+                tbody.appendChild(row);
+            });
+            return;
+        }
+        if(mode === 'prestige') {
+            document.getElementById('s-prestige').classList.remove('hidden');
+            let level = Data.prestigeLevel || 0;
+            let mult = Data.bitMultiplier || 1.0;
+            document.getElementById('prestige-level').innerText = level;
+            document.getElementById('prestige-mult').innerText = 'x' + mult.toFixed(2);
+            let info = PRESTIGE_REWARDS.find(p => p.level === level)?.bonus || 'No bonus yet';
+            document.getElementById('prestige-info').innerHTML = `Prestige ${level > 0 ? 'Current Bonus: ' + info : 'Not yet activated'}`;
+            return;
+        }
         if (mode === 'achievements') {
             document.getElementById('s-ach').classList.remove('hidden'); let list = document.getElementById('ach-list'); list.innerHTML = ''; let unlockedCount = 0;
             ACHIEVEMENTS.forEach(a => { let unlocked = Data.achievements.includes(a.id); if(unlocked) unlockedCount++; let card = document.createElement('div'); card.className = `ach-card ${unlocked ? 'unlocked' : ''}`; card.innerHTML = `<h4 style="margin:0 0 5px 0; color:${unlocked ? 'var(--gold)' : '#555'}">${a.name}</h4><span class="ach-desc" style="font-size:11px; color:#888;">${a.desc}</span><div class="ach-reward" style="color:${unlocked?'var(--cyan)':'#444'}">+${a.reward} BITS</div>`; list.appendChild(card); });
@@ -1639,9 +1763,151 @@ const Menus = {
     }, home() { if(previewId) { cancelAnimationFrame(previewId); previewId=null; } document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden')); document.getElementById('s-menu').classList.remove('hidden'); }
 };
 
-let s = localStorage.getItem(SAVE_KEY); if(s) { Data = {...Data, ...JSON.parse(s)}; if(!Data.achievements) Data.achievements = []; if(!Data.stats) Data.stats = { totalKills: 0, highestWave: 0, bossKilled: false }; }
+// ===== LONG-TERM ENGAGEMENT SYSTEMS =====
+
+// COSMETIC SKINS SYSTEM
+const SKINS = {
+    'chrome':   { name: 'Chrome', cost: 2000, color: '#c0c0c0', desc: 'Sleek metallic finish.' },
+    'neon':     { name: 'Neon Pink', cost: 1500, color: '#ff1493', desc: 'Vibrant cyberpunk style.' },
+    'plasma':   { name: 'Plasma', cost: 3000, color: '#00ff88', desc: 'Radioactive glow effect.' },
+    'obsidian': { name: 'Obsidian', cost: 2500, color: '#1a1a1a', desc: 'Pure darkness with edges.' },
+    'gold':     { name: 'Gold Rush', cost: 5000, color: '#ffd700', desc: 'Premium luxury skin.' },
+    'void':     { name: 'Void', cost: 4000, color: '#2d0a4e', desc: 'Dimensional distortion.' },
+    'coral':    { name: 'Coral', cost: 1800, color: '#ff7f50', desc: 'Ocean-inspired theme.' },
+    'holo':     { name: 'Hologram', cost: 3500, color: '#00d9ff', desc: 'Shimmering projection.' }
+};
+
+// DAILY CHALLENGES SYSTEM
+const DAILY_CHALLENGES = [
+    { id: 'killstreak', name: 'KILL STREAK', desc: 'Eliminate 50 enemies in one run', req: (s) => s.runKills >= 50, reward: 500 },
+    { id: 'wave_push', name: 'WAVE PUSHER', desc: 'Reach Wave 20+', req: (s) => s.currentWave >= 20, reward: 750 },
+    { id: 'survivor', name: 'SURVIVOR', desc: 'Reach Wave 10 with 100% HP', req: (s) => s.currentWave >= 10 && s.currentHp === s.maxHp, reward: 600 },
+    { id: 'collector', name: 'BIT COLLECTOR', desc: 'Collect 5,000 Bits in one run', req: (s) => s.runBits >= 5000, reward: 800 },
+    { id: 'sniper', name: 'PRECISION SHOOTER', desc: 'Get 3 kills from >300px away', req: (s) => s.longShotCount >= 3, reward: 400 },
+    { id: 'boss_slayer', name: 'BOSS SLAYER', desc: 'Defeat any Boss', req: (s) => s.bossDefeatedToday, reward: 1000 },
+    { id: 'heat_master', name: 'HEAT MASTER', desc: 'Keep heat <30% for 30 seconds', req: (s) => s.lowHeatTime >= 30, reward: 550 },
+    { id: 'crit_spree', name: 'CRITICAL HITS', desc: 'Land 20 critical hits', req: (s) => s.critCount >= 20, reward: 650 }
+];
+
+// QUEST SYSTEM (SHORT-TERM GOALS)
+const QUESTS = [
+    { id: 'starter', name: 'First Steps', desc: 'Complete your first game', reward: 250, type: 'story' },
+    { id: 'speedrun', name: 'Speed Racer', desc: 'Reach Wave 10 in under 2 minutes', reward: 400, type: 'challenge' },
+    { id: 'rich', name: 'Get Rich', desc: 'Accumulate 10,000 total Bits', reward: 500, type: 'grind' },
+    { id: 'collector', name: 'Chassis Collector', desc: 'Own 5 different Chassis', reward: 600, type: 'collect' },
+    { id: 'engineer', name: 'Engineer Pro', desc: 'Unlock 3 different Synergies', reward: 700, type: 'challenge' },
+    { id: 'prestige', name: 'Ascend', desc: 'Complete your first Prestige run', reward: 2000, type: 'prestige' }
+];
+
+// PRESTIGE SYSTEM (META PROGRESSION)
+const PRESTIGE_REWARDS = [
+    { level: 1, name: 'INITIATE', bonus: '+5% Bits', multiplier: 1.05 },
+    { level: 2, name: 'ASCENDED', bonus: '+10% Bits', multiplier: 1.10 },
+    { level: 3, name: 'LEGENDARY', bonus: '+20% Bits', multiplier: 1.20 },
+    { level: 5, name: 'COSMIC', bonus: '+50% Bits', multiplier: 1.50 },
+    { level: 10, name: 'ETERNAL', bonus: '+100% Bits', multiplier: 2.00 }
+];
+
+// SEASONAL EVENTS
+const CURRENT_SEASON = {
+    name: 'NEON GENESIS',
+    color: '#00ff00',
+    bonus: 'x1.5 Bits from all sources',
+    endDate: new Date(Date.now() + 7*24*60*60*1000) // 7 days
+};
+
+// ENEMY TIER EXPANSION (NEW ENEMY TYPES)
+const ENEMY_TIERS = [
+    { id: 'spawn', tier: 1, hp: 15, bits: 3, spd: 1.5, c: '#ff00ff', r: 8, shape: 'arrow', ai: 'wander' },
+    { id: 'specter', tier: 2, hp: 25, bits: 12, spd: 3.5, c: '#00ffff', r: 9, shape: 'dart', ai: 'seek' },
+    { id: 'sentinel', tier: 3, hp: 120, bits: 35, spd: 1, c: '#00ff00', r: 22, shape: 'square', ai: 'patrol' },
+    { id: 'vortex', tier: 3, hp: 60, bits: 30, spd: 2.5, c: '#ff00ff', r: 16, shape: 'tri', ai: 'orbit' },
+    { id: 'decimator', tier: 4, hp: 200, bits: 60, spd: 2, c: '#ffff00', r: 28, shape: 'square', ai: 'seek', wpn: 'heavy' },
+    { id: 'phantom', tier: 4, hp: 80, bits: 50, spd: 4.5, c: '#8080ff', r: 14, shape: 'arrow', ai: 'teleport' }
+];
+
+// LEADERBOARD TRACKING
+const Leaderboard = {
+    save() {
+        let lb = JSON.parse(localStorage.getItem('lb') || '{"scores": []}');
+        lb.scores.push({
+            name: 'Player',
+            wave: Game.wave,
+            kills: Game.stats.totalKills,
+            bits: Data.bits,
+            date: new Date().toLocaleDateString(),
+            prestige: Data.prestigeLevel || 0
+        });
+        lb.scores.sort((a,b) => b.wave - a.wave);
+        lb.scores = lb.scores.slice(0, 20);
+        localStorage.setItem('lb', JSON.stringify(lb));
+    },
+    get() {
+        return JSON.parse(localStorage.getItem('lb') || '{"scores": []}').scores;
+    }
+};
+
+// DAILY CHALLENGE TRACKER
+function CheckDailyChallenge() {
+    if(!Data.dailyChallenges) Data.dailyChallenges = {};
+    let today = new Date().toDateString();
+    if(Data.lastChallengeDate !== today) {
+        Data.dailyChallenges = {};
+        Data.lastChallengeDate = today;
+        DAILY_CHALLENGES.forEach(c => {
+            Data.dailyChallenges[c.id] = { completed: false, progress: 0 };
+        });
+    }
+}
+
+// QUEST TRACKER
+function UpdateQuestProgress(questId, value) {
+    if(!Data.quests) Data.quests = {};
+    if(!Data.quests[questId]) Data.quests[questId] = { completed: false, progress: 0 };
+    Data.quests[questId].progress = value;
+    localStorage.setItem(SAVE_KEY, JSON.stringify(Data));
+}
+
+// PRESTIGE SYSTEM (NEW RUN WITH MULTIPLIER)
+function ActivatePrestige() {
+    if(confirm('ASCEND TO PRESTIGE?\nYou will reset all items but gain +5% Bits permanently!')) {
+        Data.prestigeLevel = (Data.prestigeLevel || 0) + 1;
+        Data.bits = Math.floor(Data.bits * 0.5); // Keep 50% of bits
+        Data.owned = ['viper'];
+        Data.modules = [];
+        Data.equipped = { chassis: 'viper', mods: [] };
+        Data.chassisXP = { 'viper': {xp:0, lvl:1} };
+        Data.modLevels = {};
+        
+        let multiplier = PRESTIGE_REWARDS.find(p => p.level <= Data.prestigeLevel)?.multiplier || 1;
+        Data.bitMultiplier = multiplier;
+        
+        Game.resetGame();
+        localStorage.setItem(SAVE_KEY, JSON.stringify(Data));
+        alert(`ASCENDED TO PRESTIGE ${Data.prestigeLevel}! Bit multiplier: x${multiplier}`);
+    }
+}
+
+// SEASONAL BONUS TRACKER
+function ApplySeasonalBonus(earnings) {
+    if(CURRENT_SEASON && earnings) {
+        let seasonMultiplier = 1.5;
+        return Math.floor(earnings * seasonMultiplier);
+    }
+    return earnings;
+}
+
+// UPDATE ENEMY SPAWNING (use expanded tier list)
+function GetDynamicEnemyType() {
+    let allEnemies = [...ENEMY_DB, ...ENEMY_TIERS];
+    let waveScaling = Math.min(Game.wave / 50, 1); // Scales from 0 to 1 as wave increases
+    let tierFilter = allEnemies.filter(e => (e.tier || 1) <= 1 + Math.floor(waveScaling * 4));
+    return tierFilter[Math.floor(Math.random() * tierFilter.length)];
+}
+
+let s = localStorage.getItem(SAVE_KEY); if(s) { Data = {...Data, ...JSON.parse(s)}; if(!Data.achievements) Data.achievements = []; if(!Data.stats) Data.stats = { totalKills: 0, highestWave: 0, bossKilled: false }; if(!Data.prestigeLevel) Data.prestigeLevel = 0; if(!Data.dailyChallenges) CheckDailyChallenge(); }
 Data.owned.forEach(c => { if(!Data.chassisXP[c]) Data.chassisXP[c] = {xp:0, lvl:1}; }); Data.modules.forEach(m => { if(!Data.modLevels[m]) Data.modLevels[m] = 1; });
-Input.init(); InitStars();
+Input.init(); InitStars(); CheckDailyChallenge();
 function Loop() { Game.frame++; Game.update(); if(Game.active) requestAnimationFrame(Loop); }
 </script>
 </body>
