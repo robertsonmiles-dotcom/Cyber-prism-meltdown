@@ -67,9 +67,9 @@
     .screen { 
         position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
         display: flex; flex-direction: column; align-items: center; justify-content: center; 
-        pointer-events: none; z-index: 10; transition: opacity 0.3s, transform 0.3s;
+        pointer-events: auto; z-index: 10; transition: opacity 0.3s, transform 0.3s;
     }
-    .screen:not(.hidden) { z-index: 100; }
+    .screen:not(.hidden) { z-index: 100; pointer-events: auto; }
     .interactive { pointer-events: auto !important; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
     .hidden { display: none !important; opacity: 0; pointer-events: none !important; transform: scale(0.95); }
     
@@ -113,7 +113,7 @@
         padding: 12px 30px; font-family: 'Orbitron'; font-size: 16px; margin: 8px; 
         text-shadow: 0 0 5px var(--cyan); overflow: hidden; transition: 0.3s; cursor: pointer;
         clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-        user-select: none; -webkit-user-select: none;
+        user-select: none; -webkit-user-select: none; pointer-events: auto; z-index: 150; display: inline-block;
     }
     .btn::before {
         content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
@@ -125,7 +125,7 @@
     .btn:active { transform: scale(0.95); }
 
     /* HUD */
-    #ui-hud { justify-content: space-between; padding: 20px; box-sizing: border-box; align-items: stretch; pointer-events: none; background: transparent !important; backdrop-filter: none !important; }
+    #ui-hud { justify-content: space-between; padding: 20px; box-sizing: border-box; align-items: stretch; pointer-events: auto; background: transparent !important; backdrop-filter: none !important; }
     .top-bar { width: 100%; display: flex; justify-content: space-between; align-items: flex-start; }
     
     .stat-box { 
@@ -252,11 +252,13 @@
     <div id="joy-r" class="joy-base"></div><div id="st-r" class="stick"></div>
 </div>
 
-<div id="s-menu" class="screen interactive menu-anim">
-    <button class="btn" style="position:absolute; top:30px; left:30px; border-color:var(--gold); color:var(--gold);" onclick="Menus.open('achievements')">ACHIEVEMENTS</button>
-    <button class="btn" style="position:absolute; top:30px; left:200px; border-color:var(--pink); color:var(--pink);" onclick="Menus.open('leaderboard')">LEADERBOARD</button>
-    <button class="btn" style="position:absolute; top:30px; right:30px; border-color:#fff; color:#fff;" onclick="toggleFullScreen()">FULLSCREEN</button>
-    <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%);">
+<div id="s-menu" class="screen interactive menu-anim" style="flex-wrap: wrap;">
+    <div style="position: absolute; top: 20px; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 30px; width: calc(100% - 60px); pointer-events: auto; z-index: 150;">
+        <button class="btn" style="border-color:var(--gold); color:var(--gold); margin: 0;" onclick="Menus.open('achievements')">ACHIEVEMENTS</button>
+        <button class="btn" style="border-color:var(--pink); color:var(--pink); margin: 0;" onclick="Menus.open('leaderboard')">LEADERBOARD</button>
+        <button class="btn" style="border-color:#fff; color:#fff; margin: 0;" onclick="toggleFullScreen()">FULLSCREEN</button>
+    </div>
+    <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%); margin-top: 80px;">
         <h1 class="glitch-text">CYBER PRISM</h1>
         <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V10.3 // ONLINE</h3>
         <div style="display:flex; flex-direction:column; align-items:center;">
@@ -270,22 +272,22 @@
 </div>
 
 <div id="s-pause" class="screen hidden interactive menu-anim">
-    <div class="cyber-panel" style="text-align:center; width:300px;">
+    <div class="cyber-panel" style="text-align:center; width:300px; pointer-events: auto;">
         <h2 style="margin-top:0;">SYSTEM PAUSED</h2>
         <div style="color:#aaa; font-size:12px; margin-bottom:10px;">ACTIVE SYNERGIES: <span id="pause-syn" style="color:var(--gold)">NONE</span></div>
-        <button class="btn" style="width:100%" onclick="Game.togglePause()">RESUME MISSION</button>
-        <button class="btn" style="width:100%; border-color:#0f0; color:#0f0;" onclick="Game.buyRepair()">EMERGENCY REPAIR (500 BITS)</button>
-        <button class="btn" style="width:100%; border-color:var(--red); color:var(--red);" onclick="Game.abort()">ABORT MISSION</button>
+        <button class="btn" style="width:100%; pointer-events: auto;" onclick="Game.togglePause()">RESUME MISSION</button>
+        <button class="btn" style="width:100%; border-color:#0f0; color:#0f0; pointer-events: auto;" onclick="Game.buyRepair()">EMERGENCY REPAIR (500 BITS)</button>
+        <button class="btn" style="width:100%; border-color:var(--red); color:var(--red); pointer-events: auto;" onclick="Game.abort()">ABORT MISSION</button>
     </div>
 </div>
 <div id="s-over" class="screen hidden interactive menu-anim">
-    <div class="cyber-panel" style="text-align:center; border-color:var(--red); box-shadow:0 0 40px rgba(255,0,0,0.2);">
+    <div class="cyber-panel" style="text-align:center; border-color:var(--red); box-shadow:0 0 40px rgba(255,0,0,0.2); pointer-events: auto;">
         <h1 class="glitch-text" style="color:#f00; text-shadow:2px 2px 0px #800;">CRITICAL FAILURE</h1>
         <div style="margin:20px 0; font-size:18px;">
             <p>XP GAINED: <span id="go-xp" style="color:var(--pink)">0</span></p>
             <p>BITS COLLECTED: <span id="go-bits" style="color:var(--cyan)">0</span></p>
         </div>
-        <button class="btn" onclick="Game.abort()">RETURN TO BASE</button>
+        <button class="btn" style="pointer-events: auto;" onclick="Game.abort()">RETURN TO BASE</button>
     </div>
 </div>
 <div id="s-list" class="screen hidden interactive menu-anim">
@@ -293,33 +295,33 @@
         <h1 id="list-title" class="glitch-text" style="font-size:36px; margin:0;">HANGAR</h1>
         <div style="font-size:20px; background:rgba(0,0,0,0.7); padding:5px 15px; border:1px solid var(--cyan);">BITS: <span id="ui-bits" style="color:var(--cyan)">0</span></div>
     </div>
-    <div class="cyber-panel list-con">
+    <div class="cyber-panel list-con" style="pointer-events: auto;">
         <div class="col">
             <div id="list-tabs" style="display:flex; margin-bottom:15px;">
-                <button id="tab-chassis" class="btn" style="margin:0 10px 0 0; font-size:12px;" onclick="Menus.setShopTab('CHASSIS')">CHASSIS</button>
-                <button id="tab-modules" class="btn" style="margin:0; font-size:12px;" onclick="Menus.setShopTab('MODULES')">MODULES</button>
+                <button id="tab-chassis" class="btn" style="margin:0 10px 0 0; font-size:12px; pointer-events: auto;" onclick="Menus.setShopTab('CHASSIS')">CHASSIS</button>
+                <button id="tab-modules" class="btn" style="margin:0; font-size:12px; pointer-events: auto;" onclick="Menus.setShopTab('MODULES')">MODULES</button>
             </div>
             <div id="list-items"></div>
         </div>
         <div id="list-detail" class="col-r"></div>
     </div>
-    <button class="btn" style="margin-top:20px; z-index:999;" onclick="Menus.home()">BACK</button>
+    <button class="btn" style="margin-top:20px; z-index:999; pointer-events: auto;" onclick="Menus.home()">BACK</button>
 </div>
 <div id="s-ach" class="screen hidden interactive menu-anim">
     <div style="width:85%; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
         <h2 style="color:var(--gold); border-color:var(--gold); margin:0;">ACHIEVEMENTS</h2>
         <div style="color:#888;">UNLOCKED: <span id="ach-count" style="color:#fff">0/0</span></div>
     </div>
-    <div class="cyber-panel" style="width:85%; height:60%; overflow-y:auto; border-color:var(--gold);">
+    <div class="cyber-panel" style="width:85%; height:60%; overflow-y:auto; border-color:var(--gold); pointer-events: auto;">
         <div id="ach-list" class="ach-grid"></div>
     </div>
-    <button class="btn" style="margin-top:20px; border-color:var(--gold); color:var(--gold);" onclick="Menus.home()">BACK</button>
+    <button class="btn" style="margin-top:20px; border-color:var(--gold); color:var(--gold); pointer-events: auto;" onclick="Menus.home()">BACK</button>
 </div>
 <div id="s-up" class="screen hidden interactive menu-anim">
-    <div class="cyber-panel" style="align-items:center; padding:30px;">
+    <div class="cyber-panel" style="align-items:center; padding:30px; pointer-events: auto;">
         <h2>SYSTEM UPGRADE</h2>
         <div id="card-con"></div>
-        <button class="btn" id="btn-reroll" style="width:200px; margin-top:20px;" onclick="Game.rerollAugments()">REROLL (50 BITS)</button>
+        <button class="btn" id="btn-reroll" style="width:200px; margin-top:20px; pointer-events: auto;" onclick="Game.rerollAugments()">REROLL (50 BITS)</button>
     </div>
 </div>
 
