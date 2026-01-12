@@ -5,6 +5,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
 <title>CYBER PRISM - V10.3 FULLSCREEN</title>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
@@ -425,10 +426,10 @@ const SPEED_MULT = 1.15;
 
 /* GRAPHICS & INPUT */
 const C = document.getElementById('c'); const ctx = C.getContext('2d', {alpha: false});
-let W, H; const Resize = () => { W=C.width=window.innerWidth; H=C.height=window.innerHeight; };
+let W, H, DPR, isMobile; const Resize = () => { DPR = window.devicePixelRatio || 1; W = window.innerWidth; H = window.innerHeight; C.width = W * DPR; C.height = H * DPR; C.style.width = W + 'px'; C.style.height = H + 'px'; ctx.scale(DPR, DPR); isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768; InitStars(); };
 window.addEventListener('resize', Resize); Resize();
 const dc = document.getElementById('dust-con');
-for(let i=0; i<30; i++) {
+for(let i=0; i<(isMobile ? 15 : 30); i++) {
     let d = document.createElement('div'); d.className='dust'; d.style.left = Math.random()*100+'%'; d.style.top = Math.random()*100+'%';
     d.style.width = d.style.height = (Math.random()*4+1)+'px'; d.style.animationDuration = (10+Math.random()*20)+'s'; d.style.animationDelay = -Math.random()*20+'s'; dc.appendChild(d);
 }
