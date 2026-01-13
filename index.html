@@ -107,23 +107,188 @@
     }
     @keyframes scanPanel { 0% { top: -50%; } 100% { top: 150%; } }
 
-    /* BUTTONS */
-    .btn { 
-        position: relative; background: rgba(0, 20, 30, 0.6); border: 1px solid var(--cyan); color: var(--cyan); 
-        padding: 12px 30px; font-family: 'Orbitron'; font-size: 16px; margin: 8px; 
-        text-shadow: 0 0 5px var(--cyan); overflow: hidden; transition: 0.3s; cursor: pointer;
+    /* BUTTONS - FULLY ACCESSIBLE */
+    .btn, [role="button"] {
+        position: relative;
+        background: rgba(0, 20, 30, 0.6);
+        border: 2px solid var(--cyan);
+        color: var(--cyan);
+        padding: 12px 30px;
+        font-family: 'Orbitron';
+        font-size: 16px;
+        font-weight: bold;
+        margin: 8px;
+        text-shadow: 0 0 5px var(--cyan);
+        overflow: hidden;
+        transition: all 0.2s ease;
+        cursor: pointer;
         clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-        user-select: none; -webkit-user-select: none; pointer-events: auto; z-index: 150; display: inline-block;
-        touch-action: manipulation; -webkit-touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+        user-select: none;
+        -webkit-user-select: none;
+        pointer-events: auto;
+        z-index: 150;
+        display: inline-block;
+        touch-action: manipulation;
+        -webkit-touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        /* Remove default button styles */
+        appearance: none;
+        -webkit-appearance: none;
+        /* Ensure minimum touch target size (48x48px recommended) */
+        min-height: 48px;
+        min-width: 48px;
+        /* Focus visible for keyboard users */
+        outline: none;
     }
+    
+    /* Shimmer effect */
     .btn::before {
-        content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
         background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-        opacity: 0.2; transition: 0.4s; transform: skewX(-20deg);
+        opacity: 0.2;
+        transition: 0.4s ease;
+        transform: skewX(-20deg);
+        pointer-events: none;
     }
-    .btn:hover { background: rgba(0, 243, 255, 0.15); color: #fff; box-shadow: 0 0 15px var(--cyan); transform: scale(1.05); }
-    .btn:hover::before { left: 100%; }
-    .btn:active { transform: scale(0.95); }
+    
+    /* Hover state - visible on mouse/pointer */
+    .btn:hover:not(:disabled),
+    [role="button"]:hover:not([aria-disabled="true"]) {
+        background: rgba(0, 243, 255, 0.15);
+        color: #fff;
+        box-shadow: 0 0 15px var(--cyan), inset 0 0 10px rgba(0, 243, 255, 0.1);
+        transform: scale(1.05);
+    }
+    
+    .btn:hover:not(:disabled)::before,
+    [role="button"]:hover:not([aria-disabled="true"])::before {
+        left: 100%;
+    }
+    
+    /* Active/Pressed state */
+    .btn:active:not(:disabled),
+    [role="button"]:active:not([aria-disabled="true"]),
+    .btn.active,
+    [role="button"][aria-pressed="true"] {
+        transform: scale(0.95);
+        box-shadow: 0 0 25px var(--cyan), inset 0 0 15px rgba(0, 243, 255, 0.2);
+        background: rgba(0, 243, 255, 0.2);
+    }
+    
+    /* Focus state for keyboard navigation */
+    .btn:focus-visible,
+    [role="button"]:focus-visible {
+        outline: 3px solid var(--cyan);
+        outline-offset: 2px;
+        box-shadow: 0 0 20px var(--cyan), inset 0 0 10px rgba(0, 243, 255, 0.15);
+    }
+    
+    /* Touch active state */
+    .btn:focus:not(:focus-visible),
+    [role="button"]:focus:not(:focus-visible) {
+        outline: none;
+    }
+    
+    /* Mobile active feedback */
+    @media (hover: none) and (pointer: coarse) {
+        .btn:active:not(:disabled),
+        [role="button"]:active:not([aria-disabled="true"]) {
+            background: rgba(0, 243, 255, 0.25);
+            transform: scale(0.98);
+        }
+    }
+    
+    /* Disabled state */
+    .btn:disabled,
+    [role="button"][aria-disabled="true"] {
+        opacity: 0.5;
+        cursor: not-allowed;
+        color: #666;
+        border-color: #333;
+        box-shadow: none;
+    }
+    
+    /* Dark mode enhanced */
+    @media (prefers-color-scheme: dark) {
+        .btn, [role="button"] {
+            border-color: var(--cyan);
+            background: rgba(0, 20, 30, 0.7);
+        }
+    }
+    
+    /* Mobile-specific enhancements */
+    @media (max-width: 768px) {
+        .btn, [role="button"] {
+            padding: 14px 32px;
+            font-size: 15px;
+            min-height: 52px;
+        }
+        
+        /* Larger buttons on touch devices */
+        #s-menu .btn {
+            width: 260px;
+            padding: 16px 40px;
+            font-size: 16px;
+            margin: 12px auto;
+        }
+        
+        .row {
+            padding: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .cyber-panel {
+            max-height: 90vh;
+        }
+    }
+    
+    /* Reduce motion for users who prefer it */
+    @media (prefers-reduced-motion: reduce) {
+        .btn, [role="button"], #btn-pause, #btn-ult {
+            animation: none;
+            transition: background-color 0.1s;
+        }
+        
+        .btn::before, [role="button"]::before {
+            animation: none;
+        }
+    }
+    
+    /* High contrast mode support */
+    @media (prefers-contrast: more) {
+        .btn, [role="button"] {
+            border-width: 3px;
+            font-weight: 900;
+        }
+        
+        .btn:focus-visible, [role="button"]:focus-visible {
+            outline-width: 4px;
+        }
+    }
+    
+    /* Touch device specific styles */
+    @media (hover: none) and (pointer: coarse) {
+        .btn, [role="button"], #btn-pause, #btn-ult {
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        
+        .btn:active:not(:disabled),
+        [role="button"]:active:not([aria-disabled="true"]) {
+            transform: scale(0.97);
+        }
+    }
+    
+    /* Pointer device (mouse) specific styles */
+    @media (hover: hover) and (pointer: fine) {
+        .btn, [role="button"] {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    }
 
     /* HUD */
     #ui-hud { justify-content: space-between; padding: 20px; box-sizing: border-box; align-items: stretch; pointer-events: auto; background: transparent !important; backdrop-filter: none !important; }
@@ -138,15 +303,69 @@
     .stat-row span { margin-left: 10px; font-weight: bold; font-size: 16px; text-shadow: 0 0 5px currentColor; }
 
     #btn-pause {
-        position: absolute; top: 20px; right: 20px; z-index: 200;
-        width: 40px; height: 40px; background: rgba(0,0,0,0.5); border: 1px solid var(--cyan);
-        color: var(--cyan); font-family: 'Orbitron'; font-weight: bold;
-        display: flex; align-items: center; justify-content: center;
-        transform: skewX(-10deg); transition: 0.2s; box-shadow: 0 0 10px rgba(0,243,255,0.2);
-        animation: pulseBorder 2s infinite; pointer-events: auto; cursor: pointer;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 200;
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        min-height: 50px;
+        background: rgba(0, 0, 0, 0.6);
+        border: 2px solid var(--cyan);
+        color: var(--cyan);
+        font-family: 'Orbitron';
+        font-weight: bold;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: skewX(-10deg);
+        transition: all 0.2s ease;
+        box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        animation: pulseBorder 2s infinite;
+        pointer-events: auto;
+        cursor: pointer;
+        touch-action: manipulation;
+        -webkit-touch-action: manipulation;
+        border-radius: 4px;
+        /* Better touch target size */
     }
-    #btn-pause:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
-    @keyframes pulseBorder { 0% { box-shadow: 0 0 5px rgba(0,243,255,0.2); } 50% { box-shadow: 0 0 15px rgba(0,243,255,0.6); } 100% { box-shadow: 0 0 5px rgba(0,243,255,0.2); } }
+    
+    #btn-pause:hover:not(:disabled) {
+        background: rgba(0, 243, 255, 0.15);
+        color: #fff;
+        box-shadow: 0 0 20px var(--cyan);
+        transform: skewX(-10deg) scale(1.05);
+    }
+    
+    #btn-pause:active:not(:disabled) {
+        transform: skewX(-10deg) scale(0.95);
+    }
+    
+    #btn-pause:focus-visible {
+        outline: 3px solid var(--cyan);
+        outline-offset: 2px;
+    }
+    
+    @keyframes pulseBorder {
+        0% { box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); }
+        50% { box-shadow: 0 0 15px rgba(0, 243, 255, 0.6); }
+        100% { box-shadow: 0 0 5px rgba(0, 243, 255, 0.2); }
+    }
+    
+    /* Mobile pause button */
+    @media (max-width: 768px) {
+        #btn-pause {
+            width: 56px;
+            height: 56px;
+            min-width: 56px;
+            min-height: 56px;
+            font-size: 24px;
+            top: 15px;
+            right: 15px;
+        }
+    }
 
     /* BARS & NOTIFICATIONS */
     .bar-con { 
@@ -172,9 +391,75 @@
     .stick { position: absolute; width: 50px; height: 50px; background: rgba(0, 243, 255, 0.3); border: 2px solid var(--cyan); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; display: none; box-shadow: 0 0 15px var(--cyan); }
     .joy-base { position: absolute; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; display: none; border: 1px solid rgba(255,255,255,0.2); }
 
-    #btn-ult { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%) skewX(-15deg); width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; border: 2px solid #333; color: #333; background: rgba(0,0,0,0.5); transition: 0.3s; z-index: 100; pointer-events: auto; cursor: pointer; }
-    #btn-ult.ready { border-color: var(--pink); color: var(--pink); box-shadow: 0 0 25px var(--pink), inset 0 0 10px var(--pink); background: rgba(255, 0, 255, 0.1); animation: pulseUlt 1s infinite; }
-    @keyframes pulseUlt { 0% { transform: translateX(-50%) skewX(-15deg) scale(1); } 50% { transform: translateX(-50%) skewX(-15deg) scale(1.05); } 100% { transform: translateX(-50%) skewX(-15deg) scale(1); } }
+    #btn-ult {
+        position: absolute;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%) skewX(-15deg);
+        width: 90px;
+        height: 90px;
+        min-width: 90px;
+        min-height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: bold;
+        border: 2px solid #333;
+        color: #333;
+        background: rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+        z-index: 100;
+        pointer-events: auto;
+        cursor: not-allowed;
+        touch-action: manipulation;
+        -webkit-touch-action: manipulation;
+        border-radius: 4px;
+    }
+    
+    #btn-ult:hover {
+        transform: translateX(-50%) skewX(-15deg) scale(1.05);
+    }
+    
+    #btn-ult:active {
+        transform: translateX(-50%) skewX(-15deg) scale(0.95);
+    }
+    
+    #btn-ult.ready {
+        border-color: var(--pink);
+        color: var(--pink);
+        box-shadow: 0 0 25px var(--pink), inset 0 0 10px var(--pink);
+        background: rgba(255, 0, 255, 0.1);
+        animation: pulseUlt 1s infinite;
+        cursor: pointer;
+    }
+    
+    #btn-ult.ready:hover {
+        transform: translateX(-50%) skewX(-15deg) scale(1.08);
+    }
+    
+    #btn-ult:focus-visible {
+        outline: 3px solid var(--cyan);
+        outline-offset: 2px;
+    }
+    
+    @keyframes pulseUlt {
+        0% { transform: translateX(-50%) skewX(-15deg) scale(1); }
+        50% { transform: translateX(-50%) skewX(-15deg) scale(1.05); }
+        100% { transform: translateX(-50%) skewX(-15deg) scale(1); }
+    }
+    
+    /* Mobile ULT button */
+    @media (max-width: 768px) {
+        #btn-ult {
+            width: 70px;
+            height: 70px;
+            min-width: 70px;
+            min-height: 70px;
+            font-size: 18px;
+            bottom: 60px;
+        }
+    }
 
     /* TUTORIAL MESSAGE */
     #tut-msg {
@@ -371,160 +656,253 @@ window.toggleFS = () => {
     toggleFullScreen(); 
 };
 
-// Add touch support to buttons - ensure they work on mobile
-function setupButtonHandlers() {
-    console.log('🎮 Setting up button handlers...');
-    let buttonCount = 0;
+/**
+ * Modern, accessible button system supporting:
+ * - Mouse clicks
+ * - Touch/mobile devices
+ * - Keyboard navigation (Tab, Enter, Space)
+ * - Focus management
+ * - ARIA attributes
+ */
+
+// Focus management for keyboard users
+class KeyboardNavigationManager {
+    constructor() {
+        this.focusableElements = [];
+        this.currentFocusIndex = 0;
+        this.isKeyboardActive = false;
+        this.init();
+    }
     
-    // Setup all buttons with click handlers
-    document.querySelectorAll('button').forEach(btn => {
-        if (!btn.dataset.clickHandlerSet) {
-            buttonCount++;
-            // Add regular click listener to ensure it works
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const onclickStr = this.getAttribute('onclick');
-                console.log('Button clicked:', this.innerText, 'onclick:', onclickStr);
-                if (onclickStr) {
-                    try {
-                        new Function(onclickStr).call(this);
-                    } catch (err) {
-                        console.error('Button click error:', err);
-                    }
-                }
-            });
-            
-            btn.dataset.clickHandlerSet = 'true';
+    init() {
+        document.addEventListener('keydown', (e) => this.handleKeyDown(e));
+        document.addEventListener('keyup', (e) => this.handleKeyUp(e));
+    }
+    
+    handleKeyDown(e) {
+        // Detect if user is using keyboard
+        if (e.key.length === 1 || ['Tab', 'Enter', 'Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+            this.isKeyboardActive = true;
         }
         
-        if (!btn.dataset.touchHandlersSet) {
-            // Prevent double-tap zoom
-            btn.style.touchAction = 'manipulation';
+        // Tab key for focus cycling
+        if (e.key === 'Tab') {
+            this.updateFocusableElements();
+            if (e.shiftKey) {
+                this.currentFocusIndex = Math.max(0, this.currentFocusIndex - 1);
+            } else {
+                this.currentFocusIndex = Math.min(this.focusableElements.length - 1, this.currentFocusIndex + 1);
+            }
             
-            // Touch events
-            btn.addEventListener('touchstart', function(e) {
+            if (this.focusableElements.length > 0) {
                 e.preventDefault();
-                this.style.opacity = '0.7';
-                this.style.backgroundColor = 'rgba(0, 243, 255, 0.25)';
-            }, { passive: false });
-            
-            btn.addEventListener('touchend', function(e) {
-                e.preventDefault();
-                this.style.opacity = '1';
-                this.style.backgroundColor = '';
-                // Trigger the click
-                const onclickStr = this.getAttribute('onclick');
-                console.log('Touch ended on button:', this.innerText);
-                if (onclickStr) {
-                    try {
-                        new Function(onclickStr).call(this);
-                    } catch (err) {
-                        console.error('Button touch error:', err);
-                    }
-                }
-            }, { passive: false });
-            
-            btn.addEventListener('touchcancel', function(e) {
-                e.preventDefault();
-                this.style.opacity = '1';
-                this.style.backgroundColor = '';
-            }, { passive: false });
-            
-            btn.dataset.touchHandlersSet = 'true';
+                this.focusableElements[this.currentFocusIndex]?.focus();
+            }
         }
-    });
+    }
     
-    console.log(`✓ Set up ${buttonCount} buttons`);
+    handleKeyUp(e) {
+        // Reset keyboard active after a delay
+        setTimeout(() => {
+            this.isKeyboardActive = false;
+        }, 100);
+    }
     
-    // Setup clickable divs (like ULT button and zones)
-    document.querySelectorAll('[onclick]').forEach(el => {
-        if (!el.dataset.clickHandlerSet && el.tagName !== 'BUTTON') {
-            // Add regular click listener
-            el.addEventListener('click', function(e) {
+    updateFocusableElements() {
+        this.focusableElements = Array.from(
+            document.querySelectorAll('button, [role="button"], [tabindex="0"]')
+        ).filter(el => {
+            const style = window.getComputedStyle(el);
+            const isVisible = style.display !== 'none' && style.visibility !== 'hidden' && el.offsetParent !== null;
+            const isNotDisabled = !el.hasAttribute('disabled') && el.getAttribute('aria-disabled') !== 'true';
+            const isInVisibleScreen = !el.closest('.screen.hidden');
+            return isVisible && isNotDisabled && isInVisibleScreen;
+        });
+        
+        // Update current index based on focused element
+        const focused = document.activeElement;
+        const newIndex = this.focusableElements.indexOf(focused);
+        if (newIndex !== -1) {
+            this.currentFocusIndex = newIndex;
+        }
+    }
+}
+
+// Initialize keyboard navigation
+const keyboardNav = new KeyboardNavigationManager();
+
+function setupButtonHandlers() {
+    console.log('🎮 Initializing accessible button system...');
+    let handledElements = new Set();
+    
+    // Get all interactive elements (buttons, divs with onclick, clickable rows)
+    const getInteractiveElements = () => {
+        const elements = new Set();
+        
+        // Native buttons
+        document.querySelectorAll('button').forEach(btn => elements.add(btn));
+        
+        // Divs with onclick handlers (like #btn-pause, #btn-ult)
+        document.querySelectorAll('[onclick]:not(button)').forEach(el => {
+            // Skip zones and joysticks - they have their own input handling
+            if (!el.classList.contains('zone') && !el.id?.includes('joy') && !el.id?.includes('st-')) {
+                elements.add(el);
+            }
+        });
+        
+        // Menu rows
+        document.querySelectorAll('.row').forEach(row => elements.add(row));
+        
+        return elements;
+    };
+    
+    const setupElement = (el) => {
+        if (handledElements.has(el)) return;
+        handledElements.add(el);
+        
+        // Ensure keyboard accessibility
+        if (el.tagName !== 'BUTTON' && !el.hasAttribute('role')) {
+            el.setAttribute('role', 'button');
+            el.setAttribute('tabindex', '0');
+        }
+        
+        // Add keyboard support (Enter and Space)
+        const handleKeyboard = (e) => {
+            if ((e.key === 'Enter' || e.key === ' ') && !el.hasAttribute('disabled') && !el.getAttribute('aria-disabled')) {
                 e.preventDefault();
                 e.stopPropagation();
-                const onclickStr = this.getAttribute('onclick');
-                if (onclickStr) {
-                    try {
-                        new Function(onclickStr).call(this);
-                    } catch (err) {
-                        console.error('Element click error:', err);
-                    }
-                }
-            });
+                triggerButton(el);
+            }
+        };
+        
+        if (!el.dataset.keyboardHandlerSet) {
+            el.addEventListener('keydown', handleKeyboard, true);
+            el.dataset.keyboardHandlerSet = 'true';
+        }
+        
+        // Click handler (mouse and programmatic clicks)
+        const handleClick = (e) => {
+            if (el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true') return;
+            e.preventDefault();
+            e.stopPropagation();
+            triggerButton(el);
+        };
+        
+        if (!el.dataset.clickHandlerSet) {
+            el.addEventListener('click', handleClick, true);
             el.dataset.clickHandlerSet = 'true';
         }
         
-        if (!el.dataset.touchHandlersSet && el.tagName !== 'BUTTON') {
-            el.style.touchAction = 'manipulation';
+        // Touch handlers with visual feedback
+        if (!el.dataset.touchHandlerSet) {
+            el.addEventListener('touchstart', (e) => {
+                if (el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true') return;
+                el.classList.add('btn-active');
+                // Visual feedback
+                el.style.opacity = '0.85';
+            }, { passive: true });
             
-            el.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                this.style.opacity = '0.7';
-            }, { passive: false });
-            
-            el.addEventListener('touchend', function(e) {
-                e.preventDefault();
-                this.style.opacity = '1';
-                // Get the onclick handler string and execute it
-                const onclickStr = this.getAttribute('onclick');
-                if (onclickStr) {
-                    try {
-                        new Function(onclickStr).call(this);
-                    } catch (err) {
-                        console.error('Element touch error:', err);
-                    }
+            el.addEventListener('touchend', (e) => {
+                el.classList.remove('btn-active');
+                el.style.opacity = '1';
+                // Trigger on touch end (not start) for better UX
+                if (!el.hasAttribute('disabled') && el.getAttribute('aria-disabled') !== 'true') {
+                    triggerButton(el);
                 }
-            }, { passive: false });
+            }, { passive: true });
             
-            el.addEventListener('touchcancel', function(e) {
-                e.preventDefault();
-                this.style.opacity = '1';
-            }, { passive: false });
+            el.addEventListener('touchcancel', (e) => {
+                el.classList.remove('btn-active');
+                el.style.opacity = '1';
+            }, { passive: true });
             
-            el.dataset.touchHandlersSet = 'true';
+            el.dataset.touchHandlerSet = 'true';
         }
+        
+        // Pointer events for consistent feedback across all input types
+        if (!el.dataset.pointerHandlerSet) {
+            el.addEventListener('pointerdown', (e) => {
+                if (el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true') return;
+                el.classList.add('btn-active');
+            }, { passive: true });
+            
+            el.addEventListener('pointerup', (e) => {
+                el.classList.remove('btn-active');
+            }, { passive: true });
+            
+            el.addEventListener('pointercancel', (e) => {
+                el.classList.remove('btn-active');
+            }, { passive: true });
+            
+            el.addEventListener('pointerleave', (e) => {
+                el.classList.remove('btn-active');
+            }, { passive: true });
+            
+            el.dataset.pointerHandlerSet = 'true';
+        }
+    };
+    
+    // Setup all current elements
+    getInteractiveElements().forEach(setupElement);
+    
+    // Watch for dynamically added elements
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length) {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        if (node.tagName === 'BUTTON' || node.hasAttribute('onclick') || node.classList?.contains('row')) {
+                            setupElement(node);
+                        }
+                        // Check children
+                        node.querySelectorAll?.('button, [onclick], .row').forEach(setupElement);
+                    }
+                });
+            }
+        });
     });
     
-    // Setup row elements (menu items)
-    document.querySelectorAll('.row').forEach(el => {
-        if (!el.dataset.touchHandlersSet) {
-            el.style.touchAction = 'manipulation';
-            
-            el.addEventListener('touchstart', function(e) {
-                this.style.opacity = '0.7';
-            }, { passive: true });
-            
-            el.addEventListener('touchend', function(e) {
-                this.style.opacity = '1';
-                if (this.onclick) {
-                    this.onclick.call(this, e);
-                }
-            }, { passive: true });
-            
-            el.addEventListener('touchcancel', function(e) {
-                this.style.opacity = '1';
-            }, { passive: true });
-            
-            el.dataset.touchHandlersSet = 'true';
-        }
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: false
     });
+    
+    console.log(`✓ Button system initialized with MutationObserver & keyboard navigation`);
 }
 
-// Initialize button handlers when DOM is ready
+// Unified button trigger function
+function triggerButton(el) {
+    console.log('Button triggered:', el.innerText?.trim() || el.id, 'via', event?.type || 'programmatic');
+    
+    const onclickStr = el.getAttribute('onclick');
+    if (onclickStr) {
+        try {
+            // Execute onclick handler safely
+            new Function(onclickStr).call(el);
+        } catch (err) {
+            console.error('Button execution error:', err, 'Handler:', onclickStr);
+        }
+    } else if (el.onclick && typeof el.onclick === 'function') {
+        try {
+            el.onclick.call(el);
+        } catch (err) {
+            console.error('Button function error:', err);
+        }
+    }
+}
+
+// Initialize when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', setupButtonHandlers);
 } else {
     setupButtonHandlers();
 }
 
-// Re-setup after menus open (new buttons created dynamically)
-setInterval(() => {
-    setupButtonHandlers();
-}, 500);
+// Re-setup periodically for dynamically added content (fallback)
+setInterval(() => setupButtonHandlers(), 1000);
 
-// Also setup on page visibility change
+// Setup on visibility change
 document.addEventListener('visibilitychange', setupButtonHandlers);
 
 /* DATA & CONFIG */
