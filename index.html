@@ -546,7 +546,7 @@
     </div>
     <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%); margin-top: 80px;">
         <h1 class="glitch-text">CYBER PRISM</h1>
-        <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V10.3 // ONLINE</h3>
+        <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V11.0 // BULLETPROOF BUTTONS</h3>
         <div style="display:flex; flex-direction:column; align-items:center;">
             <button class="btn" style="width:240px; font-weight:bold; border-color:#fff; font-size:18px;" onclick="window.startGame()">DEPLOY UNIT</button>
             <button class="btn" style="width:240px; border-color:#0f0; color:#0f0;" onclick="window.startTutorial()">TUTORIAL</button>
@@ -666,244 +666,136 @@ window.toggleFS = () => {
  */
 
 // Focus management for keyboard users
-class KeyboardNavigationManager {
-    constructor() {
-        this.focusableElements = [];
-        this.currentFocusIndex = 0;
-        this.isKeyboardActive = false;
-        this.init();
-    }
-    
-    init() {
-        document.addEventListener('keydown', (e) => this.handleKeyDown(e));
-        document.addEventListener('keyup', (e) => this.handleKeyUp(e));
-    }
-    
-    handleKeyDown(e) {
-        // Detect if user is using keyboard
-        if (e.key.length === 1 || ['Tab', 'Enter', 'Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-            this.isKeyboardActive = true;
-        }
-        
-        // Tab key for focus cycling
-        if (e.key === 'Tab') {
-            this.updateFocusableElements();
-            if (e.shiftKey) {
-                this.currentFocusIndex = Math.max(0, this.currentFocusIndex - 1);
-            } else {
-                this.currentFocusIndex = Math.min(this.focusableElements.length - 1, this.currentFocusIndex + 1);
-            }
-            
-            if (this.focusableElements.length > 0) {
-                e.preventDefault();
-                this.focusableElements[this.currentFocusIndex]?.focus();
-            }
-        }
-    }
-    
-    handleKeyUp(e) {
-        // Reset keyboard active after a delay
-        setTimeout(() => {
-            this.isKeyboardActive = false;
-        }, 100);
-    }
-    
-    updateFocusableElements() {
-        this.focusableElements = Array.from(
-            document.querySelectorAll('button, [role="button"], [tabindex="0"]')
-        ).filter(el => {
-            const style = window.getComputedStyle(el);
-            const isVisible = style.display !== 'none' && style.visibility !== 'hidden' && el.offsetParent !== null;
-            const isNotDisabled = !el.hasAttribute('disabled') && el.getAttribute('aria-disabled') !== 'true';
-            const isInVisibleScreen = !el.closest('.screen.hidden');
-            return isVisible && isNotDisabled && isInVisibleScreen;
-        });
-        
-        // Update current index based on focused element
-        const focused = document.activeElement;
-        const newIndex = this.focusableElements.indexOf(focused);
-        if (newIndex !== -1) {
-            this.currentFocusIndex = newIndex;
-        }
-    }
-}
+/**
+ * BULLETPROOF BUTTON SYSTEM
+ * Simple, reliable, works every time
+ */
 
-// Initialize keyboard navigation
-const keyboardNav = new KeyboardNavigationManager();
+// Direct global button handler - NO COMPLEX LOGIC
+window.buttonHandler = function(handler) {
+    console.log('🎮 BUTTON TRIGGERED:', handler);
+    try {
+        if (typeof handler === 'function') {
+            handler();
+        } else if (typeof handler === 'string') {
+            new Function(handler)();
+        }
+    } catch (err) {
+        console.error('❌ BUTTON ERROR:', err);
+    }
+};
 
-function setupButtonHandlers() {
-    console.log('🎮 Initializing accessible button system...');
-    let handledElements = new Set();
+// Ultra-simple button setup
+function setupAllButtons() {
+    console.log('🎮 SETTING UP BUTTONS - ATTEMPT #', (window.setupAttempt || 0) + 1);
+    window.setupAttempt = (window.setupAttempt || 0) + 1;
     
-    // Get all interactive elements (buttons, divs with onclick, clickable rows)
-    const getInteractiveElements = () => {
-        const elements = new Set();
-        
-        // Native buttons
-        document.querySelectorAll('button').forEach(btn => elements.add(btn));
-        
-        // Divs with onclick handlers (like #btn-pause, #btn-ult)
-        document.querySelectorAll('[onclick]:not(button)').forEach(el => {
-            // Skip zones and joysticks - they have their own input handling
-            if (!el.classList.contains('zone') && !el.id?.includes('joy') && !el.id?.includes('st-')) {
-                elements.add(el);
-            }
-        });
-        
-        // Menu rows
-        document.querySelectorAll('.row').forEach(row => elements.add(row));
-        
-        return elements;
-    };
+    // ALL buttons and clickables
+    const allClickables = [
+        ...document.querySelectorAll('button'),
+        ...document.querySelectorAll('[onclick]'),
+        ...document.querySelectorAll('.row')
+    ];
     
-    const setupElement = (el) => {
-        if (handledElements.has(el)) return;
-        handledElements.add(el);
+    console.log(`Found ${allClickables.length} clickable elements`);
+    
+    allClickables.forEach((el, idx) => {
+        if (el.dataset.buttonSetup) return; // Already setup
         
-        // Ensure keyboard accessibility
-        if (el.tagName !== 'BUTTON' && !el.hasAttribute('role')) {
-            el.setAttribute('role', 'button');
-            el.setAttribute('tabindex', '0');
-        }
+        const elName = el.id || el.innerText?.substring(0, 20) || `Element ${idx}`;
         
-        // Add keyboard support (Enter and Space)
-        const handleKeyboard = (e) => {
-            if ((e.key === 'Enter' || e.key === ' ') && !el.hasAttribute('disabled') && !el.getAttribute('aria-disabled')) {
-                e.preventDefault();
-                e.stopPropagation();
-                triggerButton(el);
-            }
-        };
-        
-        if (!el.dataset.keyboardHandlerSet) {
-            el.addEventListener('keydown', handleKeyboard, true);
-            el.dataset.keyboardHandlerSet = 'true';
-        }
-        
-        // Click handler (mouse and programmatic clicks)
-        const handleClick = (e) => {
-            if (el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true') return;
-            e.preventDefault();
-            e.stopPropagation();
-            triggerButton(el);
-        };
-        
-        if (!el.dataset.clickHandlerSet) {
-            el.addEventListener('click', handleClick, true);
-            el.dataset.clickHandlerSet = 'true';
-        }
-        
-        // Touch handlers with visual feedback
-        if (!el.dataset.touchHandlerSet) {
-            el.addEventListener('touchstart', (e) => {
-                if (el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true') return;
-                el.classList.add('btn-active');
-                // Visual feedback
-                el.style.opacity = '0.85';
-            }, { passive: true });
-            
-            el.addEventListener('touchend', (e) => {
-                el.classList.remove('btn-active');
-                el.style.opacity = '1';
-                // Trigger on touch end (not start) for better UX
-                if (!el.hasAttribute('disabled') && el.getAttribute('aria-disabled') !== 'true') {
-                    triggerButton(el);
+        // PRIMARY: Direct click listener
+        el.addEventListener('click', function(e) {
+            console.log('✓ CLICK on', elName);
+            const onclick = this.getAttribute('onclick');
+            if (onclick) {
+                console.log('  Executing:', onclick);
+                try {
+                    new Function(onclick).call(this);
+                } catch (err) {
+                    console.error('  ERROR:', err);
                 }
-            }, { passive: true });
-            
-            el.addEventListener('touchcancel', (e) => {
-                el.classList.remove('btn-active');
-                el.style.opacity = '1';
-            }, { passive: true });
-            
-            el.dataset.touchHandlerSet = 'true';
-        }
-        
-        // Pointer events for consistent feedback across all input types
-        if (!el.dataset.pointerHandlerSet) {
-            el.addEventListener('pointerdown', (e) => {
-                if (el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true') return;
-                el.classList.add('btn-active');
-            }, { passive: true });
-            
-            el.addEventListener('pointerup', (e) => {
-                el.classList.remove('btn-active');
-            }, { passive: true });
-            
-            el.addEventListener('pointercancel', (e) => {
-                el.classList.remove('btn-active');
-            }, { passive: true });
-            
-            el.addEventListener('pointerleave', (e) => {
-                el.classList.remove('btn-active');
-            }, { passive: true });
-            
-            el.dataset.pointerHandlerSet = 'true';
-        }
-    };
-    
-    // Setup all current elements
-    getInteractiveElements().forEach(setupElement);
-    
-    // Watch for dynamically added elements
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.addedNodes.length) {
-                mutation.addedNodes.forEach((node) => {
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        if (node.tagName === 'BUTTON' || node.hasAttribute('onclick') || node.classList?.contains('row')) {
-                            setupElement(node);
-                        }
-                        // Check children
-                        node.querySelectorAll?.('button, [onclick], .row').forEach(setupElement);
-                    }
-                });
+            } else if (this.onclick) {
+                console.log('  Calling onclick function');
+                this.onclick.call(this);
             }
-        });
+        }, false);
+        
+        // SECONDARY: Touch support
+        el.addEventListener('touchend', function(e) {
+            console.log('✓ TOUCH on', elName);
+            const onclick = this.getAttribute('onclick');
+            if (onclick) {
+                console.log('  Executing:', onclick);
+                try {
+                    new Function(onclick).call(this);
+                } catch (err) {
+                    console.error('  ERROR:', err);
+                }
+            } else if (this.onclick) {
+                console.log('  Calling onclick function');
+                this.onclick.call(this);
+            }
+        }, false);
+        
+        // TERTIARY: Keyboard support (Enter/Space)
+        el.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                console.log('✓ KEYBOARD on', elName);
+                e.preventDefault();
+                const onclick = this.getAttribute('onclick');
+                if (onclick) {
+                    console.log('  Executing:', onclick);
+                    try {
+                        new Function(onclick).call(this);
+                    } catch (err) {
+                        console.error('  ERROR:', err);
+                    }
+                } else if (this.onclick) {
+                    console.log('  Calling onclick function');
+                    this.onclick.call(this);
+                }
+            }
+        }, false);
+        
+        el.dataset.buttonSetup = 'true';
+        console.log(`  ✓ Setup complete for: ${elName}`);
     });
     
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: false
-    });
-    
-    console.log(`✓ Button system initialized with MutationObserver & keyboard navigation`);
+    console.log('✅ ALL BUTTONS SETUP COMPLETE\n');
 }
 
-// Unified button trigger function
-function triggerButton(el) {
-    console.log('Button triggered:', el.innerText?.trim() || el.id, 'via', event?.type || 'programmatic');
-    
-    const onclickStr = el.getAttribute('onclick');
-    if (onclickStr) {
-        try {
-            // Execute onclick handler safely
-            new Function(onclickStr).call(el);
-        } catch (err) {
-            console.error('Button execution error:', err, 'Handler:', onclickStr);
-        }
-    } else if (el.onclick && typeof el.onclick === 'function') {
-        try {
-            el.onclick.call(el);
-        } catch (err) {
-            console.error('Button function error:', err);
-        }
-    }
-}
-
-// Initialize when DOM is ready
+// Setup on page load
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupButtonHandlers);
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('📄 DOMContentLoaded fired');
+        setupAllButtons();
+    });
 } else {
-    setupButtonHandlers();
+    console.log('📄 DOM already ready');
+    setupAllButtons();
 }
 
-// Re-setup periodically for dynamically added content (fallback)
-setInterval(() => setupButtonHandlers(), 1000);
+// Setup again after short delay (catch late DOM)
+setTimeout(() => {
+    console.log('📄 Delayed setup (100ms)');
+    setupAllButtons();
+}, 100);
 
-// Setup on visibility change
-document.addEventListener('visibilitychange', setupButtonHandlers);
+// Continuous setup for dynamic content
+setInterval(() => {
+    const newButtons = document.querySelectorAll('button:not([data-button-setup]), [onclick]:not([data-button-setup]), .row:not([data-button-setup])');
+    if (newButtons.length > 0) {
+        console.log(`📄 Found ${newButtons.length} new buttons, setting up...`);
+        setupAllButtons();
+    }
+}, 500);
+
+// Setup on visibility change (tab focus)
+document.addEventListener('visibilitychange', () => {
+    console.log('📄 Tab visibility changed, refreshing setup');
+    setupAllButtons();
+});
 
 /* DATA & CONFIG */
 const ACHIEVEMENTS = [
@@ -1671,15 +1563,10 @@ Data.owned.forEach(c => { if(!Data.chassisXP[c]) Data.chassisXP[c] = {xp:0, lvl:
 Input.init(); InitStars();
 function Loop() { Game.frame++; Game.update(); if(Game.active) requestAnimationFrame(Loop); }
 
-// Initialize menu on page load
-window.addEventListener('DOMContentLoaded', () => { Menus.home(); setupButtonHandlers(); });
-// Also try showing menu immediately
+// Show menu when game loads
 setTimeout(() => { 
-    if(!Game.active) { 
-        document.getElementById('s-menu').classList.remove('hidden');
-        setupButtonHandlers();
-    } 
-}, 100);
+    Menus.home();
+}, 50);
 </script>
 </body>
 </html>
