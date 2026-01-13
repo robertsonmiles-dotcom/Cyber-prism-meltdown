@@ -1148,7 +1148,7 @@ const Game = {
         
         document.getElementById('tut-msg').style.display = 'none';
         this.startWave();
-        document.getElementById('ui-hud').classList.remove('hidden'); document.querySelectorAll('.screen:not(#ui-hud)').forEach(s=>s.classList.add('hidden')); Loop();
+        document.getElementById('ui-hud').classList.remove('hidden'); document.querySelectorAll('.screen:not(#ui-hud)').forEach(s=>s.classList.add('hidden')); setupAllButtons(); Loop();
     },
 
     startTutorial() {
@@ -1552,10 +1552,11 @@ const Menus = {
                 det.innerHTML = `<h2 style="color:${i.color||'var(--cyan)'}; margin:0; border:none;">${i.name}</h2><div style="width:180px; height:180px; border:1px solid #333; margin:15px 0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; position:relative;"><canvas id="prev-c" width="160" height="160"></canvas></div><p style="text-align:center; font-size:13px; color:#aaa; margin-bottom:20px;">${info}</p>${btnTxt ? `<button class="btn" onclick="window.handleShopAction('${mode}', '${i.k}', ${actCost}, '${i.type}')">${btnTxt}</button>` : ''}`;
                 let pc = document.getElementById('prev-c'); let pctx = pc.getContext('2d'); let ang = -1.57;
                 const anim = () => { pctx.clearRect(0,0,160,160); pctx.save(); pctx.translate(80,80); pctx.scale(2.5, 2.5); ang += 0.02; if(i.type==='CHASSIS') Draw.ship(pctx, 0, 0, ang, i.k, i.color, Data.equipped.mods); else Draw.ship(pctx, 0, 0, ang, Data.equipped.chassis, '#555', [i.k]); pctx.restore(); previewId = requestAnimationFrame(anim); }; anim();
+                setupAllButtons();
             }; lst.appendChild(row);
         });
-        setTimeout(setupButtonHandlers, 100);
-    }, home() { if(previewId) { cancelAnimationFrame(previewId); previewId=null; } document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden')); document.getElementById('s-menu').classList.remove('hidden'); setTimeout(setupButtonHandlers, 100); }
+        setupAllButtons();
+    }, home() { if(previewId) { cancelAnimationFrame(previewId); previewId=null; } document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden')); document.getElementById('s-menu').classList.remove('hidden'); setupAllButtons(); }
 };
 
 let s = localStorage.getItem(SAVE_KEY); if(s) { Data = {...Data, ...JSON.parse(s)}; if(!Data.achievements) Data.achievements = []; if(!Data.stats) Data.stats = { totalKills: 0, highestWave: 0, bossKilled: false }; }
