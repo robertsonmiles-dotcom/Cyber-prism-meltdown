@@ -21,7 +21,7 @@
         /* PREVENT SELECTION AND MENU POPUPS ON IOS */
         user-select: none; -webkit-user-select: none; 
         -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
-        touch-action: none; 
+        touch-action: manipulation; -webkit-touch-action: manipulation;
     }
     
     /* === CRT OVERLAY EFFECT === */
@@ -114,6 +114,7 @@
         text-shadow: 0 0 5px var(--cyan); overflow: hidden; transition: 0.3s; cursor: pointer;
         clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
         user-select: none; -webkit-user-select: none; pointer-events: auto; z-index: 150; display: inline-block;
+        touch-action: manipulation; -webkit-touch-action: manipulation; -webkit-tap-highlight-color: transparent;
     }
     .btn::before {
         content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
@@ -165,7 +166,7 @@
     .zone { 
         position: absolute; bottom: 40px; width: 140px; height: 140px; 
         border: 1px dashed rgba(255,255,255,0.2); border-radius: 50%; z-index: 50; 
-        pointer-events: auto !important; touch-action: none;
+        pointer-events: auto !important; touch-action: none; -webkit-touch-action: none;
     }
     #z-l { left: 40px; } #z-r { right: 40px; }
     .stick { position: absolute; width: 50px; height: 50px; background: rgba(0, 243, 255, 0.3); border: 2px solid var(--cyan); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; display: none; box-shadow: 0 0 15px var(--cyan); }
@@ -346,6 +347,104 @@ window.openLab = () => { if(Menus && Menus.open) Menus.open('lab'); };
 window.openAchievements = () => { if(Menus && Menus.open) Menus.open('achievements'); };
 window.openLeaderboard = () => { if(Menus && Menus.open) Menus.open('leaderboard'); };
 window.toggleFS = () => { toggleFullScreen(); };
+
+// Add touch support to buttons - ensure they work on mobile
+function setupButtonHandlers() {
+    // Setup all buttons with click handlers
+    document.querySelectorAll('button').forEach(btn => {
+        if (!btn.dataset.touchHandlersSet) {
+            // Prevent double-tap zoom
+            btn.style.touchAction = 'manipulation';
+            
+            // Touch events
+            btn.addEventListener('touchstart', function(e) {
+                this.style.opacity = '0.7';
+                this.style.backgroundColor = 'rgba(0, 243, 255, 0.25)';
+            }, { passive: true });
+            
+            btn.addEventListener('touchend', function(e) {
+                this.style.opacity = '1';
+                this.style.backgroundColor = '';
+                // Trigger the click
+                if (this.onclick) {
+                    this.onclick.call(this, e);
+                }
+            }, { passive: true });
+            
+            btn.addEventListener('touchcancel', function(e) {
+                this.style.opacity = '1';
+                this.style.backgroundColor = '';
+            }, { passive: true });
+            
+            btn.dataset.touchHandlersSet = 'true';
+        }
+    });
+    
+    // Setup clickable divs (like ULT button and zones)
+    document.querySelectorAll('[onclick]').forEach(el => {
+        if (!el.dataset.touchHandlersSet && el.tagName !== 'BUTTON') {
+            el.style.touchAction = 'manipulation';
+            
+            el.addEventListener('touchstart', function(e) {
+                this.style.opacity = '0.7';
+            }, { passive: true });
+            
+            el.addEventListener('touchend', function(e) {
+                this.style.opacity = '1';
+                // Get the onclick handler string and execute it
+                const onclickStr = this.getAttribute('onclick');
+                if (onclickStr) {
+                    new Function(onclickStr).call(this);
+                }
+            }, { passive: true });
+            
+            el.addEventListener('touchcancel', function(e) {
+                this.style.opacity = '1';
+            }, { passive: true });
+            
+            el.dataset.touchHandlersSet = 'true';
+        }
+    });
+    
+    // Setup row elements (menu items)
+    document.querySelectorAll('.row').forEach(el => {
+        if (!el.dataset.touchHandlersSet) {
+            el.style.touchAction = 'manipulation';
+            
+            el.addEventListener('touchstart', function(e) {
+                this.style.opacity = '0.7';
+            }, { passive: true });
+            
+            el.addEventListener('touchend', function(e) {
+                this.style.opacity = '1';
+                if (this.onclick) {
+                    this.onclick.call(this, e);
+                }
+            }, { passive: true });
+            
+            el.addEventListener('touchcancel', function(e) {
+                this.style.opacity = '1';
+            }, { passive: true });
+            
+            el.dataset.touchHandlersSet = 'true';
+        }
+    });
+}
+
+// Initialize button handlers when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupButtonHandlers);
+} else {
+    setupButtonHandlers();
+}
+
+// Re-setup after menus open (new buttons created dynamically)
+setInterval(() => {
+    setupButtonHandlers();
+}, 500);
+
+// Also setup on page visibility change
+document.addEventListener('visibilitychange', setupButtonHandlers);
 
 /* DATA & CONFIG */
 const ACHIEVEMENTS = [
@@ -1098,7 +1197,8 @@ const Menus = {
                 const anim = () => { pctx.clearRect(0,0,160,160); pctx.save(); pctx.translate(80,80); pctx.scale(2.5, 2.5); ang += 0.02; if(i.type==='CHASSIS') Draw.ship(pctx, 0, 0, ang, i.k, i.color, Data.equipped.mods); else Draw.ship(pctx, 0, 0, ang, Data.equipped.chassis, '#555', [i.k]); pctx.restore(); previewId = requestAnimationFrame(anim); }; anim();
             }; lst.appendChild(row);
         });
-    }, home() { if(previewId) { cancelAnimationFrame(previewId); previewId=null; } document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden')); document.getElementById('s-menu').classList.remove('hidden'); }
+        setTimeout(setupButtonHandlers, 100);
+    }, home() { if(previewId) { cancelAnimationFrame(previewId); previewId=null; } document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden')); document.getElementById('s-menu').classList.remove('hidden'); setTimeout(setupButtonHandlers, 100); }
 };
 
 let s = localStorage.getItem(SAVE_KEY); if(s) { Data = {...Data, ...JSON.parse(s)}; if(!Data.achievements) Data.achievements = []; if(!Data.stats) Data.stats = { totalKills: 0, highestWave: 0, bossKilled: false }; }
@@ -1107,11 +1207,12 @@ Input.init(); InitStars();
 function Loop() { Game.frame++; Game.update(); if(Game.active) requestAnimationFrame(Loop); }
 
 // Initialize menu on page load
-window.addEventListener('DOMContentLoaded', () => { Menus.home(); });
+window.addEventListener('DOMContentLoaded', () => { Menus.home(); setupButtonHandlers(); });
 // Also try showing menu immediately
 setTimeout(() => { 
     if(!Game.active) { 
-        document.getElementById('s-menu').classList.remove('hidden'); 
+        document.getElementById('s-menu').classList.remove('hidden');
+        setupButtonHandlers();
     } 
 }, 100);
 </script>
