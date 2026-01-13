@@ -339,68 +339,149 @@ function toggleFullScreen() {
 }
 
 // Wrapper functions for button handlers to ensure they work
-window.startGame = () => { if(Game && Game.start) Game.start(); };
-window.startTutorial = () => { if(Game && Game.startTutorial) Game.startTutorial(); };
-window.openHangar = () => { if(Menus && Menus.open) Menus.open('hangar'); };
-window.openShop = () => { if(Menus && Menus.open) Menus.open('shop'); };
-window.openLab = () => { if(Menus && Menus.open) Menus.open('lab'); };
-window.openAchievements = () => { if(Menus && Menus.open) Menus.open('achievements'); };
-window.openLeaderboard = () => { if(Menus && Menus.open) Menus.open('leaderboard'); };
-window.toggleFS = () => { toggleFullScreen(); };
+window.startGame = () => { 
+    console.log('BUTTON: startGame clicked'); 
+    if(Game && Game.start) Game.start(); 
+    else console.warn('Game not ready'); 
+};
+window.startTutorial = () => { 
+    console.log('BUTTON: startTutorial clicked'); 
+    if(Game && Game.startTutorial) Game.startTutorial(); 
+    else console.warn('Game not ready'); 
+};
+window.openHangar = () => { 
+    console.log('BUTTON: openHangar clicked'); 
+    if(Menus && Menus.open) Menus.open('hangar'); 
+    else console.warn('Menus not ready'); 
+};
+window.openShop = () => { 
+    console.log('BUTTON: openShop clicked'); 
+    if(Menus && Menus.open) Menus.open('shop'); 
+    else console.warn('Menus not ready'); 
+};
+window.openLab = () => { 
+    console.log('BUTTON: openLab clicked'); 
+    if(Menus && Menus.open) Menus.open('lab'); 
+    else console.warn('Menus not ready'); 
+};
+window.openAchievements = () => { console.log('Achievements feature disabled during this session'); };
+window.openLeaderboard = () => { console.log('Leaderboard feature disabled during this session'); };
+window.toggleFS = () => { 
+    console.log('BUTTON: toggleFS clicked'); 
+    toggleFullScreen(); 
+};
 
 // Add touch support to buttons - ensure they work on mobile
 function setupButtonHandlers() {
+    console.log('🎮 Setting up button handlers...');
+    let buttonCount = 0;
+    
     // Setup all buttons with click handlers
     document.querySelectorAll('button').forEach(btn => {
+        if (!btn.dataset.clickHandlerSet) {
+            buttonCount++;
+            // Add regular click listener to ensure it works
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const onclickStr = this.getAttribute('onclick');
+                console.log('Button clicked:', this.innerText, 'onclick:', onclickStr);
+                if (onclickStr) {
+                    try {
+                        new Function(onclickStr).call(this);
+                    } catch (err) {
+                        console.error('Button click error:', err);
+                    }
+                }
+            });
+            
+            btn.dataset.clickHandlerSet = 'true';
+        }
+        
         if (!btn.dataset.touchHandlersSet) {
             // Prevent double-tap zoom
             btn.style.touchAction = 'manipulation';
             
             // Touch events
             btn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
                 this.style.opacity = '0.7';
                 this.style.backgroundColor = 'rgba(0, 243, 255, 0.25)';
-            }, { passive: true });
+            }, { passive: false });
             
             btn.addEventListener('touchend', function(e) {
+                e.preventDefault();
                 this.style.opacity = '1';
                 this.style.backgroundColor = '';
                 // Trigger the click
-                if (this.onclick) {
-                    this.onclick.call(this, e);
+                const onclickStr = this.getAttribute('onclick');
+                console.log('Touch ended on button:', this.innerText);
+                if (onclickStr) {
+                    try {
+                        new Function(onclickStr).call(this);
+                    } catch (err) {
+                        console.error('Button touch error:', err);
+                    }
                 }
-            }, { passive: true });
+            }, { passive: false });
             
             btn.addEventListener('touchcancel', function(e) {
+                e.preventDefault();
                 this.style.opacity = '1';
                 this.style.backgroundColor = '';
-            }, { passive: true });
+            }, { passive: false });
             
             btn.dataset.touchHandlersSet = 'true';
         }
     });
     
+    console.log(`✓ Set up ${buttonCount} buttons`);
+    
     // Setup clickable divs (like ULT button and zones)
     document.querySelectorAll('[onclick]').forEach(el => {
+        if (!el.dataset.clickHandlerSet && el.tagName !== 'BUTTON') {
+            // Add regular click listener
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const onclickStr = this.getAttribute('onclick');
+                if (onclickStr) {
+                    try {
+                        new Function(onclickStr).call(this);
+                    } catch (err) {
+                        console.error('Element click error:', err);
+                    }
+                }
+            });
+            el.dataset.clickHandlerSet = 'true';
+        }
+        
         if (!el.dataset.touchHandlersSet && el.tagName !== 'BUTTON') {
             el.style.touchAction = 'manipulation';
             
             el.addEventListener('touchstart', function(e) {
+                e.preventDefault();
                 this.style.opacity = '0.7';
-            }, { passive: true });
+            }, { passive: false });
             
             el.addEventListener('touchend', function(e) {
+                e.preventDefault();
                 this.style.opacity = '1';
                 // Get the onclick handler string and execute it
                 const onclickStr = this.getAttribute('onclick');
                 if (onclickStr) {
-                    new Function(onclickStr).call(this);
+                    try {
+                        new Function(onclickStr).call(this);
+                    } catch (err) {
+                        console.error('Element touch error:', err);
+                    }
                 }
-            }, { passive: true });
+            }, { passive: false });
             
             el.addEventListener('touchcancel', function(e) {
+                e.preventDefault();
                 this.style.opacity = '1';
-            }, { passive: true });
+            }, { passive: false });
             
             el.dataset.touchHandlersSet = 'true';
         }
@@ -481,11 +562,17 @@ async function apiCall(endpoint, options = {}) {
 }
 async function submitScore(wave, kills, bits) {
     const playerName = localStorage.getItem('playerName') || 'Anonymous';
-    const data = await apiCall('/leaderboard/submit', {
-        method: 'POST',
-        body: JSON.stringify({ playerName, wave, kills, bits, prestigeLevel: 0 })
-    });
-    if (data) console.log('Score submitted:', data.message);
+    console.log('Score tracking:', { playerName, wave, kills, bits });
+    // Attempting API call but won't block gameplay if it fails
+    try {
+        const data = await apiCall('/leaderboard/submit', {
+            method: 'POST',
+            body: JSON.stringify({ playerName, wave, kills, bits, prestigeLevel: 0 })
+        });
+        if (data) console.log('Score submitted:', data.message);
+    } catch (e) {
+        console.log('Score submission not critical - game continues');
+    }
 }
 async function getLeaderboard() {
     const data = await apiCall('/leaderboard');

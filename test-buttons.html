@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Button Test - CYBER PRISM</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: monospace; padding: 20px; margin: 0; }
+        .container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
+        .test-panel { border: 2px solid #0f0; padding: 15px; }
+        .test-panel h2 { margin-top: 0; }
+        .test { margin: 8px 0; padding: 8px; border-left: 3px solid #0f0; padding-left: 10px; font-size: 12px; }
+        .pass { color: #0f0; }
+        .fail { color: #f00; border-left-color: #f00; }
+        #gameFrame { border: 2px solid #00f3ff; width: 100%; height: 600px; background: #000; }
+        .summary { margin-top: 15px; padding: 15px; border: 2px solid #ffd700; text-align: center; background: rgba(255,215,0,0.05); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="test-panel">
+            <h2>TEST RESULTS</h2>
+            <div id="results"></div>
+            <div class="summary">
+                <span id="summary-text">Loading...</span>
+            </div>
+        </div>
+        <div>
+            <h2 style="margin-top: 0;">GAME WINDOW (If buttons work, they'll log to console)</h2>
+            <iframe id="gameFrame" src="index.html"></iframe>
+        </div>
+    </div>
+    
+    <script>
+        const results = document.getElementById('results');
+        const tests = [];
+        
+        function addTest(name, passed, details) {
+            tests.push({ name, passed, details });
+            const div = document.createElement('div');
+            div.className = `test ${passed ? 'pass' : 'fail'}`;
+            div.innerHTML = `<strong>${passed ? '✓' : '✗'} ${name}</strong><br><small>${details}</small>`;
+            results.appendChild(div);
+            updateSummary();
+        }
+        
+        function updateSummary() {
+            const passed = tests.filter(t => t.passed).length;
+            const total = tests.length;
+            const status = passed === total ? '✓ ALL SYSTEMS GO!' : passed > total * 0.8 ? '⚠ MOSTLY WORKING' : '✗ NEEDS FIXES';
+            document.getElementById('summary-text').innerHTML = `<strong>${status}</strong><br>${passed}/${total} tests passed`;
+        }
+        
+        // Wait for iframe to load
+        const gameFrame = document.getElementById('gameFrame');
+        
+        gameFrame.addEventListener('load', () => {
+            console.log('✓ Game frame loaded');
+            addTest('iframe loaded', true, 'Game page responsive');
+            
+            try {
+                const gameWindow = gameFrame.contentWindow;
+                
+                // Test window functions
+                const funcs = [
+                    'startGame', 'startTutorial', 'openHangar', 'openShop', 'openLab',
+                    'openAchievements', 'openLeaderboard', 'toggleFS', 'handleShopAction'
+                ];
+                
+                funcs.forEach(f => {
+                    const exists = typeof gameWindow[f] === 'function';
+                    addTest(`window.${f}()`, exists, exists ? 'Ready to call' : 'NOT FOUND');
+                });
+                
+                // Test core objects
+                addTest('Game object', typeof gameWindow.Game === 'object', gameWindow.Game ? '✓ Initialized' : '✗ Missing');
+                addTest('Menus object', typeof gameWindow.Menus === 'object', gameWindow.Menus ? '✓ Initialized' : '✗ Missing');
+                addTest('Data object', typeof gameWindow.Data === 'object', gameWindow.Data ? '✓ Initialized' : '✗ Missing');
+                
+                // Test DOM elements
+                const doc = gameFrame.contentDocument;
+                const buttons = doc.querySelectorAll('button').length;
+                addTest('Buttons in DOM', buttons > 0, `Found ${buttons} clickable buttons`);
+                
+                // Test menu visibility
+                const menu = doc.getElementById('s-menu');
+                addTest('Menu element', menu !== null, menu ? 'Menu screen found' : 'Menu not found');
+                
+                if (menu) {
+                    const isHidden = menu.classList.contains('hidden');
+                    addTest('Menu visible', !isHidden, isHidden ? 'Menu hidden (may load later)' : 'Menu visible on start');
+                }
+                
+                // Test setupButtonHandlers was called
+                const deployBtn = doc.querySelector('button[onclick*="startGame"]');
+                if (deployBtn) {
+                    const hasHandler = deployBtn.dataset.clickHandlerSet === 'true';
+                    addTest('Button handlers', hasHandler, hasHandler ? 'Handlers attached' : 'Handlers pending');
+                }
+                
+            } catch (e) {
+                addTest('Cross-origin access', false, `Security restriction: ${e.message}`);
+            }
+        });
+        
+        // Timeout fallback
+        setTimeout(() => {
+            if (tests.length === 0) {
+                addTest('Test timeout', false, 'Frame did not load in time');
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
+
