@@ -541,7 +541,6 @@
 <div id="s-menu" class="screen interactive menu-anim" style="flex-wrap: wrap;">
     <div style="position: absolute; top: 20px; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 30px; width: calc(100% - 60px); pointer-events: auto; z-index: 150;">
         <button class="btn" style="border-color:var(--gold); color:var(--gold); margin: 0;" onclick="window.openAchievements()">ACHIEVEMENTS</button>
-        <button class="btn" style="border-color:var(--pink); color:var(--pink); margin: 0;" onclick="window.openLeaderboard()">LEADERBOARD</button>
         <button class="btn" style="border-color:#fff; color:#fff; margin: 0;" onclick="window.toggleFS()">FULLSCREEN</button>
     </div>
     <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%); margin-top: 80px;">
@@ -649,8 +648,11 @@ window.openLab = () => {
     if(Menus && Menus.open) Menus.open('lab'); 
     else console.warn('Menus not ready'); 
 };
-window.openAchievements = () => { console.log('Achievements feature disabled during this session'); };
-window.openLeaderboard = () => { console.log('Leaderboard feature disabled during this session'); };
+window.openAchievements = () => { 
+    console.log('BUTTON: openAchievements clicked'); 
+    if(Menus && Menus.open) Menus.open('achievements'); 
+    else console.warn('Menus not ready'); 
+};
 window.toggleFS = () => { 
     console.log('BUTTON: toggleFS clicked'); 
     toggleFullScreen(); 
@@ -685,84 +687,44 @@ window.buttonHandler = function(handler) {
     }
 };
 
-// Ultra-simple button setup
+// Ultra-simple button setup - Direct onclick execution
 function setupAllButtons() {
-    console.log('🎮 SETTING UP BUTTONS - ATTEMPT #', (window.setupAttempt || 0) + 1);
-    window.setupAttempt = (window.setupAttempt || 0) + 1;
-    
-    // ALL buttons and clickables
+    console.log('🎮 SETTING UP BUTTONS');
     const allClickables = [
         ...document.querySelectorAll('button'),
         ...document.querySelectorAll('[onclick]'),
         ...document.querySelectorAll('.row')
     ];
     
-    console.log(`Found ${allClickables.length} clickable elements`);
-    
-    allClickables.forEach((el, idx) => {
-        if (el.dataset.buttonSetup) return; // Already setup
+    allClickables.forEach((el) => {
+        if (el.dataset.buttonSetup) return;
         
-        const elName = el.id || el.innerText?.substring(0, 20) || `Element ${idx}`;
-        
-        // PRIMARY: Direct click listener
         el.addEventListener('click', function(e) {
-            console.log('✓ CLICK on', elName);
             const onclick = this.getAttribute('onclick');
             if (onclick) {
-                console.log('  Executing:', onclick);
                 try {
-                    new Function(onclick).call(this);
+                    eval(onclick);
                 } catch (err) {
-                    console.error('  ERROR:', err);
+                    console.error('Button click error:', err);
                 }
-            } else if (this.onclick) {
-                console.log('  Calling onclick function');
-                this.onclick.call(this);
             }
         }, false);
         
-        // SECONDARY: Touch support
         el.addEventListener('touchend', function(e) {
-            console.log('✓ TOUCH on', elName);
             const onclick = this.getAttribute('onclick');
             if (onclick) {
-                console.log('  Executing:', onclick);
                 try {
-                    new Function(onclick).call(this);
+                    eval(onclick);
                 } catch (err) {
-                    console.error('  ERROR:', err);
-                }
-            } else if (this.onclick) {
-                console.log('  Calling onclick function');
-                this.onclick.call(this);
-            }
-        }, false);
-        
-        // TERTIARY: Keyboard support (Enter/Space)
-        el.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                console.log('✓ KEYBOARD on', elName);
-                e.preventDefault();
-                const onclick = this.getAttribute('onclick');
-                if (onclick) {
-                    console.log('  Executing:', onclick);
-                    try {
-                        new Function(onclick).call(this);
-                    } catch (err) {
-                        console.error('  ERROR:', err);
-                    }
-                } else if (this.onclick) {
-                    console.log('  Calling onclick function');
-                    this.onclick.call(this);
+                    console.error('Button touch error:', err);
                 }
             }
         }, false);
         
         el.dataset.buttonSetup = 'true';
-        console.log(`  ✓ Setup complete for: ${elName}`);
     });
     
-    console.log('✅ ALL BUTTONS SETUP COMPLETE\n');
+    console.log('✅ BUTTONS READY');
 }
 
 // Setup on page load
@@ -1520,22 +1482,6 @@ const Menus = {
             let list = document.getElementById('ach-list'); list.innerHTML = ''; let unlockedCount = 0;
             ACHIEVEMENTS.forEach(a => { let unlocked = Data.achievements.includes(a.id); if(unlocked) unlockedCount++; let card = document.createElement('div'); card.className = `ach-card ${unlocked ? 'unlocked' : ''}`; card.innerHTML = `<h4 style="margin:0 0 5px 0; color:${unlocked ? 'var(--gold)' : '#555'}">${a.name}</h4><span class="ach-desc" style="font-size:11px; color:#888;">${a.desc}</span><div class="ach-reward" style="color:${unlocked?'var(--cyan)':'#444'}">+${a.reward} BITS</div>`; list.appendChild(card); });
             document.getElementById('ach-count').innerText = `${unlockedCount}/${ACHIEVEMENTS.length}`; return;
-        } else if (mode === 'leaderboard') {
-            document.getElementById('s-ach').classList.remove('hidden');
-            document.querySelector('#s-ach h2').innerText = 'GLOBAL LEADERBOARD';
-            document.querySelector('#s-ach .cyber-panel').style.borderColor = 'var(--pink)';
-            let list = document.getElementById('ach-list');
-            list.innerHTML = '<div style="text-align:center; color:#aaa;">Loading leaderboard...</div>';
-            getLeaderboard().then(data => {
-                list.innerHTML = '';
-                data.entries.forEach(entry => {
-                    let card = document.createElement('div');
-                    card.className = 'ach-card unlocked';
-                    card.innerHTML = `<h4 style="margin:0 0 5px 0; color:var(--gold)">${entry.playerName}</h4><span class="ach-desc" style="font-size:11px; color:#888;">Wave ${entry.wave} | Kills ${entry.kills} | Bits ${entry.bits}</span><div class="ach-reward" style="color:var(--cyan)">#${entry.rank}</div>`;
-                    list.appendChild(card);
-                });
-            });
-            return;
         }
         document.getElementById('s-list').classList.remove('hidden'); document.getElementById('list-title').innerText = mode.toUpperCase(); document.getElementById('ui-bits').innerText = Data.bits;
         const lst = document.getElementById('list-items'); const det = document.getElementById('list-detail'); const tabRow = document.getElementById('list-tabs'); lst.innerHTML = ''; det.innerHTML = '';
