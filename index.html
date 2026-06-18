@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="format-detection" content="telephone=no">
-<title>CYBER PRISM - V11.3 ALL BUTTONS FIXED</title>
+<title>CYBER PRISM - V11.4 COMPLETE</title>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
     
@@ -545,7 +545,7 @@
     </div>
     <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%); margin-top: 80px;">
         <h1 class="glitch-text">CYBER PRISM</h1>
-        <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V11.3 // ALL BUTTONS WORKING</h3>
+        <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V11.4 // ALL SYSTEMS GO</h3>
         <div style="display:flex; flex-direction:column; align-items:center;">
             <button class="btn" style="width:240px; font-weight:bold; border-color:#fff; font-size:18px;" onclick="window.startGame()">DEPLOY UNIT</button>
             <button class="btn" style="width:240px; border-color:#0f0; color:#0f0;" onclick="window.startTutorial()">TUTORIAL</button>
@@ -583,8 +583,8 @@
     <div class="cyber-panel list-con" style="pointer-events: auto;">
         <div class="col">
             <div id="list-tabs" style="display:flex; margin-bottom:15px;">
-                <button id="tab-chassis" class="btn" style="margin:0 10px 0 0; font-size:12px; pointer-events: auto;" onclick="Menus && Menus.setShopTab && Menus.setShopTab('CHASSIS')">CHASSIS</button>
-                <button id="tab-modules" class="btn" style="margin:0; font-size:12px; pointer-events: auto;" onclick="Menus && Menus.setShopTab && Menus.setShopTab('MODULES')">MODULES</button>
+                <button id="tab-chassis" class="btn" style="margin:0 10px 0 0; font-size:12px; pointer-events: auto;" onclick="window.setShopChassis()">CHASSIS</button>
+                <button id="tab-modules" class="btn" style="margin:0; font-size:12px; pointer-events: auto;" onclick="window.setShopModules()">MODULES</button>
             </div>
             <div id="list-items"></div>
         </div>
@@ -746,6 +746,27 @@ window.triggerUltGame = () => {
         Game.triggerUlt();
     } else {
         console.error('❌ Game.triggerUlt not available');
+    }
+};
+
+// Shop tab handlers
+window.setShopChassis = () => {
+    console.log('🚀 SHOP: CHASSIS TAB');
+    if(Menus && Menus.setShopTab) {
+        console.log('✅ Calling Menus.setShopTab(CHASSIS)');
+        Menus.setShopTab('CHASSIS');
+    } else {
+        console.error('❌ Menus.setShopTab not available');
+    }
+};
+
+window.setShopModules = () => {
+    console.log('🔧 SHOP: MODULES TAB');
+    if(Menus && Menus.setShopTab) {
+        console.log('✅ Calling Menus.setShopTab(MODULES)');
+        Menus.setShopTab('MODULES');
+    } else {
+        console.error('❌ Menus.setShopTab not available');
     }
 };
 
