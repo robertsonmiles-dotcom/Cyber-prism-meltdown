@@ -546,12 +546,12 @@
     <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%); margin-top: 80px;">
         <h1 class="glitch-text">CYBER PRISM</h1>
         <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V11.5 // EMERGENCY DEBUG</h3>
-        <div style="display:flex; flex-direction:column; align-items:center;">
-            <button class="btn" style="width:240px; font-weight:bold; border-color:#fff; font-size:18px;" onclick="window.startGame()">DEPLOY UNIT</button>
-            <button class="btn" style="width:240px; border-color:#0f0; color:#0f0;" onclick="window.startTutorial()">TUTORIAL</button>
-            <button class="btn" style="width:240px;" onclick="window.openHangar()">HANGAR</button>
-            <button class="btn" style="width:240px;" onclick="window.openShop()">BLACK MARKET</button>
-            <button class="btn" style="width:240px;" onclick="window.openLab()">R&D LAB</button>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+            <button style="padding:20px 40px; font-size:18px; background:#00ff00; color:#000; border:none; cursor:pointer; font-weight:bold;" onclick="alert('DEPLOY BUTTON TEST'); window.startGame();">TEST: DEPLOY UNIT</button>
+            <button style="padding:20px 40px; font-size:18px; background:#00ff00; color:#000; border:none; cursor:pointer; font-weight:bold;" onclick="alert('TUTORIAL BUTTON TEST'); window.startTutorial();">TEST: TUTORIAL</button>
+            <button style="padding:20px 40px; font-size:18px; background:#00ff00; color:#000; border:none; cursor:pointer; font-weight:bold;" onclick="alert('HANGAR BUTTON TEST'); window.openHangar();">TEST: HANGAR</button>
+            <button style="padding:20px 40px; font-size:18px; background:#00ff00; color:#000; border:none; cursor:pointer; font-weight:bold;" onclick="alert('SHOP BUTTON TEST'); window.openShop();">TEST: BLACK MARKET</button>
+            <button style="padding:20px 40px; font-size:18px; background:#00ff00; color:#000; border:none; cursor:pointer; font-weight:bold;" onclick="alert('LAB BUTTON TEST'); window.openLab();">TEST: R&D LAB</button>
         </div>
     </div>
 </div>
@@ -660,6 +660,7 @@ window.openAchievements = function() {
 };
 
 window.toggleFS = function() { 
+    alert('FULLSCREEN CLICKED');
     console.log('🖥️ FULLSCREEN');
     toggleFullScreen();
 };
