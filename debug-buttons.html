@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            background: #0a0a0a;
+        }
+        h1 {
+            color: #00ff00;
+            text-align: center;
+        }
+        .console-log {
+            background: #000;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin: 10px 0;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .console-log div {
+            margin: 3px 0;
+        }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: 2px solid #00ff00;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .status.success {
+            background: #001a00;
+            border: 1px solid #00ff00;
+        }
+        .status.error {
+            background: #1a0000;
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 BUTTON DEBUG TEST</h1>
+        
+        <div class="status success">
+            <h3>Test Console Output:</h3>
+            <div class="console-log" id="console"></div>
+        </div>
+
+        <div class="button-group">
+            <button id="test-btn-1" onclick="testClick('Test Button 1')">TEST 1</button>
+            <button id="test-btn-2" onclick="testClick('Test Button 2')">TEST 2</button>
+            <button id="test-btn-3" onclick="testClick('Test Button 3')">TEST 3</button>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <button onclick="loadGame()" style="width: 200px; padding: 15px; font-size: 16px;">
+                🎮 LOAD GAME
+            </button>
+        </div>
+
+        <div class="status" id="status-box" style="display:none;">
+            <p id="status-text"></p>
+        </div>
+    </div>
+
+    <script>
+        const consoleEl = document.getElementById('console');
+        const statusBox = document.getElementById('status-box');
+        const statusText = document.getElementById('status-text');
+
+        // Override console.log to show in UI
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const msg = args.join(' ');
+            const div = document.createElement('div');
+            div.textContent = '> ' + msg;
+            consoleEl.appendChild(div);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        };
+
+        console.log('🟢 Debug page loaded');
+        console.log('Testing button onclick handlers...');
+
+        function testClick(name) {
+            console.log(`✅ Button clicked: ${name}`);
+            statusBox.classList.add('success');
+            statusBox.classList.remove('error');
+            statusText.innerHTML = `<strong>SUCCESS!</strong> ${name} onclick handler executed!`;
+            statusBox.style.display = 'block';
+        }
+
+        function loadGame() {
+            console.log('Loading game...');
+            // Try to find game functions
+            if (typeof window.startGame === 'function') {
+                console.log('✅ window.startGame() found');
+                // Don't actually start the game, just log that we found it
+            } else {
+                console.log('❌ window.startGame() NOT FOUND');
+                statusBox.classList.add('error');
+                statusBox.classList.remove('success');
+                statusText.innerHTML = '<strong>ERROR:</strong> window.startGame() not found. Game may not be loaded.';
+                statusBox.style.display = 'block';
+                return;
+            }
+
+            // Try to load the game in an iframe
+            console.log('Attempting to load game...');
+            const iframe = document.createElement('iframe');
+            iframe.src = '/index.html';
+            iframe.style.width = '100%';
+            iframe.style.height = '600px';
+            iframe.style.border = '2px solid #00ff00';
+            iframe.style.marginTop = '20px';
+            
+            document.querySelector('.container').appendChild(iframe);
+            console.log('Game iframe loaded');
+        }
+
+        // Check if we can access the Game object from parent
+        function checkGameAvailable() {
+            if (typeof parent.Game !== 'undefined') {
+                console.log('✅ Parent window Game object found');
+                return true;
+            } else {
+                console.log('⚠️  Parent window Game object not found');
+                return false;
+            }
+        }
+
+        // Test basic DOM manipulation
+        function testDOM() {
+            console.log('Testing DOM...');
+            const btn1 = document.getElementById('test-btn-1');
+            if (btn1) {
+                console.log('✅ test-btn-1 element found');
+                console.log('   onclick attribute:', btn1.getAttribute('onclick'));
+                console.log('   pointer-events:', window.getComputedStyle(btn1).pointerEvents);
+            } else {
+                console.log('❌ test-btn-1 element NOT FOUND');
+            }
+        }
+
+        // Run initial tests
+        setTimeout(() => {
+            testDOM();
+            console.log('🔍 Running diagnostics...');
+            console.log('Ready for testing!');
+        }, 500);
+    </script>
+</body>
+</html>

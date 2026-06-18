@@ -1477,10 +1477,36 @@ Data.owned.forEach(c => { if(!Data.chassisXP[c]) Data.chassisXP[c] = {xp:0, lvl:
 Input.init(); InitStars();
 function Loop() { Game.frame++; Game.update(); if(Game.active) requestAnimationFrame(Loop); }
 
-// Show menu when game loads
-setTimeout(() => { 
+// Initialize game UI and show menu
+function initializeGame() {
+    console.log('🎮 Initializing game UI...');
+    
+    // Verify all window functions exist
+    const requiredFunctions = [
+        'startGame', 'startTutorial', 'openHangar', 'openShop', 'openLab', 
+        'openAchievements', 'toggleFS'
+    ];
+    
+    requiredFunctions.forEach(fn => {
+        if (typeof window[fn] === 'function') {
+            console.log(`✅ ${fn} function available`);
+        } else {
+            console.error(`❌ ${fn} function NOT available`);
+        }
+    });
+    
+    // Setup buttons one more time
+    setupAllButtons();
+    
+    // Show menu
     Menus.home();
-}, 50);
+    
+    console.log('🎮 Game UI initialized');
+}
+
+// Show menu when game loads
+setTimeout(initializeGame, 100);
+
 </script>
 </body>
 </html>
