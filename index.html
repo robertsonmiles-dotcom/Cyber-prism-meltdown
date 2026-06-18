@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="format-detection" content="telephone=no">
-<title>CYBER PRISM - V11.1 BUTTON NAVIGATION</title>
+<title>CYBER PRISM - V11.2 FULL NAVIGATION</title>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
     
@@ -545,7 +545,7 @@
     </div>
     <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%); margin-top: 80px;">
         <h1 class="glitch-text">CYBER PRISM</h1>
-        <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V11.1 // FULL NAVIGATION</h3>
+        <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V11.2 // COMPLETE NAVIGATION</h3>
         <div style="display:flex; flex-direction:column; align-items:center;">
             <button class="btn" style="width:240px; font-weight:bold; border-color:#fff; font-size:18px;" onclick="window.startGame()">DEPLOY UNIT</button>
             <button class="btn" style="width:240px; border-color:#0f0; color:#0f0;" onclick="window.startTutorial()">TUTORIAL</button>
@@ -590,7 +590,7 @@
         </div>
         <div id="list-detail" class="col-r"></div>
     </div>
-    <button class="btn" style="margin-top:20px; z-index:999; pointer-events: auto;" onclick="Menus && Menus.home && Menus.home()">BACK</button>
+    <button class="btn" style="margin-top:20px; z-index:999; pointer-events: auto;" onclick="window.goHome()">BACK</button>
 </div>
 <div id="s-ach" class="screen hidden interactive menu-anim">
     <div style="width:85%; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -600,7 +600,7 @@
     <div class="cyber-panel" style="width:85%; height:60%; overflow-y:auto; border-color:var(--gold); pointer-events: auto;">
         <div id="ach-list" class="ach-grid"></div>
     </div>
-    <button class="btn" style="margin-top:20px; border-color:var(--gold); color:var(--gold); pointer-events: auto;" onclick="Menus && Menus.home && Menus.home()">BACK</button>
+    <button class="btn" style="margin-top:20px; border-color:var(--gold); color:var(--gold); pointer-events: auto;" onclick="window.goHome()">BACK</button>
 </div>
 <div id="s-up" class="screen hidden interactive menu-anim">
     <div class="cyber-panel" style="align-items:center; padding:30px; pointer-events: auto;">
@@ -686,6 +686,16 @@ window.openAchievements = () => {
 window.toggleFS = () => { 
     console.log('🖥️ TOGGLE FULLSCREEN CLICKED');
     toggleFullScreen();
+};
+
+window.goHome = () => {
+    console.log('🏠 GO HOME CLICKED');
+    if(Menus && Menus.home) {
+        console.log('✅ Calling Menus.home()');
+        Menus.home();
+    } else {
+        console.error('❌ Menus.home not available');
+    }
 };
 
 /**
