@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="format-detection" content="telephone=no">
-<title>CYBER PRISM - V11.2 FULL NAVIGATION</title>
+<title>CYBER PRISM - V11.3 ALL BUTTONS FIXED</title>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
     
@@ -515,7 +515,7 @@
 <div id="tut-msg">INITIALIZING TRAINING SIM...</div>
 
 <div id="ui-hud" class="screen hidden">
-    <button id="btn-pause" onclick="Game && Game.togglePause && Game.togglePause()">II</button>
+    <button id="btn-pause" onclick="window.togglePauseGame()">II</button>
     <div class="top-bar">
         <div>
             <div class="bar-con"><div id="hp-lag" class="bar"></div><div id="hp-bar" class="bar"></div><span class="bar-label">INTEGRITY</span></div>
@@ -532,7 +532,7 @@
     </div>
     <div id="msg-oh">WEAPON JAMMED</div>
     <div id="lvl-up-msg">FIRMWARE UPDATE<br><span id="lvl-bonus" style="color:#fff; font-size:12px;">+5% DMG</span></div>
-    <div id="btn-ult" onclick="Game && Game.triggerUlt && Game.triggerUlt()">ULT</div>
+    <div id="btn-ult" onclick="window.triggerUltGame()">ULT</div>
     <div id="z-l" class="zone"></div><div id="z-r" class="zone"></div>
     <div id="joy-l" class="joy-base"></div><div id="st-l" class="stick"></div>
     <div id="joy-r" class="joy-base"></div><div id="st-r" class="stick"></div>
@@ -545,7 +545,7 @@
     </div>
     <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%); margin-top: 80px;">
         <h1 class="glitch-text">CYBER PRISM</h1>
-        <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V11.2 // COMPLETE NAVIGATION</h3>
+        <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V11.3 // ALL BUTTONS WORKING</h3>
         <div style="display:flex; flex-direction:column; align-items:center;">
             <button class="btn" style="width:240px; font-weight:bold; border-color:#fff; font-size:18px;" onclick="window.startGame()">DEPLOY UNIT</button>
             <button class="btn" style="width:240px; border-color:#0f0; color:#0f0;" onclick="window.startTutorial()">TUTORIAL</button>
@@ -560,9 +560,9 @@
     <div class="cyber-panel" style="text-align:center; width:300px; pointer-events: auto;">
         <h2 style="margin-top:0;">SYSTEM PAUSED</h2>
         <div style="color:#aaa; font-size:12px; margin-bottom:10px;">ACTIVE SYNERGIES: <span id="pause-syn" style="color:var(--gold)">NONE</span></div>
-        <button class="btn" style="width:100%; pointer-events: auto;" onclick="Game && Game.togglePause && Game.togglePause()">RESUME MISSION</button>
-        <button class="btn" style="width:100%; border-color:#0f0; color:#0f0; pointer-events: auto;" onclick="Game && Game.buyRepair && Game.buyRepair()">EMERGENCY REPAIR (500 BITS)</button>
-        <button class="btn" style="width:100%; border-color:var(--red); color:var(--red); pointer-events: auto;" onclick="Game && Game.abort && Game.abort()">ABORT MISSION</button>
+        <button class="btn" style="width:100%; pointer-events: auto;" onclick="window.togglePauseGame()">RESUME MISSION</button>
+        <button class="btn" style="width:100%; border-color:#0f0; color:#0f0; pointer-events: auto;" onclick="window.buyRepairGame()">EMERGENCY REPAIR (500 BITS)</button>
+        <button class="btn" style="width:100%; border-color:var(--red); color:var(--red); pointer-events: auto;" onclick="window.abortMission()">ABORT MISSION</button>
     </div>
 </div>
 <div id="s-over" class="screen hidden interactive menu-anim">
@@ -572,7 +572,7 @@
             <p>XP GAINED: <span id="go-xp" style="color:var(--pink)">0</span></p>
             <p>BITS COLLECTED: <span id="go-bits" style="color:var(--cyan)">0</span></p>
         </div>
-        <button class="btn" style="pointer-events: auto;" onclick="Game && Game.abort && Game.abort()">RETURN TO BASE</button>
+        <button class="btn" style="pointer-events: auto;" onclick="window.abortMission()">RETURN TO BASE</button>
     </div>
 </div>
 <div id="s-list" class="screen hidden interactive menu-anim">
@@ -606,7 +606,7 @@
     <div class="cyber-panel" style="align-items:center; padding:30px; pointer-events: auto;">
         <h2>SYSTEM UPGRADE</h2>
         <div id="card-con"></div>
-        <button class="btn" id="btn-reroll" style="width:200px; margin-top:20px; pointer-events: auto;" onclick="Game && Game.rerollAugments && Game.rerollAugments()">REROLL (50 BITS)</button>
+        <button class="btn" id="btn-reroll" style="width:200px; margin-top:20px; pointer-events: auto;" onclick="window.rerollAugmentsGame()">REROLL (50 BITS)</button>
     </div>
 </div>
 
@@ -695,6 +695,57 @@ window.goHome = () => {
         Menus.home();
     } else {
         console.error('❌ Menus.home not available');
+    }
+};
+
+// Game control button handlers
+window.togglePauseGame = () => {
+    console.log('⏸️ TOGGLE PAUSE CLICKED');
+    if(Game && Game.togglePause) {
+        console.log('✅ Calling Game.togglePause()');
+        Game.togglePause();
+    } else {
+        console.error('❌ Game.togglePause not available');
+    }
+};
+
+window.buyRepairGame = () => {
+    console.log('🔧 BUY REPAIR CLICKED');
+    if(Game && Game.buyRepair) {
+        console.log('✅ Calling Game.buyRepair()');
+        Game.buyRepair();
+    } else {
+        console.error('❌ Game.buyRepair not available');
+    }
+};
+
+window.abortMission = () => {
+    console.log('⚠️ ABORT MISSION CLICKED');
+    if(Game && Game.abort) {
+        console.log('✅ Calling Game.abort()');
+        Game.abort();
+    } else {
+        console.error('❌ Game.abort not available');
+    }
+};
+
+window.rerollAugmentsGame = () => {
+    console.log('🎲 REROLL AUGMENTS CLICKED');
+    if(Game && Game.rerollAugments) {
+        console.log('✅ Calling Game.rerollAugments()');
+        Game.rerollAugments();
+    } else {
+        console.error('❌ Game.rerollAugments not available');
+    }
+};
+
+window.triggerUltGame = () => {
+    console.log('⚡ ULT TRIGGERED');
+    if(Game && Game.triggerUlt) {
+        console.log('✅ Calling Game.triggerUlt()');
+        Game.triggerUlt();
+    } else {
+        console.error('❌ Game.triggerUlt not available');
     }
 };
 
