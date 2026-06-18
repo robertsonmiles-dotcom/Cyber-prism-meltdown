@@ -687,77 +687,38 @@ window.buttonHandler = function(handler) {
     }
 };
 
-// Ultra-simple button setup - Direct onclick execution
+// Simple button event handler setup
 function setupAllButtons() {
     console.log('🎮 SETTING UP BUTTONS');
-    const allClickables = [
-        ...document.querySelectorAll('button'),
-        ...document.querySelectorAll('[onclick]'),
-        ...document.querySelectorAll('.row')
-    ];
+    const buttons = document.querySelectorAll('button, [onclick], .row');
     
-    allClickables.forEach((el) => {
+    buttons.forEach((el) => {
+        // Skip if already setup
         if (el.dataset.buttonSetup) return;
         
-        el.addEventListener('click', function(e) {
-            const onclick = this.getAttribute('onclick');
-            if (onclick) {
-                try {
-                    eval(onclick);
-                } catch (err) {
-                    console.error('Button click error:', err);
-                }
-            }
-        }, false);
-        
-        el.addEventListener('touchend', function(e) {
-            const onclick = this.getAttribute('onclick');
-            if (onclick) {
-                try {
-                    eval(onclick);
-                } catch (err) {
-                    console.error('Button touch error:', err);
-                }
-            }
-        }, false);
+        // For button elements, ensure they have click listeners
+        if (el.tagName === 'BUTTON' || el.hasAttribute('onclick')) {
+            el.style.cursor = 'pointer';
+            el.style.pointerEvents = 'auto';
+        }
         
         el.dataset.buttonSetup = 'true';
     });
     
-    console.log('✅ BUTTONS READY');
+    console.log('✅ BUTTONS READY - ' + buttons.length + ' buttons found');
 }
 
 // Setup on page load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('📄 DOMContentLoaded fired');
-        setupAllButtons();
-    });
-} else {
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('📄 DOMContentLoaded fired');
+    setupAllButtons();
+});
+
+// Also run immediately in case DOM is already loaded
+if (document.readyState !== 'loading') {
     console.log('📄 DOM already ready');
     setupAllButtons();
 }
-
-// Setup again after short delay (catch late DOM)
-setTimeout(() => {
-    console.log('📄 Delayed setup (100ms)');
-    setupAllButtons();
-}, 100);
-
-// Continuous setup for dynamic content
-setInterval(() => {
-    const newButtons = document.querySelectorAll('button:not([data-button-setup]), [onclick]:not([data-button-setup]), .row:not([data-button-setup])');
-    if (newButtons.length > 0) {
-        console.log(`📄 Found ${newButtons.length} new buttons, setting up...`);
-        setupAllButtons();
-    }
-}, 500);
-
-// Setup on visibility change (tab focus)
-document.addEventListener('visibilitychange', () => {
-    console.log('📄 Tab visibility changed, refreshing setup');
-    setupAllButtons();
-});
 
 /* DATA & CONFIG */
 const ACHIEVEMENTS = [
