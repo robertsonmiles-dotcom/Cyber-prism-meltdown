@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="format-detection" content="telephone=no">
-<title>CYBER PRISM - V11.4 COMPLETE</title>
+<title>CYBER PRISM - V11.5 EMERGENCY DEBUG</title>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
     
@@ -545,7 +545,7 @@
     </div>
     <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%); margin-top: 80px;">
         <h1 class="glitch-text">CYBER PRISM</h1>
-        <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V11.4 // ALL SYSTEMS GO</h3>
+        <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V11.5 // EMERGENCY DEBUG</h3>
         <div style="display:flex; flex-direction:column; align-items:center;">
             <button class="btn" style="width:240px; font-weight:bold; border-color:#fff; font-size:18px;" onclick="window.startGame()">DEPLOY UNIT</button>
             <button class="btn" style="width:240px; border-color:#0f0; color:#0f0;" onclick="window.startTutorial()">TUTORIAL</button>
@@ -622,255 +622,121 @@ function toggleFullScreen() {
   }
 }
 
-// Wrapper functions for button handlers - ensure navigation works
-window.startGame = () => { 
-    console.log('🎮 START GAME BUTTON CLICKED');
-    if(Game && Game.start) {
-        console.log('✅ Calling Game.start()');
-        Game.start();
-    } else {
-        console.error('❌ Game not ready');
-    }
+// Wrapper functions for button handlers - MUST BE GLOBAL
+window.startGame = function() { 
+    alert('DEPLOY UNIT CLICKED');
+    console.log('🎮 START GAME');
+    if(Game && Game.start) { Game.start(); }
 };
 
-window.startTutorial = () => { 
-    console.log('🎓 START TUTORIAL BUTTON CLICKED');
-    if(Game && Game.startTutorial) {
-        console.log('✅ Calling Game.startTutorial()');
-        Game.startTutorial();
-    } else {
-        console.error('❌ Game.startTutorial not available');
-    }
+window.startTutorial = function() { 
+    alert('TUTORIAL CLICKED');
+    console.log('🎓 START TUTORIAL');
+    if(Game && Game.startTutorial) { Game.startTutorial(); }
 };
 
-window.openHangar = () => { 
-    console.log('🛠️ OPEN HANGAR CLICKED');
-    if(Menus && Menus.open) {
-        console.log('✅ Calling Menus.open(hangar)');
-        Menus.open('hangar');
-    } else {
-        console.error('❌ Menus not ready');
-    }
+window.openHangar = function() { 
+    alert('HANGAR CLICKED');
+    console.log('🛠️ HANGAR');
+    if(Menus && Menus.open) { Menus.open('hangar'); }
 };
 
-window.openShop = () => { 
-    console.log('💰 OPEN SHOP CLICKED');
-    if(Menus && Menus.open) {
-        console.log('✅ Calling Menus.open(shop)');
-        Menus.open('shop');
-    } else {
-        console.error('❌ Menus not ready');
-    }
+window.openShop = function() { 
+    alert('SHOP CLICKED');
+    console.log('💰 SHOP');
+    if(Menus && Menus.open) { Menus.open('shop'); }
 };
 
-window.openLab = () => { 
-    console.log('🧪 OPEN LAB CLICKED');
-    if(Menus && Menus.open) {
-        console.log('✅ Calling Menus.open(lab)');
-        Menus.open('lab');
-    } else {
-        console.error('❌ Menus not ready');
-    }
+window.openLab = function() { 
+    alert('LAB CLICKED');
+    console.log('🧪 LAB');
+    if(Menus && Menus.open) { Menus.open('lab'); }
 };
 
-window.openAchievements = () => { 
-    console.log('🏆 OPEN ACHIEVEMENTS CLICKED');
-    if(Menus && Menus.open) {
-        console.log('✅ Calling Menus.open(achievements)');
-        Menus.open('achievements');
-    } else {
-        console.error('❌ Menus not ready');
-    }
+window.openAchievements = function() { 
+    alert('ACHIEVEMENTS CLICKED');
+    console.log('🏆 ACHIEVEMENTS');
+    if(Menus && Menus.open) { Menus.open('achievements'); }
 };
 
-window.toggleFS = () => { 
-    console.log('🖥️ TOGGLE FULLSCREEN CLICKED');
+window.toggleFS = function() { 
+    console.log('🖥️ FULLSCREEN');
     toggleFullScreen();
 };
 
-window.goHome = () => {
-    console.log('🏠 GO HOME CLICKED');
-    if(Menus && Menus.home) {
-        console.log('✅ Calling Menus.home()');
-        Menus.home();
-    } else {
-        console.error('❌ Menus.home not available');
-    }
+window.goHome = function() {
+    alert('HOME CLICKED');
+    console.log('🏠 HOME');
+    if(Menus && Menus.home) { Menus.home(); }
 };
 
-// Game control button handlers
-window.togglePauseGame = () => {
-    console.log('⏸️ TOGGLE PAUSE CLICKED');
-    if(Game && Game.togglePause) {
-        console.log('✅ Calling Game.togglePause()');
-        Game.togglePause();
-    } else {
-        console.error('❌ Game.togglePause not available');
-    }
+window.togglePauseGame = function() {
+    alert('PAUSE CLICKED');
+    console.log('⏸️ PAUSE');
+    if(Game && Game.togglePause) { Game.togglePause(); }
 };
 
-window.buyRepairGame = () => {
-    console.log('🔧 BUY REPAIR CLICKED');
-    if(Game && Game.buyRepair) {
-        console.log('✅ Calling Game.buyRepair()');
-        Game.buyRepair();
-    } else {
-        console.error('❌ Game.buyRepair not available');
-    }
+window.buyRepairGame = function() {
+    alert('REPAIR CLICKED');
+    console.log('🔧 REPAIR');
+    if(Game && Game.buyRepair) { Game.buyRepair(); }
 };
 
-window.abortMission = () => {
-    console.log('⚠️ ABORT MISSION CLICKED');
-    if(Game && Game.abort) {
-        console.log('✅ Calling Game.abort()');
-        Game.abort();
-    } else {
-        console.error('❌ Game.abort not available');
-    }
+window.abortMission = function() {
+    alert('ABORT CLICKED');
+    console.log('⚠️ ABORT');
+    if(Game && Game.abort) { Game.abort(); }
 };
 
-window.rerollAugmentsGame = () => {
-    console.log('🎲 REROLL AUGMENTS CLICKED');
-    if(Game && Game.rerollAugments) {
-        console.log('✅ Calling Game.rerollAugments()');
-        Game.rerollAugments();
-    } else {
-        console.error('❌ Game.rerollAugments not available');
-    }
+window.rerollAugmentsGame = function() {
+    alert('REROLL CLICKED');
+    console.log('🎲 REROLL');
+    if(Game && Game.rerollAugments) { Game.rerollAugments(); }
 };
 
-window.triggerUltGame = () => {
-    console.log('⚡ ULT TRIGGERED');
-    if(Game && Game.triggerUlt) {
-        console.log('✅ Calling Game.triggerUlt()');
-        Game.triggerUlt();
-    } else {
-        console.error('❌ Game.triggerUlt not available');
-    }
+window.triggerUltGame = function() {
+    console.log('⚡ ULT');
+    if(Game && Game.triggerUlt) { Game.triggerUlt(); }
 };
 
-// Shop tab handlers
-window.setShopChassis = () => {
-    console.log('🚀 SHOP: CHASSIS TAB');
-    if(Menus && Menus.setShopTab) {
-        console.log('✅ Calling Menus.setShopTab(CHASSIS)');
-        Menus.setShopTab('CHASSIS');
-    } else {
-        console.error('❌ Menus.setShopTab not available');
-    }
+window.setShopChassis = function() {
+    alert('CHASSIS CLICKED');
+    console.log('🚀 CHASSIS');
+    if(Menus && Menus.setShopTab) { Menus.setShopTab('CHASSIS'); }
 };
 
-window.setShopModules = () => {
-    console.log('🔧 SHOP: MODULES TAB');
-    if(Menus && Menus.setShopTab) {
-        console.log('✅ Calling Menus.setShopTab(MODULES)');
-        Menus.setShopTab('MODULES');
-    } else {
-        console.error('❌ Menus.setShopTab not available');
-    }
+window.setShopModules = function() {
+    alert('MODULES CLICKED');
+    console.log('🧩 MODULES');
+    if(Menus && Menus.setShopTab) { Menus.setShopTab('MODULES'); }
 };
 
 /**
- * Modern, accessible button system supporting:
- * - Mouse clicks
- * - Touch/mobile devices
- * - Keyboard navigation (Tab, Enter, Space)
- * - Focus management
- * - ARIA attributes
+ * BULLETPROOF BUTTON SYSTEM - SIMPLIFIED
+ * Direct onclick handlers - NO EVENT LISTENERS
+ * NO eval() - NO complex logic
  */
 
-// Focus management for keyboard users
-/**
- * BULLETPROOF BUTTON SYSTEM
- * Simple, reliable, works every time
- */
-
-// Direct global button handler - NO COMPLEX LOGIC
-window.buttonHandler = function(handler) {
-    console.log('🎮 BUTTON TRIGGERED:', handler);
-    try {
-        if (typeof handler === 'function') {
-            handler();
-        } else if (typeof handler === 'string') {
-            new Function(handler)();
-        }
-    } catch (err) {
-        console.error('❌ BUTTON ERROR:', err);
-    }
-};
-
-// Robust button system with proper event handling and navigation
+// Setup buttons - just ensure they're visible
 function setupAllButtons() {
     console.log('🎮 SETTING UP BUTTONS');
-    
-    const buttons = document.querySelectorAll('button, [onclick], .row');
-    let setupCount = 0;
+    const buttons = document.querySelectorAll('button, [onclick]');
     
     buttons.forEach((el) => {
-        // Skip if already setup
-        if (el.dataset.buttonSetup) return;
-        
-        // Ensure buttons are clickable
-        el.style.cursor = 'pointer';
+        // Ensure button is clickable
         el.style.pointerEvents = 'auto';
-        el.style.zIndex = '150';
-        
-        // Get the onclick handler
-        const onclickAttr = el.getAttribute('onclick');
-        
-        // Add click event listener that executes the handler
-        el.addEventListener('click', function(e) {
-            console.log('✅ BUTTON CLICKED:', this.textContent.trim(), 'Handler:', onclickAttr);
-            
-            if (onclickAttr) {
-                try {
-                    // Execute the onclick handler in window scope
-                    const func = new Function(onclickAttr);
-                    func.call(window);
-                    console.log('✅ Handler executed successfully');
-                } catch (err) {
-                    console.error('❌ Handler error:', err);
-                }
-            }
-            
-            e.preventDefault();
-            e.stopPropagation();
-        }, false);
-        
-        // Also allow touch on mobile
-        el.addEventListener('touchend', function(e) {
-            console.log('👆 TOUCH:', this.textContent.trim());
-            
-            if (onclickAttr) {
-                try {
-                    const func = new Function(onclickAttr);
-                    func.call(window);
-                    console.log('✅ Handler executed via touch');
-                } catch (err) {
-                    console.error('❌ Touch handler error:', err);
-                }
-            }
-            
-            e.preventDefault();
-            e.stopPropagation();
-        }, false);
-        
-        el.dataset.buttonSetup = 'true';
-        setupCount++;
+        el.style.cursor = 'pointer';
+        el.style.zIndex = '999';
+        el.style.position = 'relative';
     });
     
-    console.log(`✅ BUTTONS READY - ${setupCount} buttons configured`);
+    console.log(`✅ ${buttons.length} buttons configured`);
 }
 
-// Setup on page load
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('📄 DOMContentLoaded fired');
-    setupAllButtons();
-});
-
-// Also run immediately in case DOM is already loaded
-if (document.readyState !== 'loading') {
-    console.log('📄 DOM already ready');
+// Call setup immediately
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupAllButtons);
+} else {
     setupAllButtons();
 }
 
