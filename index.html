@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="format-detection" content="telephone=no">
-<title>CYBER PRISM - V10.3 FULLSCREEN</title>
+<title>CYBER PRISM - V11.1 BUTTON NAVIGATION</title>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
     
@@ -545,7 +545,7 @@
     </div>
     <div style="text-align:center; padding:40px; background:radial-gradient(circle, rgba(0,0,0,0.8) 0%, transparent 70%); margin-top: 80px;">
         <h1 class="glitch-text">CYBER PRISM</h1>
-        <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V11.0 // BULLETPROOF BUTTONS</h3>
+        <h3 style="color:var(--cyan); letter-spacing:4px; margin-top:-10px; margin-bottom:40px; opacity:0.8;">V11.1 // FULL NAVIGATION</h3>
         <div style="display:flex; flex-direction:column; align-items:center;">
             <button class="btn" style="width:240px; font-weight:bold; border-color:#fff; font-size:18px;" onclick="window.startGame()">DEPLOY UNIT</button>
             <button class="btn" style="width:240px; border-color:#0f0; color:#0f0;" onclick="window.startTutorial()">TUTORIAL</button>
@@ -622,40 +622,70 @@ function toggleFullScreen() {
   }
 }
 
-// Wrapper functions for button handlers to ensure they work
+// Wrapper functions for button handlers - ensure navigation works
 window.startGame = () => { 
-    console.log('BUTTON: startGame clicked'); 
-    if(Game && Game.start) Game.start(); 
-    else console.warn('Game not ready'); 
+    console.log('🎮 START GAME BUTTON CLICKED');
+    if(Game && Game.start) {
+        console.log('✅ Calling Game.start()');
+        Game.start();
+    } else {
+        console.error('❌ Game not ready');
+    }
 };
+
 window.startTutorial = () => { 
-    console.log('BUTTON: startTutorial clicked'); 
-    if(Game && Game.startTutorial) Game.startTutorial(); 
-    else console.warn('Game not ready'); 
+    console.log('🎓 START TUTORIAL BUTTON CLICKED');
+    if(Game && Game.startTutorial) {
+        console.log('✅ Calling Game.startTutorial()');
+        Game.startTutorial();
+    } else {
+        console.error('❌ Game.startTutorial not available');
+    }
 };
+
 window.openHangar = () => { 
-    console.log('BUTTON: openHangar clicked'); 
-    if(Menus && Menus.open) Menus.open('hangar'); 
-    else console.warn('Menus not ready'); 
+    console.log('🛠️ OPEN HANGAR CLICKED');
+    if(Menus && Menus.open) {
+        console.log('✅ Calling Menus.open(hangar)');
+        Menus.open('hangar');
+    } else {
+        console.error('❌ Menus not ready');
+    }
 };
+
 window.openShop = () => { 
-    console.log('BUTTON: openShop clicked'); 
-    if(Menus && Menus.open) Menus.open('shop'); 
-    else console.warn('Menus not ready'); 
+    console.log('💰 OPEN SHOP CLICKED');
+    if(Menus && Menus.open) {
+        console.log('✅ Calling Menus.open(shop)');
+        Menus.open('shop');
+    } else {
+        console.error('❌ Menus not ready');
+    }
 };
+
 window.openLab = () => { 
-    console.log('BUTTON: openLab clicked'); 
-    if(Menus && Menus.open) Menus.open('lab'); 
-    else console.warn('Menus not ready'); 
+    console.log('🧪 OPEN LAB CLICKED');
+    if(Menus && Menus.open) {
+        console.log('✅ Calling Menus.open(lab)');
+        Menus.open('lab');
+    } else {
+        console.error('❌ Menus not ready');
+    }
 };
+
 window.openAchievements = () => { 
-    console.log('BUTTON: openAchievements clicked'); 
-    if(Menus && Menus.open) Menus.open('achievements'); 
-    else console.warn('Menus not ready'); 
+    console.log('🏆 OPEN ACHIEVEMENTS CLICKED');
+    if(Menus && Menus.open) {
+        console.log('✅ Calling Menus.open(achievements)');
+        Menus.open('achievements');
+    } else {
+        console.error('❌ Menus not ready');
+    }
 };
+
 window.toggleFS = () => { 
-    console.log('BUTTON: toggleFS clicked'); 
-    toggleFullScreen(); 
+    console.log('🖥️ TOGGLE FULLSCREEN CLICKED');
+    toggleFullScreen();
 };
 
 /**
@@ -687,31 +717,67 @@ window.buttonHandler = function(handler) {
     }
 };
 
-// Simple button event handler setup
+// Robust button system with proper event handling and navigation
 function setupAllButtons() {
     console.log('🎮 SETTING UP BUTTONS');
+    
     const buttons = document.querySelectorAll('button, [onclick], .row');
+    let setupCount = 0;
     
     buttons.forEach((el) => {
         // Skip if already setup
         if (el.dataset.buttonSetup) return;
         
-        // For button elements, ensure they have click listeners
-        if (el.tagName === 'BUTTON' || el.hasAttribute('onclick')) {
-            el.style.cursor = 'pointer';
-            el.style.pointerEvents = 'auto';
+        // Ensure buttons are clickable
+        el.style.cursor = 'pointer';
+        el.style.pointerEvents = 'auto';
+        el.style.zIndex = '150';
+        
+        // Get the onclick handler
+        const onclickAttr = el.getAttribute('onclick');
+        
+        // Add click event listener that executes the handler
+        el.addEventListener('click', function(e) {
+            console.log('✅ BUTTON CLICKED:', this.textContent.trim(), 'Handler:', onclickAttr);
             
-            // Add click logging for debugging
-            el.addEventListener('click', function(e) {
-                const onclick = this.getAttribute('onclick');
-                console.log('✅ BUTTON CLICKED:', this.textContent, 'Handler:', onclick);
-            }, false);
-        }
+            if (onclickAttr) {
+                try {
+                    // Execute the onclick handler in window scope
+                    const func = new Function(onclickAttr);
+                    func.call(window);
+                    console.log('✅ Handler executed successfully');
+                } catch (err) {
+                    console.error('❌ Handler error:', err);
+                }
+            }
+            
+            e.preventDefault();
+            e.stopPropagation();
+        }, false);
+        
+        // Also allow touch on mobile
+        el.addEventListener('touchend', function(e) {
+            console.log('👆 TOUCH:', this.textContent.trim());
+            
+            if (onclickAttr) {
+                try {
+                    const func = new Function(onclickAttr);
+                    func.call(window);
+                    console.log('✅ Handler executed via touch');
+                } catch (err) {
+                    console.error('❌ Touch handler error:', err);
+                }
+            }
+            
+            e.preventDefault();
+            e.stopPropagation();
+        }, false);
         
         el.dataset.buttonSetup = 'true';
+        setupCount++;
     });
     
-    console.log('✅ BUTTONS READY - ' + buttons.length + ' buttons found');
+    console.log(`✅ BUTTONS READY - ${setupCount} buttons configured`);
 }
 
 // Setup on page load
@@ -1440,21 +1506,48 @@ window.handleShopAction = function(mode, itemKey, cost, type) {
 const Menus = {
     setShopTab(t) { ShopTab = t; Menus.open('shop'); },
     open(mode) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+        console.log(`📋 Menus.open() called with mode: ${mode}`);
+        
+        // Hide all screens first
+        document.querySelectorAll('.screen').forEach(s => {
+            s.classList.add('hidden');
+            s.style.pointerEvents = 'none';
+            s.style.zIndex = '10';
+        });
+        
         if(previewId) { cancelAnimationFrame(previewId); previewId=null; }
+        
         if (mode === 'achievements') {
-            document.getElementById('s-ach').classList.remove('hidden');
+            console.log('🏆 Showing achievements screen');
+            const achScreen = document.getElementById('s-ach');
+            achScreen.classList.remove('hidden');
+            achScreen.style.pointerEvents = 'auto';
+            achScreen.style.zIndex = '100';
+            
             document.querySelector('#s-ach h2').innerText = 'ACHIEVEMENTS';
             document.querySelector('#s-ach .cyber-panel').style.borderColor = 'var(--gold)';
             let list = document.getElementById('ach-list'); list.innerHTML = ''; let unlockedCount = 0;
             ACHIEVEMENTS.forEach(a => { let unlocked = Data.achievements.includes(a.id); if(unlocked) unlockedCount++; let card = document.createElement('div'); card.className = `ach-card ${unlocked ? 'unlocked' : ''}`; card.innerHTML = `<h4 style="margin:0 0 5px 0; color:${unlocked ? 'var(--gold)' : '#555'}">${a.name}</h4><span class="ach-desc" style="font-size:11px; color:#888;">${a.desc}</span><div class="ach-reward" style="color:${unlocked?'var(--cyan)':'#444'}">+${a.reward} BITS</div>`; list.appendChild(card); });
-            document.getElementById('ach-count').innerText = `${unlockedCount}/${ACHIEVEMENTS.length}`; return;
+            document.getElementById('ach-count').innerText = `${unlockedCount}/${ACHIEVEMENTS.length}`;
+            setupAllButtons();
+            return;
         }
-        document.getElementById('s-list').classList.remove('hidden'); document.getElementById('list-title').innerText = mode.toUpperCase(); document.getElementById('ui-bits').innerText = Data.bits;
+        
+        console.log(`📋 Showing menu mode: ${mode}`);
+        const listScreen = document.getElementById('s-list');
+        listScreen.classList.remove('hidden');
+        listScreen.style.pointerEvents = 'auto';
+        listScreen.style.zIndex = '100';
+        
+        document.getElementById('list-title').innerText = mode.toUpperCase();
+        document.getElementById('ui-bits').innerText = Data.bits;
         const lst = document.getElementById('list-items'); const det = document.getElementById('list-detail'); const tabRow = document.getElementById('list-tabs'); lst.innerHTML = ''; det.innerHTML = '';
+        
         if(mode === 'shop') { tabRow.style.display = 'flex'; if(ShopTab === 'CHASSIS') { document.getElementById('tab-chassis').style.borderColor = 'var(--cyan)'; document.getElementById('tab-modules').style.borderColor = '#333'; } else { document.getElementById('tab-chassis').style.borderColor = '#333'; document.getElementById('tab-modules').style.borderColor = 'var(--cyan)'; } } else tabRow.style.display = 'none';
+        
         let items = [];
         if(mode === 'shop') { if(ShopTab === 'CHASSIS') { Object.keys(CHASSIS).forEach(k => { if(!Data.owned.includes(k)) items.push({k, ...CHASSIS[k], type:'CHASSIS'}); }); } else { Object.keys(MODULES).forEach(k => { if(!Data.modules.includes(k)) items.push({k, ...MODULES[k], type:'MODULE'}); }); } } else if (mode === 'hangar' || mode === 'lab') { Data.owned.forEach(k => items.push({k, ...CHASSIS[k], type:'CHASSIS'})); Data.modules.forEach(k => items.push({k, ...MODULES[k], type:'MODULE'})); }
+        
         items.forEach(i => {
             let row = document.createElement('div'); row.className = 'row'; if(Data.equipped.chassis === i.k || Data.equipped.mods.includes(i.k)) row.classList.add('active');
             row.innerHTML = `<span>${i.name}</span><span style="font-size:10px">${i.type}</span>`;
@@ -1468,8 +1561,26 @@ const Menus = {
                 setupAllButtons();
             }; lst.appendChild(row);
         });
+        
         setupAllButtons();
-    }, home() { if(previewId) { cancelAnimationFrame(previewId); previewId=null; } document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden')); document.getElementById('s-menu').classList.remove('hidden'); setupAllButtons(); }
+        console.log(`✅ Menu screen ready for mode: ${mode}`);
+    },
+    
+    home() { 
+        console.log('🏠 Going to home menu');
+        if(previewId) { cancelAnimationFrame(previewId); previewId=null; }
+        document.querySelectorAll('.screen').forEach(s => {
+            s.classList.add('hidden');
+            s.style.pointerEvents = 'none';
+            s.style.zIndex = '10';
+        });
+        const menuScreen = document.getElementById('s-menu');
+        menuScreen.classList.remove('hidden');
+        menuScreen.style.pointerEvents = 'auto';
+        menuScreen.style.zIndex = '100';
+        setupAllButtons();
+        console.log('✅ Home menu displayed');
+    }
 };
 
 let s = localStorage.getItem(SAVE_KEY); if(s) { Data = {...Data, ...JSON.parse(s)}; if(!Data.achievements) Data.achievements = []; if(!Data.stats) Data.stats = { totalKills: 0, highestWave: 0, bossKilled: false }; }
